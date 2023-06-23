@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10000,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="关于Linux命令行的基本使用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux命令行基础使用">
+<meta property="og:url" content="http://example.com/2023/03/16/Linux/index.html">
+<meta property="og:site_name" content="HZ&#39;Blog">
+<meta property="og:description" content="关于Linux命令行的基本使用。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-03-16T06:58:33.000Z">
+<meta property="article:modified_time" content="2023-05-21T14:01:31.937Z">
+<meta property="article:author" content="Honghangzhi">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2023/03/16/Linux/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Linux命令行基础使用 | HZ'Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">HZ'Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/03/16/Linux/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Honghangzhi">
+      <meta itemprop="description" content="不积跬步，无以千里">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HZ'Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux命令行基础使用
+        </h1>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-03-16 14:58:33" itemprop="dateCreated datePublished" datetime="2023-03-16T14:58:33+08:00">2023-03-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-05-21 22:01:31" itemprop="dateModified" datetime="2023-05-21T22:01:31+08:00">2023-05-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                  <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                    <a href="/categories/%E5%B7%A5%E5%85%B7/" itemprop="url" rel="index"><span itemprop="name">工具</span></a>
+                  </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/03/16/Linux/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/03/16/Linux/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>18k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>16 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>关于Linux命令行的基本使用。</p>
+<span id="more"></span>
+
+
+
+
+
+
+
+
+
+<h1 id="安装和配置"><a href="#安装和配置" class="headerlink" title="安装和配置"></a>安装和配置</h1><p>安装计算机系统的步骤可以概括为以下几个步骤：</p>
+<ol>
+<li>准备安装介质：选择合适的安装介质，如光盘、USB闪存盘等，并确保安装介质的可靠性和完整性。</li>
+<li>进入BIOS设置：开机时按下相应的按键（通常是F2、DEL等），进入BIOS设置界面，设置启动顺序和其他必要参数，确保计算机能够从安装介质启动。</li>
+<li>启动计算机并进入安装界面：将安装介质插入计算机，重新启动计算机，等待计算机从安装介质启动并进入安装界面。</li>
+<li>选择安装类型：根据需求选择安装类型，如新安装、升级安装、自定义安装等，然后按照提示进行操作。</li>
+<li>准备磁盘，完成磁盘分区。</li>
+<li>选择安装位置：选择安装系统的位置，如硬盘的分区或未分配空间等，然后按照提示进行操作。</li>
+<li>安装系统：根据选择的安装类型和安装位置，开始安装系统，安装过程中需要进行一些基本设置，如时区、键盘布局、用户名等，按照提示进行操作。</li>
+<li>安装驱动程序和更新：安装完成后，需要安装相应的驱动程序和更新，以确保计算机正常运行和安全。</li>
+<li>安装软件和配置环境：根据需要安装相应的软件和配置环境，如浏览器、办公软件、编程环境等。</li>
+<li>完成设置和备份：完成设置后，需要进行一些基本的备份和恢复操作，以确保数据的安全性和完整性。</li>
+</ol>
+<h2 id="磁盘分区（partition）"><a href="#磁盘分区（partition）" class="headerlink" title="磁盘分区（partition）"></a>磁盘分区（partition）</h2><p>磁盘分区是将物理硬盘分成多个逻辑分区的过程。每个分区看起来像是一个单独的硬盘，在操作系统中被视为一个独立的存储设备。通过分区，可以将一个硬盘分成多个部分来存储不同的数据，例如操作系统、应用程序、用户文件等。</p>
+<p>在Windows上，分区就是把磁盘分层C盘，D盘，E盘的过程。分区的基本概念有：</p>
+<ul>
+<li>主分区：是硬盘的基本分区，最多只能有4个主分区。</li>
+<li>扩展分区：是一种特殊的主分区，可以包含多个逻辑分区。一个硬盘只能有一个扩展分区。</li>
+<li>逻辑分区：是在扩展分区中创建的，可以被格式化为文件系统并用于存储数据。</li>
+<li>分区表：是记录硬盘分区信息的数据结构，可以分为MBR分区表和GPT分区表两种。</li>
+<li>分区工具：是用来创建、删除、调整分区的软件工具，例如Windows的磁盘管理工具、Linux的fdisk命令等。</li>
+</ul>
+<h3 id="MBR"><a href="#MBR" class="headerlink" title="MBR"></a>MBR</h3><p>MBR（Master Boot Record）是一种旧的磁盘分区方案，用于记录磁盘的分区信息和引导程序。MBR存在于硬盘的第一个扇区（512字节）中，通常被称为主引导记录（Master Boot Record）。</p>
+<p>MBR分区方案最多支持4个主分区或3个主分区和1个扩展分区，每个分区最大支持2TB的存储空间。在MBR分区中，分区信息被存储在MBR中的分区表中，<strong>分为四个16字节的分区表项</strong>，每个分区表项描述一个分区的起始位置、大小、分区类型等信息。</p>
+<p>MBR分区方案存在一些缺点，例如不支持大于2TB的硬盘、分区数有限等。随着硬盘容量的不断扩大，MBR分区方案已经逐渐被GPT分区方案取代。</p>
+<p>尽管MBR分区方案已经逐渐被淘汰，但由于历史原因和兼容性需求，一些旧系统和软件仍然使用MBR分区方案。</p>
+<h3 id="GPT"><a href="#GPT" class="headerlink" title="GPT"></a>GPT</h3><p>GPT（GUID Partition Table）是一种新的磁盘分区方案，取代了旧的MBR（Master Boot Record）分区方案。GPT分区方案支持大于2TB的硬盘，最多支持128个分区，<strong>每个分区可以使用GUID进行标识</strong>。GPT分区方案的优势在于：</p>
+<ol>
+<li>支持大于2TB的硬盘。MBR分区方案只支持最大2TB的硬盘，而GPT分区方案可以支持超过2TB的硬盘。</li>
+<li>最多支持128个分区。MBR分区方案最多只支持4个主分区或3个主分区和1个扩展分区，而GPT分区方案可以支持最多128个分区。</li>
+<li>数据冗余和校验。GPT分区方案在分区表中存储了分区数据的备份和校验信息，可以提高数据的安全性和可靠性。</li>
+<li>逻辑分区的独立性。GPT分区方案中每个分区都有独立的GUID标识，可以避免不同分区之间的冲突。</li>
+<li>兼容性。GPT分区方案可以兼容MBR分区方案，可以在旧的操作系统和硬件上使用。</li>
+</ol>
+<p>在使用GPT分区方案时，需要使用支持GPT分区的操作系统和磁盘管理工具。例如，Windows Vista、Windows 7、Windows 8、Windows 10、Mac OS X等操作系统都支持GPT分区方案。同时，使用GPT分区方案也需要备份重要的数据，以免分区操作不当导致数据丢失。</p>
+<p>早期磁盘第一个扇区里面含有的重要信息我们称为MBR （Master Boot<br>Record） 格式，但是由于近年来磁盘的容量不断扩大，造成读写上的一些困扰， 甚至有些大于 2TB 以上的磁盘分区已经让某些操作系统无法存取。因此后来又多了一个新的磁盘分区格式，称为 GPT （GUID partition table）</p>
+<h3 id="Linux磁盘分区"><a href="#Linux磁盘分区" class="headerlink" title="Linux磁盘分区"></a>Linux磁盘分区</h3><p>磁盘挂载</p>
+<p>磁盘挂载是将一个文件系统连接到Linux文件系统树的过程，以便于访问文件和目录。在Linux中，所有文件和目录都存在于文件系统中，包括硬盘、U盘、CD-ROM等存储设备上的文件。磁盘挂载就是将这些存储设备中的文件系统连接到Linux文件系统树（目录树）中的一个挂载点上，使得Linux系统能够访问这些存储设备上的文件。</p>
+<p>在Linux中，每个挂载点都是一个目录，它是由管理员创建的，并用于连接文件系统。当管理员想要使用磁盘上的文件时，需要先将磁盘挂载到某个挂载点上，然后才能访问文件系统中的文件和目录。挂载点的选择通常是根据需要访问的文件系统的类型和目的来决定的。</p>
+<p>简单来说，Linux可以把硬盘或分区挂载到目录树的任意一个目录，而Windows全部都挂载到根目录，分成了C盘，D盘等。</p>
+<p>假设硬盘分为两个分区，partition1挂载到根目录，partition 2挂载到/home目录。 那么，当把数据放置在/home内的各级目录时，数据是放置到partition2，如果不是放在/home下面的目录， 那么数据就会被放置到partition1。</p>
+<p>分区规划</p>
+<ul>
+<li>最简单的分区方法：仅分区出根目录与内存交换空间（ / &amp; swap ）即可。 然后再预留一些剩余的磁盘以供后续的练习之用。不过，这当然是不保险的分区方法（所以鸟哥常常说这是“懒人分区法”）！ 因为如果任何一个小细节坏掉（例如坏轨的产生），你的根目录将可能整个的损毁～挽救方面较困难！</li>
+<li>稍微麻烦一点的方式： 较麻烦一点的分区方式就是先分析这部主机的未来用途，然后根据用途去分析需要较大容量的目录， 以及读写较为频繁的目录，将这些重要的目录分别独立出来而不与根目录放在一起， 那当这些读写较频繁的磁盘分区有问题时，至少不会<br>影响到根目录的系统数据，那挽救方面就比较容易啊！ 在默认的CentOS环境中，下面的目录是比较符合容量大且（或）读写频繁的目录啰：<ul>
+<li>/boot</li>
+<li>/</li>
+<li>/home</li>
+<li>/var</li>
+<li>Swap</li>
+</ul>
+</li>
+</ul>
+<p>分区实例</p>
+<p>案例一：家用的小型Linux服务器，IP分享与文件分享中心</p>
+<ul>
+<li>提供服务： 提供家里的多部计算机的网络连线分享，所以需要NAT功能。提供家庭成员的数据存放容量，由于家里使用Windows系统的成员不少， 所以创建SAMBA服务器，提供网芳的网络磁盘功能。</li>
+<li>主机硬件配备：<ul>
+<li>CPU使用 AMD Athlon 4850e 省电型 CPU</li>
+<li>内存大小为 4GB</li>
+<li>两张网卡，控制芯片为常见的螃蟹卡（Realtek）</li>
+<li>只有一颗 640GB 的磁盘</li>
+<li>显卡为 CPU 内的内置显卡 （Radeon HD 3200）</li>
+<li>安装完毕后将屏幕,键盘,鼠标,DVD-ROM等配备均移除，仅剩下网络线与电源线。</li>
+</ul>
+</li>
+<li>硬盘分区：<ul>
+<li>分成 /, /usr, /var, /tmp等目录均独立；</li>
+<li>1 GB的Swap；</li>
+<li>安装比较过时的 CentOS 5.x 最新版</li>
+</ul>
+</li>
+</ul>
+<p>案例二：提供Linux的PC计算机集群：</p>
+<ul>
+<li>提供服务： 提供研究室成员对于模式仿真的软、硬件平台，主要提供的服务并非网际网络服务，而是研究室内部的研究工作分析。</li>
+<li>主机硬件配备：<ul>
+<li>利用两部多核系统处理器 （一部 20核 40绪，一部 12核 24绪），搭配 10G 网卡组<br>合而成</li>
+<li>使用内置的显卡</li>
+<li>运算用主机仅一颗磁盘，储存用主机提供 8 颗 2TB 磁盘组成的磁盘阵列</li>
+<li>一部 128GB 内存，一部 96GB 内存</li>
+</ul>
+</li>
+<li>硬盘分区：<ul>
+<li>运算主机方面，整颗磁盘仅分 /boot, / 及 swap 而已</li>
+<li>储存主机方面，磁盘阵列分成两颗磁盘，一颗 100G 给系统用，一颗 12T 给数据<br>用。系统磁盘用的分区为 /boot, /, /home, /tmp, /var 等分区， 数据磁盘全部容量规划<br>在同一个分区而已。</li>
+<li>安装最新的 CentOS 7.x 版</li>
+</ul>
+</li>
+</ul>
+<p>案例三：</p>
+<h2 id="开机检测程序"><a href="#开机检测程序" class="headerlink" title="开机检测程序"></a>开机检测程序</h2><h3 id="BIOS"><a href="#BIOS" class="headerlink" title="BIOS"></a>BIOS</h3><p>BIOS（Basic Input/Output System）是计算机系统中的一项基本固件，它提供了操作系统和硬件设备之间的接口，控制着计算机的启动过程和硬件设备的基本功能。BIOS通常存储在计算机主板上的Flash ROM中，它是计算机启动过程中第一个被执行的程序。</p>
+<p>BIOS的主要功能包括以下几个方面：</p>
+<ol>
+<li>硬件初始化：BIOS会在计算机启动时对各种硬件设备进行初始化和检测，确保它们能够正常工作。</li>
+<li>启动顺序：BIOS会根据预设的启动顺序来查找可启动设备（例如硬盘、光驱、USB设备等），并从中加载操作系统的引导程序。</li>
+<li>系统设置：BIOS可以提供一些基本的系统设置，例如时间、日期、硬件设备设置等。</li>
+<li>系统自检：BIOS会对计算机系统进行一些自检操作，例如检查内存是否正常、硬盘是否存在等。</li>
+</ol>
+<p>随着计算机技术的不断发展，BIOS逐渐被UEFI（Unified Extensible Firmware Interface）所取代。UEFI提供了比BIOS更强大和灵活的功能，例如支持硬盘容量大于2TB、支持图形化界面等。不过，BIOS仍然广泛存在于许多老旧的计算机系统中。</p>
+<h3 id="UEFI"><a href="#UEFI" class="headerlink" title="UEFI"></a>UEFI</h3><p>UEFI是“Unified Extensible Firmware Interface”的缩写，中文名为“统一可扩展固件接口”。它是一种新型的固件接口标准，用于取代传统的BIOS固件接口。UEFI最初由Intel提出，并得到了多家计算机硬件厂商的支持，目前已经成为主流的固件接口标准。</p>
+<p>UEFI相比于传统的BIOS具有以下优点：</p>
+<ol>
+<li>更快的启动速度：UEFI启动的速度比BIOS更快，因为UEFI在启动过程中可以并行执行多个操作。</li>
+<li>更好的可扩展性：UEFI接口可以轻松地扩展和更新，支持新的硬件和功能，使计算机系统更具灵活性和可升级性。</li>
+<li>更好的安全性：UEFI可以提供更好的安全性，支持安全启动和数字签名，可以保护计算机系统免受恶意软件和攻击。</li>
+<li>更多的操作系统支持：UEFI可以支持多个操作系统，包括Windows、Linux、macOS等，同时还支持64位操作系统。</li>
+</ol>
+<p>UEFI在功能上与传统的BIOS类似，都具有控制计算机启动过程、管理硬件设备、提供基本的输入输出功能等。但UEFI接口更加现代化、灵活性更高、可扩展性更强、安全性更好。UEFI已经成为现代计算机系统的标准固件接口，越来越多的计算机硬件厂商和操作系统厂商开始支持UEFI接口。</p>
+<h2 id="引导程序"><a href="#引导程序" class="headerlink" title="引导程序"></a>引导程序</h2><p>开机流程、模块管理与 Loader</p>
+<h3 id="grub2"><a href="#grub2" class="headerlink" title="grub2"></a>grub2</h3><h2 id="系统设置"><a href="#系统设置" class="headerlink" title="系统设置"></a>系统设置</h2><p>鸟哥20章</p>
+<p>网络设置</p>
+<p>参数</p>
+<ul>
+<li>method: manual （手动设置）</li>
+<li>IP: 172.16.1.1</li>
+<li>netmask: 255.255.0.0</li>
+<li>gateway: 172.16.200.254</li>
+<li>DNS: 172.16.200.254</li>
+<li>hostname: study.centos.vbird</li>
+</ul>
+<p>网卡</p>
+<ul>
+<li>eno1 ：代表由主板 BIOS 内置的网卡</li>
+<li>ens1 ：代表由主板 BIOS 内置的 PCI-E 界面的网卡</li>
+<li>enp2s0 ：代表 PCI-E 界面的独立网卡，可能有多个插孔，因此会有 s0, s1… 的编号～</li>
+<li>eth0 ：如果上述的名称都不适用，就回到原本的默认网卡编号</li>
+</ul>
+<p>日期与时间设置</p>
+<p>世界事件标准</p>
+<ol>
+<li>协调世界时（Coordinated Universal Time，缩写为UTC）：UTC是目前全球通用的时间标准，基于原子钟的国际时间。它通过对格林威治时间（GMT）进行时区和夏令时调整，以确保与地球各个区域的时间保持一致。UTC通常以24小时制表示时间。</li>
+<li>格林威治标准时间（Greenwich Mean Time，缩写为GMT）：GMT是以伦敦格林威治天文台所在地的当地时间作为基准的时间标准。它不考虑夏令时的调整，保持在标准时间。GMT已被UTC取代，但仍然在一些时区标识符中使用。</li>
+<li>国际原子时间（International Atomic Time，缩写为TAI）：TAI是由国际原子时标准实验室（BIPM）维护的一种基于原子钟的时间标准。它是通过原子钟测量获得的连续时间流，与地球的自转速率无关。</li>
+<li>地球时间（Terrestrial Time，缩写为TT）：TT是基于地球自转的时间标准，与国际原子时间略有不同，因为地球自转速率会受到多种因素的影响。</li>
+<li>协调射电时（Coordinated Radioactive Time，缩写为TAI(R)）：TAI(R)是TAI与地球自转速率的差异之间的校正值，以确保与地球的动力学时标准（如TT）保持一致。</li>
+</ol>
+<p>在日常生活和计算机系统中，最常用的时间标准是UTC，它为世界各地提供了统一的时间参考。其他时间标准主要在科学、导航、天文学等领域中使用。</p>
+<p>计算机的日期和时间表示</p>
+<ol>
+<li><p>时间戳（Timestamp）：时间戳是一个整数或浮点数，表示从一个特定的基准时间（通常是UNIX纪元，即1970年1月1日00:00:00 UTC）开始经过的时间量。时间戳以<strong>秒</strong>为单位，可以用于进行日期和时间的计算和比较。</p>
+</li>
+<li><p>字符串表示：日期和时间可以使用字符串来表示，遵循特定的格式。常见的日期和时间格式包括：</p>
+<ul>
+<li>年-月-日（例如：2023-05-15）</li>
+<li>月/日/年（例如：05/15/2023）</li>
+<li>日-月-年（例如：15-05-2023）</li>
+<li>24小时制时间（例如：14:30:00）</li>
+<li>12小时制时间（例如：2:30:00 PM）</li>
+</ul>
+<p>字符串表示可以使用不同的分隔符、顺序和时间制式，具体取决于所使用的日期和时间格式。</p>
+</li>
+<li><p>结构化对象：在编程语言中，常常使用特定的日期和时间对象或类来表示日期和时间。这些对象通常具有属性或方法，用于存储和操作日期和时间信息。例如，Python中的<code>datetime</code>模块提供了<code>datetime</code>类，可以存储日期和时间，并提供各种操作方法。</p>
+</li>
+<li><p>时区信息：在计算机中，日期和时间表示通常也包含与之关联的时区信息。时区信息用于将本地时间与全球标准时间（如UTC）进行转换，并考虑夏令时的调整。</p>
+</li>
+<li><p>ISO 8601格式： ISO 8601是国际标准化组织定义的日期和时间表示标准。它的格式为<code>YYYY-MM-DDTHH:MM:SS</code>，其中<code>T</code>是日期和时间的分隔符。</p>
+</li>
+</ol>
+<p>设置日期和时间</p>
+<ol>
+<li><p>使用<code>date</code>命令设置日期和时间：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bashCopy code</span><br><span class="line">sudo date --set=&quot;YYYY-MM-DD HH:MM:SS&quot;</span><br></pre></td></tr></table></figure>
+
+<p>其中，<code>YYYY-MM-DD</code>是日期，<code>HH:MM:SS</code>是时间。</p>
+<p>例如，要将日期设置为2023年5月15日，时间设置为14:30:00，可以运行以下命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bashCopy code</span><br><span class="line">sudo date --set=&quot;2023-05-15 14:30:00&quot;</span><br></pre></td></tr></table></figure>
+
+<p>请注意，使用<code>date</code>命令需要超级用户（root）权限。</p>
+</li>
+<li><p>使用<code>timedatectl</code>命令设置时区</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">timedatectl list-timezones</span><br><span class="line">sudo timedatectl set-timezone Asia/Shanghai</span><br></pre></td></tr></table></figure></li>
+<li><p>使用<code>timedatectl</code>命令设置日期和时间：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo timedatectl set-time &quot;YYYY-MM-DD HH:MM:SS&quot;</span><br></pre></td></tr></table></figure>
+
+<p>同样，替换<code>YYYY-MM-DD</code>和<code>HH:MM:SS</code>为您想要设置的日期和时间。</p>
+<p>例如，要将日期设置为2023年5月15日，时间设置为14:30:00，可以运行以下命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo timedatectl set-time &quot;2023-05-15 14:30:00&quot;</span><br></pre></td></tr></table></figure>
+
+<p><code>timedatectl</code>命令还提供其他与时间相关的设置和管理功能，如设置时区、启用/禁用网络时间同步等。</p>
+</li>
+<li><p>网络校时</p>
+<ul>
+<li><p>手动网络校时</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo ntpdate &lt;时间服务器&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+<li><p>自动网络校时，使用NTP等软件可以自动校时，但是会开几个端口，占用一些资源。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install ntp</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>使用<code>hwclock</code>命令设置硬件时钟（RTC）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo hwclock --set --date=&quot;YYYY-MM-DD HH:MM:SS&quot;</span><br><span class="line">sudo hwclock --hctosys         # 将硬件时钟同步到系统时钟</span><br></pre></td></tr></table></figure>
+
+<p>先使用第一行命令将硬件时钟设置为指定日期和时间，然后使用第二行命令将硬件时钟同步到系统时钟。</p>
+<p>请注意，<code>hwclock</code>命令需要超级用户（root）权限。</p>
+</li>
+</ol>
+<p>语系设置</p>
+<p>防火墙简易设置</p>
+<ul>
+<li>服务：一般来说，如果你的 Linux server 是作为 Internet 的服务器，提供的是比较一般<br>的服务，那么只要处理“服务”项目即可。默认你的服务器已经提供了 ssh 与 dhcpv6-<br>client 的服务端口喔！<br>端口：如果你提供的服务所启用的端口并不是正规的端口，举例来说，为了玩 systemd<br>与 SELinux 我们曾经将 ssh 的端口调整到 222 ，同时也曾经将 ftp 的端口调整到 555 对<br>吧！那如果你想要让人家连进来，就不能只开放上面的“服务”项目，连这个“端口”的地方<br>也需要调整才行！另外， 如果有某些比较特别的服务是 CentOS 默认没有提供的，所<br>以“服务”当然也就没有存在！这时你也可以直接通过端口来搞定它！<br>丰富规则（rich rule）：如果你有“整个网域”需要放行或者是拒绝的时候，那么前两个项<br>目就没有办法适用， 这时就得要这个项目来处理了。不过鸟哥测试了 7.1 这一版的设<br>置，似乎怪怪的～因此，下面我们会以 firewall-cmd 来增加这一个项目的设置。<br>接口：就是这个界域主要是针对哪一个网卡来做规范的意思，我们只有一张网卡，所以<br>当然就是 eth0 啰！</li>
+</ul>
+<h2 id="软件包管理"><a href="#软件包管理" class="headerlink" title="软件包管理"></a>软件包管理</h2><p>CentOS使用yum管理，Ubuntu使用RPM管理</p>
+<h2 id="RPM-RedHat-Package-Manager"><a href="#RPM-RedHat-Package-Manager" class="headerlink" title="RPM(RedHat Package Manager)"></a>RPM(RedHat Package Manager)</h2><p>查询和检验</p>
+<p><strong>目录配置</strong>：安装包存放位置</p>
+<p>安装：<code>rpm -ivh 文件位置|网络地址</code></p>
+<p>升级：<br>-Uvh    没有安装，安装新软件<br>-Fvh    没有安装，不升级</p>
+<p><strong>查询</strong>  位置：/var/lib/rpm/<br><code>rpm -qa|grep xxx</code></p>
+<p>i686、i386表示32位系统，noarch：通用</p>
+<p>RPM 验证与数位签章(Verify/signature)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">rpm -Va </span><br><span class="line">rpm -V已安装的软体名称</span><br><span class="line">rpm -Vp某个RPM档案的档名</span><br><span class="line">rpm -Vf在系统上面的某个档案</span><br></pre></td></tr></table></figure>
+
+<p> RPM 卸载与重建资料库(erase/rebuilddb)</p>
+<p>找出与pam有关的软件名称，并尝试移除pam这个软件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -qa | grep pam</span><br></pre></td></tr></table></figure>
+
+<h3 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h3><ul>
+<li>列出所有可更新的软件清单命令：<strong>sudo apt update</strong></li>
+<li>升级软件包：<strong>sudo apt upgrade</strong></li>
+<li>列出可更新的软件包及版本信息：<strong>apt list –upgradeable</strong></li>
+<li>升级软件包，升级前先删除需要更新软件包：<strong>sudo apt full-upgrade</strong></li>
+<li>安装指定的软件命令：<strong>sudo apt install <package_name></strong></li>
+<li>安装多个软件包：<strong>sudo apt install <package_1> <package_2> <package_3></strong></li>
+<li>更新指定的软件命令：<strong>sudo apt update <package_name></strong></li>
+<li>显示软件包具体信息,例如：版本号，安装大小，依赖关系等等：<strong>sudo apt show <package_name></strong></li>
+<li>删除软件包命令：<strong>sudo apt remove <package_name></strong></li>
+<li>清理不再使用的依赖和库文件: <strong>sudo apt autoremove</strong></li>
+<li>移除软件包及配置文件: <strong>sudo apt purge <package_name></strong></li>
+<li>查找软件包命令： <strong>sudo apt search <keyword></strong></li>
+<li>列出所有已安装的包：<strong>apt list –installed</strong></li>
+<li>列出所有已安装的包的版本信息：<strong>apt list –all-versions</strong></li>
+</ul>
+<h2 id="YUM-Yellow-dog-Updater"><a href="#YUM-Yellow-dog-Updater" class="headerlink" title="YUM(Yellow dog Updater)"></a><strong>YUM(Yellow dog Updater)</strong></h2><p><strong>查找</strong>：yum [list|info|search|provides|whatprovides] 参数</p>
+<p><strong>安装/升级功能</strong>：yum [install|update] 软体</p>
+<p><strong>卸载</strong>：yum [remove] 软体</p>
+<p>设置yum映射站：vim /etc/yum.repos.d/CentOS-Base.repo</p>
+<h3 id="添加软件源"><a href="#添加软件源" class="headerlink" title="添加软件源"></a>添加软件源</h3><ol>
+<li><p>直接下载<code>repo</code>文件，放到<code>/etc/yum.repos.d</code>目录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/yum.repos.d/mongodb-org-6.0.repo</span><br></pre></td></tr></table></figure></li>
+<li><p>下载<code>rpm</code>文件，命令行安装</p>
+</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo rpm -ivh mysql57-community-release-el7-9.noarch.rpm # 生成repo文件</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="Shell简介"><a href="#Shell简介" class="headerlink" title="Shell简介"></a>Shell简介</h1><p>壳程序（shell）是能够操作应用程序的接口</p>
+<p>合法shell可以在/etc/shells查看</p>
+<p>bash shell的优点：</p>
+<ul>
+<li>history</li>
+<li>命令和文件补全（tab）</li>
+<li>别名</li>
+<li>脚本</li>
+<li>万用字符</li>
+</ul>
+<p>查询指令是否为 Bash shell 的内置命令： type</p>
+<h2 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h2><ul>
+<li><p>echo，取用变量，注意要加上<code>$</code>符</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;PATH&#125;</span> <span class="comment"># 推荐</span></span><br></pre></td></tr></table></figure></li>
+<li><p>=，设置变量</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">name=VBird<span class="string">&#x27;s name</span></span><br><span class="line"><span class="string">PATH=$&#123;PATH&#125;:/home/bin # 扩增</span></span><br><span class="line"><span class="string">unset myname”</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h3><p>使用命令行设置，只会作用于<strong>当前终端</strong></p>
+<ul>
+<li>set 观察所有变量 （含环境变量与自订变量）</li>
+<li>export 把自定义变量变成环境变量</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">env <span class="comment"># 列出所有的环境变量；</span></span><br><span class="line"><span class="built_in">export</span> <span class="comment"># 也能列出所有的环境变量，另外还可添加环境变量</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$PATH</span> <span class="comment"># echo $PATH 用于列出变量PATH的值，里面包含了已添加的目录。</span></span><br><span class="line"><span class="comment"># 加到PATH末尾</span></span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:/path/to/your/dir</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加到PATH开头</span></span><br><span class="line"><span class="built_in">export</span> PATH=/path/to/your/dir:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> VAR_NAME=value</span><br></pre></td></tr></table></figure>
+
+<p>配置文件</p>
+<ul>
+<li>/etc/profile<br>这是系统整体的设置（所有用户），你最好不要修改这个文件；</li>
+<li>~/.bash_profile 或 ~/.bash_login 或 ~/.profile<br>属于使用者个人设置，你要改自己的数据，就写入这里！</li>
+<li>source ：读入环境配置文件的指令（使配置文件生效）</li>
+</ul>
+<h2 id="别名"><a href="#别名" class="headerlink" title="别名"></a>别名</h2><ul>
+<li><p>alias</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alias lm=&#x27;ls -al &amp;#124; more&#x27;</span><br></pre></td></tr></table></figure></li>
+<li><p>unalias</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">unalias</span> lm</span><br></pre></td></tr></table></figure></li>
+<li><p>history，显示最近1000条</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">!number <span class="comment"># 执行第几条指令的意思</span></span><br><span class="line">!<span class="built_in">command</span> <span class="comment"># 由最近的指令向前搜寻“指令串开头为 command”的那个指令，并执行</span></span><br><span class="line">!! <span class="comment"># 执行上一个指令（相当于按↑按键后，按 Enter）</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="基本bash-shell命令"><a href="#基本bash-shell命令" class="headerlink" title="基本bash shell命令"></a>基本bash shell命令</h2><h3 id="关机"><a href="#关机" class="headerlink" title="关机"></a>关机</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">sync 内存数据同步到磁盘，关机和重启前使用</span><br><span class="line"></span><br><span class="line">shutdown 关机</span><br><span class="line">shutdown -h now 立即关机</span><br><span class="line">shutdown -h 1:1分钟关机</span><br><span class="line">shutdown -r now :立即重启</span><br><span class="line"></span><br><span class="line">-t sec：-t 后面加秒数，几秒后关机</span><br><span class="line">-k：只是发送警告消息</span><br><span class="line">-r：将系统服务停掉后就重启</span><br><span class="line">-h：将系统服务停掉后就关机</span><br><span class="line">-n：不经过init程序，直接以shutdown功能关机</span><br><span class="line">-f：关机并开机后，强制略过fsck磁盘检查</span><br><span class="line">-F：系统重启之后，强制进行fsck磁盘检查</span><br><span class="line">-c：取消已经在进行的shutdown命令内容</span><br><span class="line"></span><br><span class="line">reboot ; 重启</span><br><span class="line"></span><br><span class="line">halt ; poweroff; 关机</span><br></pre></td></tr></table></figure>
+
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">ctrl+alt+f1f2f3 切换不同虚拟终端</span><br><span class="line">ctrl+c <span class="comment"># 中止命令</span></span><br><span class="line">init 0<span class="comment"># 关键</span></span><br><span class="line">who  <span class="comment"># 当前用户</span></span><br><span class="line">whoami <span class="comment"># 当前用户及权限</span></span><br><span class="line"></span><br><span class="line">date <span class="comment"># 月日时分年</span></span><br><span class="line">hwclock <span class="comment"># -s 同步硬件 -w 同步系统</span></span><br><span class="line"> </span><br><span class="line">cal <span class="comment"># 日历</span></span><br><span class="line">cal 7 2001</span><br><span class="line"> </span><br><span class="line">clear / ctrl+l <span class="comment"># 清屏 </span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># 获取帮助</span></span><br><span class="line">man su</span><br><span class="line">su --<span class="built_in">help</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看Linux版本</span></span><br><span class="line"><span class="comment"># 1.查看系统版本信息的命令 </span></span><br><span class="line">lsb_release -a</span><br><span class="line"><span class="comment"># (使用命令时提示command not found,需要安装yum install redhat-lsb -y)</span></span><br><span class="line"></span><br><span class="line">cat /etc/redhat-release</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="文件管理和文件系统"><a href="#文件管理和文件系统" class="headerlink" title="文件管理和文件系统"></a>文件管理和文件系统</h1><h2 id="文件和目录操作"><a href="#文件和目录操作" class="headerlink" title="文件和目录操作"></a>文件和目录操作</h2><ul>
+<li><p><strong>ls</strong>：列出目录内容。</p>
+</li>
+<li><p><strong>file</strong>：确定文件类型。</p>
+</li>
+<li><p><strong>less</strong>：查看文件内容，more的替换（less is more），可以前后翻页。</p>
+</li>
+<li><p><strong>cd</strong> （change directory， 变换目录） </p>
+</li>
+<li><p><strong>pwd</strong> （显示当前所在目录）<br>-p 显示出确切路径</p>
+</li>
+<li><p><strong>cp</strong>：复制文件和目录。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cp item1 item2 <span class="comment"># 复制文件</span></span><br><span class="line">cp item… directory <span class="comment">#复制到目录</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>mv</strong>：移动或重命名文件和目录，使用与cp类似。</p>
+</li>
+<li><p><strong>mkdir</strong> （创建新目录） <code>mkdir directory…</code></p>
+<ul>
+<li>-m 设定权限</li>
+<li>-p 递归建立所需目录（不使用-p选项需要一层一层地创建，如/home/bird/testing/test1）</li>
+</ul>
+</li>
+<li><p><strong>rmdir</strong> （删除”空”的目录）<br>-r：删除此目录下的所有文件，但是此目录不删除</p>
+</li>
+<li><p><strong>rm</strong>：移除文件和目录。</p>
+</li>
+</ul>
+<h3 id="查看文件"><a href="#查看文件" class="headerlink" title="查看文件"></a>查看文件</h3><ul>
+<li>cat 由第一行开始显示文件内容</li>
+<li>tac 从最后一行开始显示，可以看出 tac 是 cat 的倒着写！</li>
+<li>nl 显示的时候，顺道输出行号！</li>
+<li>more 一页一页的显示文件内容</li>
+<li>less 与 more 类似，但是比 more 更好的是，他可以往前翻页！</li>
+<li>head 只看头几行</li>
+<li>tail 只看尾巴几行</li>
+<li>od 以二进制的方式读取文件内容！</li>
+</ul>
+<h3 id="文件搜索"><a href="#文件搜索" class="headerlink" title="文件搜索"></a>文件搜索</h3><ul>
+<li>which （寻找“可执行文件”）</li>
+<li>whereis （由一些特定的目录中寻找文件文件名）</li>
+<li>locate / updatedb</li>
+<li>find</li>
+</ul>
+<h2 id="权限管理"><a href="#权限管理" class="headerlink" title="权限管理"></a>权限管理</h2><p>Linux一般将文件可存取的身份分为三个类别，分别是 owner/group/others，且三种身份各有 read/write/execute 等权限。</p>
+<p>文件类型有以下几种，使用<code>ls -l</code>查看</p>
+<ul>
+<li>[ d ]表示目录，例如上表文件名为“.config”的那一行；</li>
+<li>[ - ]表示文件，例如上表文件名为“initial-setup-ks.cfg”那一行；</li>
+<li>[ l ]表示为链接文件（link file）；</li>
+<li>[ b ]表示为设备文件里面的可供储存的周边设备（可随机存取设备）；</li>
+<li>[ c ]表示为设备文件里面的序列埠设备，例如键盘、鼠标（一次性读取设<br>备）。</li>
+</ul>
+<p>修改文件和目录权限</p>
+<ul>
+<li><p>chgrp：更改文件所属群组，群组必须在/etc/group中存在</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chgrp users initial-setup-ks.cfg</span><br></pre></td></tr></table></figure></li>
+<li><p>chown：更改文件所有者。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">chown bin initial-setup-ks.cfg</span><br><span class="line">chown root:root initial-setup-ks.cfg</span><br><span class="line">chown .root <span class="comment"># 更改群组</span></span><br></pre></td></tr></table></figure></li>
+<li><p>chmod：更改文件的权限。</p>
+<ul>
+<li>数字类型：&gt; r:4 &gt; w:2 &gt; x:1</li>
+<li>符号类型：使用<code>+,-,=</code>三个符号表示增加、除去和设置</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">chmod 777 .bashrc</span><br><span class="line">chmod u=rwx,go=rx .bashr</span><br><span class="line">chmod a+w .bashrc</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>对于文件和目录，权限有不同的意义：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>内容</th>
+<th>r</th>
+<th>w</th>
+<th>x</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文件</td>
+<td>详细数据 data</td>
+<td>读到文件内容</td>
+<td>修改文件内容</td>
+<td>执行文件内容</td>
+</tr>
+<tr>
+<td>目录</td>
+<td>文件名</td>
+<td>读取文件名</td>
+<td>修改文件名（创建、修改文件和目录）</td>
+<td>进入该目录的权限</td>
+</tr>
+</tbody></table>
+<p>对于开放资源，目录要设置r和w的权限，不能只设置r，否则无法获取目录下的资源。</p>
+<h2 id="目录配置"><a href="#目录配置" class="headerlink" title="目录配置"></a>目录配置</h2><p>关于Linux的目录可以参考一些规范。</p>
+<p>Filesystem Hierarchy Standard（FHS）</p>
+<p>Linux Standard Base（LSB）</p>
+<p>记录文件</p>
+<ul>
+<li>/etc/passwd</li>
+<li>/etc/shadow</li>
+<li>/etc/group</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -al</span><br></pre></td></tr></table></figure>
+
+<h2 id="磁盘和文件系统管理"><a href="#磁盘和文件系统管理" class="headerlink" title="磁盘和文件系统管理"></a>磁盘和文件系统管理</h2><h3 id="磁盘管理"><a href="#磁盘管理" class="headerlink" title="磁盘管理"></a>磁盘管理</h3><p>磁盘状态</p>
+<ul>
+<li>df：列出文件系统的整体磁盘使用量；</li>
+<li>du：评估文件系统的磁盘使用量（常用在推估目录所占容量）</li>
+</ul>
+<p>实体链接与符号链接</p>
+<p><strong>in</strong>：创建硬链接和符号链接。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ln file link <span class="comment"># 硬链接</span></span><br><span class="line">ln –s item link <span class="comment"># 符号链接</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>磁盘的分区、格式化、检验与挂载</p>
+<ul>
+<li>lsblk 列出系统上的所有磁盘列表</li>
+<li>blkid 列出设备的 UUID 等参数</li>
+<li>parted 列出磁盘的分区表类型与分区信息</li>
+</ul>
+<p>分区</p>
+<ul>
+<li>gdisk</li>
+<li>partprobe 更新 Linux 核心的分区表信息</li>
+<li>fdisk</li>
+</ul>
+<p>格式化</p>
+<p>检验</p>
+<ul>
+<li>xfs_repair 处理 XFS 文件系统</li>
+<li>fsck.ext4 处理 EXT4 文件系统</li>
+</ul>
+<p>挂载</p>
+<ul>
+<li>mount</li>
+<li>umount （将设备文件卸载）</li>
+</ul>
+<p>磁盘/文件系统参数</p>
+<ul>
+<li>mknod</li>
+<li>xfs_admin 修改 XFS 文件系统的 UUID 与 Label name</li>
+<li>tune2fs 修改 ext4 的 label name 与 UUID<br>鸟哥的 Linux 私房菜：基础学习篇 第四版<br>7.3</li>
+</ul>
+<p>开机挂载</p>
+<p>内存交换空间（swap）之创建</p>
+<h3 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h3><p>常见的文件系统有以下几种</p>
+<ul>
+<li>Windows<ul>
+<li>FAT</li>
+<li>NTFS</li>
+</ul>
+</li>
+<li>macOS</li>
+<li>Linux<ul>
+<li>Ext2 （Linux second extended<br>file system, ext2fs）</li>
+</ul>
+</li>
+</ul>
+<p>Linux 文件系统</p>
+<p>EXT2</p>
+<ul>
+<li>superblock：记录此 filesystem 的整体信息，包括inode/block的总量、使用量、剩余量，<br>以及文件系统的格式与相关信息等；</li>
+<li>inode：记录文件的属性，一个文件占用一个inode，同时记录此文件的数据所在的 block<br>号码；</li>
+<li>block：实际记录文件的内容，若文件太大时，会占用多个 block 。</li>
+</ul>
+<p>EXT2</p>
+<p>EXT2（第二扩展文件系统）是Linux操作系统最早采用的一种文件系统，是一种基于磁盘块的文件系统。它是Linux中最古老、最稳定、最成熟的文件系统之一，被广泛用于许多Linux发行版中。</p>
+<p>EXT2文件系统支持大多数常见的Unix文件系统功能，如硬链接、软链接、文件权限、访问控制、文件系统日志等。它将文件系统的数据和元数据分别存储在不同的区域，可以有效提高文件系统的性能和稳定性。</p>
+<p>EXT2文件系统的最大文件大小为2TB，最大文件系统大小为32TB。它使用块组来组织文件系统的布局，每个块组包含一个超级块、块位图、inode位图和数据块。块组大小可以根据文件系统大小和性能需求进行配置。</p>
+<p>虽然EXT2文件系统已经相对落后，但它仍然在某些特殊的应用场景中被使用，比如嵌入式设备、老旧服务器等。同时，它也是EXT3和EXT4文件系统的基础，这两种文件系统在功能和性能上都对EXT2进行了改进和增强。</p>
+<p>EXT2（第二扩展文件系统）是Linux操作系统最早采用的一种文件系统，是一种基于磁盘块的文件系统。它将文件系统的数据和元数据分别存储在不同的区域，可以有效提高文件系统的性能和稳定性。</p>
+<p>EXT2文件系统的数据分为两类：文件数据和元数据。文件数据指的是文件中的实际内容，包括文件的文本、图片、视频、音频等等。元数据则是描述文件的数据，包括文件的大小、创建时间、修改时间、访问权限等等。EXT2文件系统将文件数据和元数据分别存储在不同的磁盘块中，以提高文件系统的性能和稳定性。</p>
+<p>EXT2文件系统采用了inode（索引节点）的机制来管理文件，每个文件都有一个唯一的inode号码，用于描述文件的元数据信息。inode中存储了文件的类型、大小、权限、所有者、创建时间、修改时间、链接数等信息，同时也包含了指向文件数据的指针，使得文件系统可以快速地访问文件数据。</p>
+<p>EXT2文件系统还采用了块位图的机制来管理磁盘块的分配和释放。每个块组都有一个块位图，用于记录该块组中每个磁盘块的使用情况。块位图中的每个位代表一个磁盘块，如果该位为1，则表示该块已被分配给某个文件，否则表示该块未被分配或已被释放。</p>
+<p>EXT2文件系统还提供了文件系统日志功能，可以记录文件系统的操作，包括文件的创建、修改、删除等，以提高文件系统的可靠性和稳定性。</p>
+<p>总之，EXT2文件系统采用了一系列的机制和算法来管理文件和磁盘块，使得文件系统具有高效、可靠、稳定的特点。虽然现在已经有了EXT3、EXT4等更先进的文件系统，但EXT2仍然在一些特殊的应用场景中得到广泛应用。</p>
+<p>EXT3</p>
+<p>EXT3是Linux操作系统上一种常用的日志文件系统，是EXT2文件系统的升级版本。EXT3文件系统在保留EXT2的文件和目录结构的基础上，增加了日志功能，可以提高文件系统的性能和稳定性。</p>
+<p>EXT3文件系统的日志功能可以记录文件系统的操作，包括文件的创建、修改、删除等，以防止文件系统崩溃或断电导致的数据丢失或损坏。当文件系统遇到意外的断电或崩溃时，可以通过日志来恢复文件系统，保证文件系统的完整性和稳定性。</p>
+<p>EXT3文件系统的索引节点（inode）的结构和EXT2类似，但它增加了一个状态位，用于标记文件是否是删除状态。当文件被删除时，该状态位会被设置，但文件的数据和元数据并不会被立即删除，只有在磁盘空间紧张时，文件的数据和元数据才会被真正删除。</p>
+<p>EXT3文件系统还提供了许多其他的功能，例如支持大文件（最大可达2TB），支持日志和数据分离、支持热插拔设备等等。EXT3文件系统相对于EXT2文件系统来说，性能更加稳定、可靠，更适合作为生产环境下的文件系统。</p>
+<p>EXT4</p>
+<p>EXT4是Linux操作系统上一种常用的日志文件系统，是EXT3文件系统的升级版本。与EXT3相比，EXT4文件系统在性能和可靠性方面都有了一定的提升。</p>
+<p>EXT4文件系统在保留EXT3的日志功能的基础上，对文件系统的管理进行了优化。EXT4使用了更加高效的索引节点（inode）布局，支持更大的文件和更快的文件系统检索。同时，EXT4还支持更高效的块分配算法，可以减少磁盘碎片和提高磁盘空间的利用率。</p>
+<p>EXT4文件系统还支持更好的错误处理能力，可以在文件系统发生错误时，自动进行修复和恢复。EXT4还提供了一些新的特性，例如支持多种块大小、支持延迟分配、支持extents等。</p>
+<p>总的来说，EXT4是一种高性能、高可靠性、高可扩展性的文件系统，适用于需要处理大量数据和高并发访问的场景，是当前Linux操作系统下最为常用的文件系统之一。</p>
+<p>XFS</p>
+<p>XFS是一种高性能、高扩展性的文件系统，最初由SGI公司开发，现已被广泛应用于Linux等操作系统中。</p>
+<p>XFS的主要特点是高性能、高可扩展性和强大的容错能力。它支持非常大的文件系统和大文件，可以扩展到数百万甚至数十亿个文件，支持多达9EB的文件系统大小，支持实时在线扩容，非常适合处理海量数据。同时，XFS还具有强大的容错能力，即使在发生系统崩溃或断电等异常情况时，XFS也可以很快地恢复文件系统。</p>
+<p>XFS还支持许多高级特性，如快照、透明压缩、延迟分配、文件系统元数据日志、在线文件系统检查和修复等，这些特性可以提高系统的性能和可靠性，并减少管理员的工作负担。</p>
+<p>XFS的高性能主要得益于其基于B+树的文件索引结构，以及采用了延迟写技术，将写操作合并在一起，减少磁盘I/O操作。同时，XFS还支持异步I/O和多线程，可以充分利用系统的多核CPU和多个磁盘并行处理数据，提高系统的吞吐量和响应速度。</p>
+<p>总之，XFS是一种高性能、高可扩展性、高容错性的文件系统，适用于处理大量数据和高并发访问的场景。</p>
+<h1 id="磁盘配额（Quota）与进阶文件系统管理"><a href="#磁盘配额（Quota）与进阶文件系统管理" class="headerlink" title="磁盘配额（Quota）与进阶文件系统管理"></a>磁盘配额（Quota）与进阶文件系统管理</h1><p>磁盘阵列 （RAID） </p>
+<p>逻辑卷轴文件系统 （LVM）</p>
+<h1 id="压缩、打包和备份"><a href="#压缩、打包和备份" class="headerlink" title="压缩、打包和备份"></a>压缩、打包和备份</h1><h2 id="文件压缩程序"><a href="#文件压缩程序" class="headerlink" title="文件压缩程序"></a>文件压缩程序</h2><h3 id="gzip"><a href="#gzip" class="headerlink" title="gzip"></a>gzip</h3><p>压缩和解压缩文件工具，Linux的主要压缩指令</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">gzip foo.txt</span><br><span class="line">gunzip foo.txt.gz </span><br><span class="line"></span><br><span class="line">gzip -c 345.txt &gt; 345.txt.gz  <span class="comment"># 保留原文件压缩</span></span><br><span class="line">gunzip -c 345.txt.gz &gt; 234.txt <span class="comment"># 保留原文件解压</span></span><br><span class="line"></span><br><span class="line">gzip * <span class="comment"># 压缩目录下的所有文件</span></span><br><span class="line">gzip -dv * <span class="comment"># 解压并显示详细信息</span></span><br><span class="line">gunzip -c foo.txt | less <span class="comment"># 查看某个压缩文本文件的内容</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="bzip2"><a href="#bzip2" class="headerlink" title="bzip2"></a>bzip2</h3><p>块排序文件压缩工具，牺牲速度以换取高质量的数据压缩。<strong>支持gzip的所有选项</strong>，区别是压缩级别选项不同，另外，解压缩bzip2压缩文件的专用工具是bunzip2和bzcat命令。bzip2还配有专门的bzip2recover命令，该命令用于恢复损坏的.bz2文件。</p>
+<h2 id="文件归档程序"><a href="#文件归档程序" class="headerlink" title="文件归档程序"></a>文件归档程序</h2><p>归档是一个聚集众多文件并将它们组合为一个大文件的过程，它通常作为系统备份的一部分，而且通常也用于将旧数据从某个系统移到某些长期存储设备的情况下。</p>
+<h3 id="tar"><a href="#tar" class="headerlink" title="tar"></a>tar</h3><p>磁带归档工具。</p>
+<ul>
+<li>以.tar结尾文件，用普通的tar命令归档的文件</li>
+<li>以.tgz结尾文件，gzip归档的文件</li>
+</ul>
+<p>操作模式</p>
+<ul>
+<li>-c –create <strong>创建</strong>文件和/或目录列表的归档文件</li>
+<li>-x, –extract 从归档文件中提取文件</li>
+<li>-t, –list列出归档文件的内容</li>
+<li>-r, –append 在归档文件末尾追加内容</li>
+<li>-f, –file=ARCHIVE 指定文件名</li>
+<li>-C, –directory=DIR 指定<strong>提取路径</strong></li>
+<li>-v, –verbose 详细列出已处理的文件</li>
+<li>-j, –bzip2 指定用<strong>bzip2</strong>归档</li>
+<li>-J, –xz 指定用<strong>xz</strong>归档</li>
+<li>-z, –gzip 指定用<strong>gzip</strong>归档</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tar cf test.tar <span class="built_in">test</span></span><br><span class="line">tar xf test.tar <span class="comment"># 提取到当前位置</span></span><br><span class="line">tar xf test.tar -C target <span class="comment"># 提取到当前位置</span></span><br><span class="line">tar -xf foo.txt.tar -C ./target/ <span class="comment"># 提取到目标文件夹</span></span><br><span class="line">tar tf test.tar <span class="comment"># 归档并列出归档文件的内容</span></span><br></pre></td></tr></table></figure>
+
+<p>tar命令创建归档文件时通常辅助以find命令。首先使用find命令查找到需要被归档的文件，然后使用tar对这些文件进行归档，实例如下。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">find playground -name <span class="string">&#x27;file-A&#x27;</span> -<span class="built_in">exec</span> tar rf playground.tar <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span> <span class="string">&#x27;+&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 还可使用标准输出</span></span><br><span class="line">find playground -name <span class="string">&#x27;file-A&#x27;</span> | tar cf - --files-from=- | gzip</span><br><span class="line">&gt; playground.tgz</span><br></pre></td></tr></table></figure>
+
+<h3 id="zip"><a href="#zip" class="headerlink" title="zip"></a>zip</h3><p>既是文件压缩工具也是文件归档工具</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">zip -r playground.zip playground</span><br><span class="line">unzip ../playground.zip</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是：如果指定的归档文件已经存在，那么zip仅仅只会更新而不会取而代之。这意味着原来存在的归档文件会保留下来，只是增加了一些新文件，原有匹配文件则被替换。</p>
+<h2 id="文件同步程序rsync"><a href="#文件同步程序rsync" class="headerlink" title="文件同步程序rsync"></a>文件同步程序rsync</h2><p>快速检测到本地和远程系统上两个目录之间的不同，从而以最少数量的复制动作以完成两个目录之间的同步。</p>
+<p>调用方式：<code>rsync options source destination</code></p>
+<p>source和destination的目标</p>
+<ul>
+<li>一个本地文件或目录；</li>
+<li>一个远程文件或目录，形式为[user@]host:path；</li>
+<li>一个远程rsync服务器，由rsync://[user@]host[:port]/path指定。</li>
+</ul>
+<h1 id="网络和远程管理"><a href="#网络和远程管理" class="headerlink" title="网络和远程管理"></a>网络和远程管理</h1><p>网络和远程管理</p>
+<p>熟悉Linux网络服务，如SSH、FTP、HTTP、DNS、DHCP等，能够配置网络回环、网卡和VIP等网络参数<br>熟悉Linux系统的远程管理和监测，如ssh、telnet等远程管理工具，以及netstat、tcpdump等网络监测工具</p>
+<h1 id="网络配置"><a href="#网络配置" class="headerlink" title="网络配置"></a>网络配置</h1><p>不同的Linux发行版可能会使用不同的网络管理工具和配置文件。以下是一些主要的Linux发行版的网络管理工具和配置文件：</p>
+<ul>
+<li>Ubuntu：Ubuntu使用Netplan作为网络管理工具，它的配置文件位于<code>/etc/netplan/</code>目录下，以<code>.yaml</code>为扩展名。</li>
+<li>Debian：Debian使用<code>/etc/network/interfaces</code>文件来配置网络。</li>
+<li>Fedora：Fedora使用NetworkManager作为网络管理工具，并使用<code>/etc/NetworkManager/system-connections/</code>目录下的文件来配置网络。</li>
+<li>CentOS：CentOS使用<code>/etc/sysconfig/network-scripts/ifcfg-eth0</code>文件来配置网络。</li>
+<li>Arch Linux：Arch Linux使用systemd-networkd和Netctl来管理网络，它们的配置文件位于<code>/etc/systemd/network/</code>和<code>/etc/netctl/</code>目录下。</li>
+</ul>
+<h3 id="NetworkManager"><a href="#NetworkManager" class="headerlink" title="NetworkManager"></a>NetworkManager</h3><p><a target="_blank" rel="noopener" href="https://networkmanager.dev/">https://networkmanager.dev/</a></p>
+<p>NetworkManager是目前最常见的默认网络管理工具。它是一个守护进程，可以在Linux系统上管理各种类型的网络连接，包括以太网、Wi-Fi、VPN和移动宽带等。 NetworkManager 提供了一个图形用户界面和一个命令行界面，让用户方便地配置和管理网络连接。</p>
+<p>除了 NetworkManager 之外，还有一些其他的网络管理工具可供选择，例如 systemd-networkd、ifup 和 ConnMan 等。但是，这些工具使用的并不广泛，NetworkManager 仍然是最常见的默认网络管理工具之一。</p>
+<h3 id="Netplan"><a href="#Netplan" class="headerlink" title="Netplan"></a>Netplan</h3><p>Netplan是Ubuntu 17.10及更高版本中的网络配置工具。它的目的是提供一种简单的方式来配置网络，特别是对于使用多个网络接口的服务器来说更为方便。它采用 YAML 格式的配置文件，可以轻松地定义网络接口、IP地址、DNS服务器和路由等。</p>
+<p>Netplan 可以通过在 <code>/etc/netplan/</code> 目录中创建 YAML 文件来进行配置。每个文件定义了一组网络接口和相应的配置信息。例如，下面的示例配置文件定义了一个以太网接口，使用静态 IP 地址和 DNS 服务器：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">yamlCopy codenetwork:</span><br><span class="line">  version: 2</span><br><span class="line">  ethernets:</span><br><span class="line">    eth0:</span><br><span class="line">      dhcp4: no</span><br><span class="line">      addresses: [192.168.0.2/24]</span><br><span class="line">      gateway4: 192.168.0.1</span><br><span class="line">      nameservers:</span><br><span class="line">        addresses: [8.8.8.8, 8.8.4.4]</span><br></pre></td></tr></table></figure>
+
+<p>配置文件中的 <code>network</code> 部分指定了要进行配置的网络类型，本例中是以太网。<code>ethernets</code> 部分列出了要配置的所有以太网接口，本例中只有一个 <code>eth0</code> 接口。接口的配置选项包括静态或动态 IP 地址、DNS 服务器和路由等。</p>
+<p>一旦配置文件创建好了，就可以使用 <code>netplan apply</code> 命令来应用配置更改。如果有多个配置文件，则会按字母顺序依次应用它们。如果出现错误，则会显示错误消息。</p>
+<p>Netplan 是 Ubuntu 中的默认网络配置工具，并且可以在 Ubuntu Server 和 Desktop 版本中使用。</p>
+<p>systemd-networkd</p>
+<p>ifup</p>
+<p>Network Scripts</p>
+<p>Netctl</p>
+<h3 id="CentOS"><a href="#CentOS" class="headerlink" title="CentOS"></a>CentOS</h3><p>要配置CentOS的网络，可以按照以下步骤进行：</p>
+<ol>
+<li><p>打开终端或命令行界面，并以管理员身份登录系统。</p>
+</li>
+<li><p>编辑<code>/etc/sysconfig/network-scripts/ifcfg-eth0</code>文件（以eth0网卡为例），可以使用vi编辑器或nano等其他编辑器。</p>
+</li>
+<li><p>在文件中添加以下行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">makefileCopy codeDEVICE=eth0</span><br><span class="line">BOOTPROTO=static</span><br><span class="line">IPADDR=&lt;your IP address&gt;</span><br><span class="line">NETMASK=&lt;your netmask&gt;</span><br><span class="line">GATEWAY=&lt;your gateway IP&gt;</span><br><span class="line">DNS1=&lt;your primary DNS&gt;</span><br><span class="line">DNS2=&lt;your secondary DNS&gt;</span><br><span class="line">ONBOOT=yes</span><br></pre></td></tr></table></figure></li>
+<li><p>重新启动网络服务以使新的网络配置生效，可以执行以下命令：</p>
+<ul>
+<li><p>对于 CentOS 7及更高版本（使用systemd）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl restart network</span><br></pre></td></tr></table></figure></li>
+<li><p>对于 CentOS 6及更低版本（使用init脚本）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service network restart</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ol>
+<p>在 CentOS 中，网络配置文件主要位于<code>/etc/sysconfig/network-scripts/</code>目录下。以下是常见的网络配置文件：</p>
+<ol>
+<li><code>/etc/sysconfig/network</code>：此文件包含全局网络配置参数，如主机名（<code>HOSTNAME</code>）和网关（<code>GATEWAY</code>）等。</li>
+<li><code>/etc/sysconfig/network-scripts/ifcfg-&lt;interface&gt;</code>：此文件包含每个网络接口（例如<code>eth0</code>、<code>eth1</code>等）的配置信息。每个接口都有一个对应的文件，以<code>ifcfg-&lt;interface&gt;</code>的形式命名。例如，如果您的接口名是<code>eth0</code>，则配置文件名为<code>ifcfg-eth0</code>。在该文件中，您可以设置接口的IP地址（<code>IPADDR</code>）、子网掩码（<code>NETMASK</code>）、默认网关（<code>GATEWAY</code>）等。</li>
+<li><code>/etc/sysconfig/network-scripts/ifcfg-lo</code>：此文件是本地回环接口（loopback interface）的配置文件。该接口通常用于本地通信，IP地址默认为<code>127.0.0.1</code>。</li>
+<li><code>/etc/resolv.conf</code>：此文件包含DNS解析器的配置信息，指定用于解析主机名的DNS服务器。</li>
+</ol>
+<h3 id="Ubuntu"><a href="#Ubuntu" class="headerlink" title="Ubuntu"></a>Ubuntu</h3><p>在 Ubuntu 中，网络配置文件主要位于<code>/etc/netplan/</code>目录下。以下是常见的网络配置文件：</p>
+<ol>
+<li><code>/etc/netplan/50-cloud-init.yaml</code>：这是由云初始化工具生成的默认网络配置文件。它包含有关网络接口和配置的信息。</li>
+<li><code>/etc/netplan/*.yaml</code>：在某些情况下，可能会存在其他以<code>.yaml</code>为扩展名的网络配置文件。这些文件的名称可能会有所不同，但它们都遵循<code>.yaml</code>格式。</li>
+</ol>
+<p>您可以编辑这些文件来配置网络接口、IP地址、子网掩码、网关和DNS等网络参数。然后，您需要应用配置更改并重新加载网络配置。</p>
+<ol start="3">
+<li>应用网络配置更改并重新加载网络配置，请执行以下命令：</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo netplan apply</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="检查、监测网络"><a href="#检查、监测网络" class="headerlink" title="检查、监测网络"></a>检查、监测网络</h2><ul>
+<li><p>ping：向网络主机发送ICMP ECHO_REQUEST数据包。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ping linuxcommand.org</span><br></pre></td></tr></table></figure></li>
+<li><p>traceroute：显示数据包到网络主机的路由路径。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">traceroute slashdot.org</span><br></pre></td></tr></table></figure></li>
+<li><p>netstat：显示网络连接、路由表、网络接口数据、伪连接以及多点传送成员等信息。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -ie</span><br></pre></td></tr></table></figure></li>
+<li><p>ifconfig: 显示或设置网络设备</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">ifconfig</span><br><span class="line">ifconfig eth0 down <span class="comment">#关闭网卡</span></span><br><span class="line">ifconfig eth0 up <span class="comment"># 启动网卡</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改网络配置</span></span><br><span class="line">ifconfig eth0 hw ether 00:AA:BB:CC:DD:EE <span class="comment"># 设置Mac地址</span></span><br><span class="line"><span class="comment"># 设置IP地址</span></span><br><span class="line"><span class="comment"># 设置ARP协议</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置MTU</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="传输文件"><a href="#传输文件" class="headerlink" title="传输文件"></a>传输文件</h2><h3 id="ftp"><a href="#ftp" class="headerlink" title="ftp"></a>ftp</h3><p>采用FTP（文件传输协议）传输文件，<strong>交互式</strong>网络下载器。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ftp fileserver</span><br><span class="line">anonymous <span class="comment"># 匿名登陆</span></span><br><span class="line"><span class="comment"># 输入密码</span></span><br><span class="line"><span class="built_in">cd</span> pub/cd_images/Ubuntu-8.04 <span class="comment"># 进入服务器文件夹 </span></span><br><span class="line">lcd Desktop <span class="comment"># 进入本地桌面</span></span><br><span class="line">get ubuntu-8.04-desktop-i386.iso <span class="comment"># 下载文件</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="lftp"><a href="#lftp" class="headerlink" title="lftp"></a>lftp</h3><p>改善后的文件传输命令，更多额外的便利功能，包括多协议支持（HTTP）、下载失败时自动重新尝试、后台进程支持、Tab键完成文件名输入等许多其他的功能。</p>
+<h3 id="wget"><a href="#wget" class="headerlink" title="wget"></a>wget</h3><p>非交互式网络下载器，既可以用于从网站上下载内容也可以<br>用于从FTP站点下载，单个文件、多个文件甚至整个网站都可以被下载。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http://linuxcommand.org/index.php</span><br></pre></td></tr></table></figure>
+
+<p>许多参数选项支持递归下载、后台文件下载（允许下线的情况下继续下载）以及继续下载部分被下载的文件等操作。</p>
+<h3 id="curl"><a href="#curl" class="headerlink" title="curl"></a>curl</h3><p>即client URL，用来请求 Web 服务器。</p>
+<ol>
+<li><p>标头相关</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl -A <span class="string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36&#x27;</span> https://google.com <span class="comment"># 指定User-Agent</span></span><br><span class="line">curl -e <span class="string">&#x27;https://google.com?q=example&#x27;</span> https://www.example.com <span class="comment"># 设置Referer</span></span><br><span class="line">curl -H <span class="string">&#x27;Accept-Language: en-US&#x27;</span> https://google.com <span class="comment"># 设置任意标头</span></span><br><span class="line">curl -i https://www.example.com <span class="comment"># 打印response的header</span></span><br></pre></td></tr></table></figure></li>
+<li><p>Cookie相关</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl https://www.example.com <span class="comment"># 默认get请求</span></span><br><span class="line">curl -b cookies.txt https://www.google.com <span class="comment"># 发送cookie</span></span><br><span class="line">curl -c cookies.txt https://www.google.com <span class="comment"># 将返回的cookie写入文件</span></span><br></pre></td></tr></table></figure></li>
+<li><p>请求相关</p>
+<ul>
+<li><p>post相关</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -d<span class="string">&#x27;login=emma＆password=123&#x27;</span>-X POST https://google.com/login <span class="comment"># 发送 POST 请求的数据体，省略 -X选项</span></span><br><span class="line">curl --data-urlencode <span class="string">&#x27;comment=hello world&#x27;</span> https://google.com/login <span class="comment"># 等同于-d 区别在于会自动将发送的数据进行 URL 编码 此处的空格需要进行url编码</span></span><br><span class="line">curl -G -d <span class="string">&#x27;q=kitties&#x27;</span> -d <span class="string">&#x27;count=20&#x27;</span> https://google.com/search <span class="comment"># -G 构造 URL 的查询字符串</span></span><br></pre></td></tr></table></figure></li>
+<li><p>其他</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">curl -x socks5://james:cats@myproxy.com:8080 https://www.example.com <span class="comment"># 指定 HTTP 请求的代理</span></span><br><span class="line">curl -X POST https://www.example.com <span class="comment"># 指定 HTTP 请求的方法。</span></span><br><span class="line">curl -k https://www.example.com <span class="comment"># 跳过 SSL 检测。</span></span><br><span class="line">curl -L -d <span class="string">&#x27;tweet=hi&#x27;</span> https://api.twitter.com/tweet <span class="comment"># 跟随服务器的重定向 curl 默认不跟随重定向</span></span><br><span class="line">curl --limit-rate 200k https://google.com <span class="comment"># 限制 HTTP 请求和回应的带宽 模拟慢网速的环境</span></span><br><span class="line">curl -o example.html https://www.example.com <span class="comment"># 将服务器的回应保存成文件 等同于wget命令</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ol>
+<h2 id="远程通信"><a href="#远程通信" class="headerlink" title="远程通信"></a>远程通信</h2><p>ssh：OpenSSH（SSH协议的免费开源实现）版的SSH客户端（远程系统登录命令）。</p>
+<p>scp：secure copy 的缩写，是远程复制文件命令。</p>
+<p>sftp：secure file transfer program的缩写，安全文件传输程序。</p>
+<p>Windows SSH：使用<a target="_blank" rel="noopener" href="https://www.putty.org/">PuTTY</a></p>
+<h2 id="telnet"><a href="#telnet" class="headerlink" title="telnet"></a>telnet</h2><h1 id="安全管理和系统监控"><a href="#安全管理和系统监控" class="headerlink" title="安全管理和系统监控"></a>安全管理和系统监控</h1><p>Linux安全和系统监控</p>
+<p>熟悉Linux系统安全管理基本原则，能够使用如iptables等Linux系统相关的安全管理工具<br>熟悉Linux系统的监控管理，能够使用常用系统资源监控工具，如sar、top、iostat、vmstat等</p>
+<p>账号管理</p>
+<p>文件使用UID和GID判断拥有者和拥有群组</p>
+<ul>
+<li>id：显示用户身份标识。</li>
+<li>umask：设置文件的默认权限。</li>
+<li>su：以另一个用户的身份运行shell。<ul>
+<li>-l 使用目标用户的环境</li>
+</ul>
+</li>
+<li>sudo：以另一个用户的身份来执行命令。</li>
+<li>passwd：更改用户密码。</li>
+</ul>
+<h2 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h2><h3 id="查看进程"><a href="#查看进程" class="headerlink" title="查看进程"></a>查看进程</h3><ul>
+<li><p>ps：显示当前所有进程的运行情况。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps axu</span><br></pre></td></tr></table></figure></li>
+<li><p>top：<strong>实时显示</strong>当前所有任务的资源占用情况。</p>
+</li>
+<li><p>jobs：列出所有活动作业的状态信息。</p>
+</li>
+</ul>
+<h3 id="控制进程"><a href="#控制进程" class="headerlink" title="控制进程"></a>控制进程</h3><h4 id="中断进程"><a href="#中断进程" class="headerlink" title="中断进程"></a>中断进程</h4><p>在终端里按下<strong>Ctrl-C</strong>键将会中断（interrupt）一个程序，它意味着我们委婉地<strong>请求程序结束</strong>。许多（但不是所有）命令行程序都可以使用这种方法来实现中断。</p>
+<h4 id="使进程后台运行"><a href="#使进程后台运行" class="headerlink" title="使进程后台运行"></a>使进程后台运行</h4><p>在命令后面加上和号字符（&amp;）</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gedit &amp;</span><br></pre></td></tr></table></figure>
+
+<h4 id="使进程回到前台运行"><a href="#使进程回到前台运行" class="headerlink" title="使进程回到前台运行"></a>使进程回到前台运行</h4><p>使用fg设置在前台中运行作业，要用到作业编号（jobspec选项），一般先用jobs命令查看</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">fg</span> %1</span><br></pre></td></tr></table></figure>
+
+<h4 id="停止暂停进程"><a href="#停止暂停进程" class="headerlink" title="停止暂停进程"></a>停止暂停进程</h4><p>按下Ctrl-Z键，程序将会暂停，此时可以用fg命令设置在前台中运行作业，也可以用bg命令设置在后台中运行作业。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">bg</span> %1</span><br></pre></td></tr></table></figure>
+
+<h3 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h3><p>kill：发送信号给某个进程。</p>
+<ul>
+<li>1 HUP 挂起信号。这是美好的过去留下的痕迹，当时通过电话线和调制解调器来把终端和远端计算机连接在一起。该信号用来指示程序控制终端已被“挂起”。该信号的效果通过关闭终端会话的方式来表现。运行在终端上的前台程序收到该信号后将终止。该信号也被很多后台程序用来进行重新初始化。这就意味着，当一个后台进程接收到该信号时，它将重启并且重新读取它的配置文件。Apache Web服务器就是后台进程使用HUP信号重新初始化的一个例子。</li>
+<li>2 INT 中断信号。执行效果和在终端按下Ctrl-C键的效果一样。通常用来<strong>终止</strong>一个程序</li>
+<li>9 KILL 杀死信号。该信号比较特殊。鉴于程序可以选择不同的方式来处理发送过来的信号，包括忽略所有的这些信号，KILL信号将不会真正意义上地被发送到目标程序。而是内核宁愿立即终止了该进程。当进程以这种方式被终止时，它将<strong>没有机会对它自己进行“清理”或者对当前工作进行保存</strong>。考虑到这个原因，KILL信号只能当作其他的终端信号都执行失败的情况下的<strong>最后选择</strong>。</li>
+<li>15 TERM 终止信号。这是kill命令<strong>默认</strong>发送的信号类型。如果程序仍然有足够的“活力”（alive enough）来接收信号，那么它将被<strong>终止</strong>。</li>
+<li>18 CONT 继续运行信号。恢复之前接受了STOP信号的进程。</li>
+<li>19 STOP 暂停信号。该信号将使进程暂停，而不是终止。和KILL信号类似，该信号不会被发送给目标进程，因此它<strong>不能被忽略</strong>。</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -KILL 73927</span><br><span class="line"><span class="built_in">kill</span> -l <span class="comment"># 查看更多信号</span></span><br></pre></td></tr></table></figure>
+
+<p>kill命令准确地说并不是“杀死”进程，而是给进程发送信号（signal）。</p>
+<p>在按下Ctrl-C键的情况下，它将发送一个称为INT（中断，Interrupt）的信号；在按下Ctrl-Z的情况下，它将发送一个称为TSTP（终端暂停，Terminal Stop）的信号。</p>
+<p>没有指定信号，那么默认发送TERM（终止，Terminate）信号。</p>
+<p>killall：可以给<strong>指定程序</strong>或者<strong>指定用户名</strong>的多个进程发<br>送信号。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">killall [-u user] [-signal] name...</span><br></pre></td></tr></table></figure>
+
+<h3 id="其他命令"><a href="#其他命令" class="headerlink" title="其他命令"></a>其他命令</h3><ul>
+<li>pstree 以树状的模式输出进程列表，该模式显示了进程间的父/子关系</li>
+<li>vmstat 输出系统资源使用情况的快照，包括内存，交换空间和磁盘I/O。如果想要持续查看输出，可以在命令后面加上一个间隔时间（以秒为单位），命令将按照间隔时间来动态更新显示的内容（比如，vmstat 5）。按下Ctrl-C键可以终止输出</li>
+<li>xload 用来绘制显示系统时间负载情况图形的一种图形化界面程序</li>
+<li>tload 类似于xload程序，但是图形是在终端上绘制。按下Ctrl-C键终止输出</li>
+</ul>
+<h1 id="性能调优"><a href="#性能调优" class="headerlink" title="性能调优"></a>性能调优</h1><p>Linux调优</p>
+<p>了解Linux系统性能调优方法，根据系统负载、资源占用率等调整系统相关参数，如内核参数、进程调度参数等<br>能够使用性能监测工具，如perf、strace、gdb、lsof等，分析系统瓶颈并进行调优操作</p>
+
+    </div>
+
+    
+    
+    
+
+    
+      <div>
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:24px;">（完）</div>
+    
+</div>
+      </div>
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/10/02/%E8%AE%BA%E6%96%87%E5%86%99%E4%BD%9C%E7%AF%87/" rel="prev" title="论文写作篇">
+      <i class="fa fa-chevron-left"></i> 论文写作篇
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/04/11/erlang%E5%9F%BA%E7%A1%80/" rel="next" title="erlang基础">
+      erlang基础 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%92%8C%E9%85%8D%E7%BD%AE"><span class="nav-number">1.</span> <span class="nav-text">安装和配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E5%88%86%E5%8C%BA%EF%BC%88partition%EF%BC%89"><span class="nav-number">1.1.</span> <span class="nav-text">磁盘分区（partition）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MBR"><span class="nav-number">1.1.1.</span> <span class="nav-text">MBR</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GPT"><span class="nav-number">1.1.2.</span> <span class="nav-text">GPT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux%E7%A3%81%E7%9B%98%E5%88%86%E5%8C%BA"><span class="nav-number">1.1.3.</span> <span class="nav-text">Linux磁盘分区</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E6%9C%BA%E6%A3%80%E6%B5%8B%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.2.</span> <span class="nav-text">开机检测程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#BIOS"><span class="nav-number">1.2.1.</span> <span class="nav-text">BIOS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UEFI"><span class="nav-number">1.2.2.</span> <span class="nav-text">UEFI</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E5%AF%BC%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.3.</span> <span class="nav-text">引导程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#grub2"><span class="nav-number">1.3.1.</span> <span class="nav-text">grub2</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.4.</span> <span class="nav-text">系统设置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E5%8C%85%E7%AE%A1%E7%90%86"><span class="nav-number">1.5.</span> <span class="nav-text">软件包管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RPM-RedHat-Package-Manager"><span class="nav-number">1.6.</span> <span class="nav-text">RPM(RedHat Package Manager)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">1.6.1.</span> <span class="nav-text">常用命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#YUM-Yellow-dog-Updater"><span class="nav-number">1.7.</span> <span class="nav-text">YUM(Yellow dog Updater)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E8%BD%AF%E4%BB%B6%E6%BA%90"><span class="nav-number">1.7.1.</span> <span class="nav-text">添加软件源</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Shell%E7%AE%80%E4%BB%8B"><span class="nav-number">2.</span> <span class="nav-text">Shell简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%98%E9%87%8F"><span class="nav-number">2.1.</span> <span class="nav-text">变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">2.1.1.</span> <span class="nav-text">环境变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%AB%E5%90%8D"><span class="nav-number">2.2.</span> <span class="nav-text">别名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%ACbash-shell%E5%91%BD%E4%BB%A4"><span class="nav-number">2.3.</span> <span class="nav-text">基本bash shell命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E6%9C%BA"><span class="nav-number">2.3.1.</span> <span class="nav-text">关机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">2.3.2.</span> <span class="nav-text">其他</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86%E5%92%8C%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.</span> <span class="nav-text">文件管理和文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%92%8C%E7%9B%AE%E5%BD%95%E6%93%8D%E4%BD%9C"><span class="nav-number">3.1.</span> <span class="nav-text">文件和目录操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%96%87%E4%BB%B6"><span class="nav-number">3.1.1.</span> <span class="nav-text">查看文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%90%9C%E7%B4%A2"><span class="nav-number">3.1.2.</span> <span class="nav-text">文件搜索</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86"><span class="nav-number">3.2.</span> <span class="nav-text">权限管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%E9%85%8D%E7%BD%AE"><span class="nav-number">3.3.</span> <span class="nav-text">目录配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E5%92%8C%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86"><span class="nav-number">3.4.</span> <span class="nav-text">磁盘和文件系统管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86"><span class="nav-number">3.4.1.</span> <span class="nav-text">磁盘管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.4.2.</span> <span class="nav-text">文件系统</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E9%85%8D%E9%A2%9D%EF%BC%88Quota%EF%BC%89%E4%B8%8E%E8%BF%9B%E9%98%B6%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86"><span class="nav-number">4.</span> <span class="nav-text">磁盘配额（Quota）与进阶文件系统管理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8E%8B%E7%BC%A9%E3%80%81%E6%89%93%E5%8C%85%E5%92%8C%E5%A4%87%E4%BB%BD"><span class="nav-number">5.</span> <span class="nav-text">压缩、打包和备份</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%8E%8B%E7%BC%A9%E7%A8%8B%E5%BA%8F"><span class="nav-number">5.1.</span> <span class="nav-text">文件压缩程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#gzip"><span class="nav-number">5.1.1.</span> <span class="nav-text">gzip</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bzip2"><span class="nav-number">5.1.2.</span> <span class="nav-text">bzip2</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%BD%92%E6%A1%A3%E7%A8%8B%E5%BA%8F"><span class="nav-number">5.2.</span> <span class="nav-text">文件归档程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#tar"><span class="nav-number">5.2.1.</span> <span class="nav-text">tar</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#zip"><span class="nav-number">5.2.2.</span> <span class="nav-text">zip</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%90%8C%E6%AD%A5%E7%A8%8B%E5%BA%8Frsync"><span class="nav-number">5.3.</span> <span class="nav-text">文件同步程序rsync</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%92%8C%E8%BF%9C%E7%A8%8B%E7%AE%A1%E7%90%86"><span class="nav-number">6.</span> <span class="nav-text">网络和远程管理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE"><span class="nav-number">7.</span> <span class="nav-text">网络配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#NetworkManager"><span class="nav-number">7.0.1.</span> <span class="nav-text">NetworkManager</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Netplan"><span class="nav-number">7.0.2.</span> <span class="nav-text">Netplan</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CentOS"><span class="nav-number">7.0.3.</span> <span class="nav-text">CentOS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Ubuntu"><span class="nav-number">7.0.4.</span> <span class="nav-text">Ubuntu</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E3%80%81%E7%9B%91%E6%B5%8B%E7%BD%91%E7%BB%9C"><span class="nav-number">7.1.</span> <span class="nav-text">检查、监测网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%A0%E8%BE%93%E6%96%87%E4%BB%B6"><span class="nav-number">7.2.</span> <span class="nav-text">传输文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ftp"><span class="nav-number">7.2.1.</span> <span class="nav-text">ftp</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lftp"><span class="nav-number">7.2.2.</span> <span class="nav-text">lftp</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#wget"><span class="nav-number">7.2.3.</span> <span class="nav-text">wget</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#curl"><span class="nav-number">7.2.4.</span> <span class="nav-text">curl</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9C%E7%A8%8B%E9%80%9A%E4%BF%A1"><span class="nav-number">7.3.</span> <span class="nav-text">远程通信</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#telnet"><span class="nav-number">7.4.</span> <span class="nav-text">telnet</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%92%8C%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7"><span class="nav-number">8.</span> <span class="nav-text">安全管理和系统监控</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B"><span class="nav-number">8.1.</span> <span class="nav-text">进程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E8%BF%9B%E7%A8%8B"><span class="nav-number">8.1.1.</span> <span class="nav-text">查看进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E8%BF%9B%E7%A8%8B"><span class="nav-number">8.1.2.</span> <span class="nav-text">控制进程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E8%BF%9B%E7%A8%8B"><span class="nav-number">8.1.2.1.</span> <span class="nav-text">中断进程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E8%BF%9B%E7%A8%8B%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C"><span class="nav-number">8.1.2.2.</span> <span class="nav-text">使进程后台运行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E8%BF%9B%E7%A8%8B%E5%9B%9E%E5%88%B0%E5%89%8D%E5%8F%B0%E8%BF%90%E8%A1%8C"><span class="nav-number">8.1.2.3.</span> <span class="nav-text">使进程回到前台运行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%81%9C%E6%AD%A2%E6%9A%82%E5%81%9C%E8%BF%9B%E7%A8%8B"><span class="nav-number">8.1.2.4.</span> <span class="nav-text">停止暂停进程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7"><span class="nav-number">8.1.3.</span> <span class="nav-text">信号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%91%BD%E4%BB%A4"><span class="nav-number">8.1.4.</span> <span class="nav-text">其他命令</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98"><span class="nav-number">9.</span> <span class="nav-text">性能调优</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Honghangzhi"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Honghangzhi</p>
+  <div class="site-description" itemprop="description">不积跬步，无以千里</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Honghangzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'Wk2wsEFrasa9yOsstHf3YRlp-gzGzoHsz',
+      appKey     : 'zKA4ww3CAjsjGZ52EFJPkpRn',
+      placeholder: "欢迎交流讨论...",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

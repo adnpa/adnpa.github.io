@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10000,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Erlang – Erlang Reference Manual Erlang&#x2F;OTP Manual Page Index zinx项目 erlang基础erlang简介函数式编程语言，语义上分布式，天生支持并发，运行于虚拟机，创建进程微秒级，采用消息传递。 支持热更新 低成本实现并发 otp：开放类型平台 参考  BIF 数据结构 Erlang – sets Erlang – dict Er">
+<meta property="og:type" content="article">
+<meta property="og:title" content="erlang基础">
+<meta property="og:url" content="http://example.com/2023/04/11/erlang%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="HZ&#39;Blog">
+<meta property="og:description" content="Erlang – Erlang Reference Manual Erlang&#x2F;OTP Manual Page Index zinx项目 erlang基础erlang简介函数式编程语言，语义上分布式，天生支持并发，运行于虚拟机，创建进程微秒级，采用消息传递。 支持热更新 低成本实现并发 otp：开放类型平台 参考  BIF 数据结构 Erlang – sets Erlang – dict Er">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-04-11T05:41:21.000Z">
+<meta property="article:modified_time" content="2023-05-21T13:57:00.285Z">
+<meta property="article:author" content="Honghangzhi">
+<meta property="article:tag" content="erlang">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2023/04/11/erlang%E5%9F%BA%E7%A1%80/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>erlang基础 | HZ'Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">HZ'Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/11/erlang%E5%9F%BA%E7%A1%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Honghangzhi">
+      <meta itemprop="description" content="不积跬步，无以千里">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HZ'Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          erlang基础
+        </h1>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-04-11 13:41:21" itemprop="dateCreated datePublished" datetime="2023-04-11T13:41:21+08:00">2023-04-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-05-21 21:57:00" itemprop="dateModified" datetime="2023-05-21T21:57:00+08:00">2023-05-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                  <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                    <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                  </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/04/11/erlang%E5%9F%BA%E7%A1%80/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/04/11/erlang%E5%9F%BA%E7%A1%80/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>17k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>15 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <span id="more"></span>
+
+<p><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/reference_manual/users_guide.html">Erlang – Erlang Reference Manual</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man_index.html">Erlang/OTP Manual Page Index</a></p>
+<p>zinx项目</p>
+<h1 id="erlang基础"><a href="#erlang基础" class="headerlink" title="erlang基础"></a>erlang基础</h1><h2 id="erlang简介"><a href="#erlang简介" class="headerlink" title="erlang简介"></a>erlang简介</h2><p>函数式编程语言，语义上分布式，天生支持并发，运行于虚拟机，创建进程微秒级，采用消息传递。</p>
+<p>支持热更新</p>
+<p>低成本实现并发</p>
+<p>otp：开放类型平台</p>
+<p>参考</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/erlang.html">BIF</a></li>
+<li>数据结构</li>
+<li><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/sets.html">Erlang – sets</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/dict.html">Erlang – dict</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/gb_trees.html">Erlang – gb_trees</a></li>
+</ul>
+<h2 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h2><p>建议切换到root用户安装，因为使用erlc编译时是用root的环境</p>
+<h2 id="数据类型简介"><a href="#数据类型简介" class="headerlink" title="数据类型简介"></a>数据类型简介</h2><p>erlang没有用户定义类型，只能通过将erlang term组合成复合类型。</p>
+<h3 id="term"><a href="#term" class="headerlink" title="term"></a>term</h3><ul>
+<li><p>Constant</p>
+<ul>
+<li><p>Numbers</p>
+<ul>
+<li><p>整数，没有上限。</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">%%  $&#123;Char&#125; 创建ASCII对应的整数</span></span><br><span class="line">$A <span class="comment">% 62</span></span><br><span class="line"><span class="comment">%% &lt;Base&gt;#&lt;Value&gt; 创建Base进制整数</span></span><br><span class="line"><span class="number">16#ffff</span> <span class="comment">%65535</span></span><br></pre></td></tr></table></figure></li>
+<li><p>浮点数</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">12.345</span> </span><br><span class="line">-27.<span class="number">45e-05</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>原子（Atoms），表示常量值，相当于C或Java里的枚举类型，或者Scheme或Ruby里的符号。</p>
+<p>小写字母开头定义原子，或者用单引号定义大写字母开头的原子，而双引号用于定义字符串.</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">atom</span><br><span class="line">&#x27;ATOM&#x27;</span><br></pre></td></tr></table></figure></li>
+<li><p>Fun</p>
+</li>
+<li><p>Port Identifier</p>
+</li>
+<li><p>Pids，存储进程标识</p>
+</li>
+<li><p>reference，存储系统储唯一引用</p>
+</li>
+<li><p>位串（ Bit Strings），用于存储未类型化内存区域，不足8位的位串称为二进制型（binaries）</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;&lt;<span class="number">10</span>,<span class="number">20</span>&gt;&gt;.</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>Compound</p>
+<ul>
+<li>turples</li>
+<li>Lists<ul>
+<li>string</li>
+</ul>
+</li>
+<li>Map</li>
+</ul>
+</li>
+</ul>
+<h2 id="模式识别"><a href="#模式识别" class="headerlink" title="模式识别"></a>模式识别</h2><p>三种情况会发生模式识别</p>
+<ul>
+<li>表达式 <code>Lhs = Rhs</code></li>
+<li>调用函数</li>
+<li>case和receive限定符</li>
+</ul>
+<h3 id="Pattern-Expression"><a href="#Pattern-Expression" class="headerlink" title="Pattern = Expression"></a>Pattern = Expression</h3><h3 id="calling-a-function"><a href="#calling-a-function" class="headerlink" title="calling a function"></a>calling a function</h3><p>erlang的变量是一次性赋值变量，相当于C++中的const变量</p>
+<p>=号是模式匹配操作符</p>
+<p><code>Lhs = Rhs</code>表示计算右侧之和左侧的模式匹配，只有成功才返回这个值</p>
+<p>使用<code>f().</code>命令使shell解除所有绑定</p>
+<p>可以修改的内存区域有个专业术语叫作可变状态（mutable state）。Erlang是一种函数式编程语言，具有不可变状态。</p>
+<p>如果使用C或Java这些传统编程语言来为多核CPU编程，就不得不对付共享内存的问题。为了不破坏共享内存，访问时必须给这些内存加锁。访问共享内存的程序在操作共享内存时万万不可崩溃。Erlang里没有可变状态，没有共享内存，也没有锁。这让程序并行变得简单了。</p>
+<h2 id="常用数据类型"><a href="#常用数据类型" class="headerlink" title="常用数据类型"></a>常用数据类型</h2><h3 id="二进制型与位语法"><a href="#二进制型与位语法" class="headerlink" title="二进制型与位语法"></a>二进制型与位语法</h3><p>位串（bitstring），位数不是8的整数倍的二进制型</p>
+<p>简化网络编程</p>
+<ol>
+<li><p>创建和打印<br>双小于号与双大于号之间的一列<strong>整数</strong>或<strong>字符串</strong><br>类似于字符串，如果可打印成字符串就打印成字符串</p>
+ <figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;&lt;<span class="number">5</span>,<span class="number">10</span>,<span class="number">20</span>&gt;&gt;.</span><br></pre></td></tr></table></figure></li>
+<li><p>操作二进制型，可以使用以下两种方式：</p>
+<ul>
+<li><p>内置函数</p>
+<p>* </p>
+</li>
+<li><p>位语法</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">%X占3位 Y占7位 Z占6位 共16位</span></span><br><span class="line">M = &lt;&lt;X:<span class="number">3</span>, Y:<span class="number">7</span>, Z:<span class="number">6</span>&gt;&gt;.</span><br><span class="line"></span><br><span class="line">Red=<span class="number">2</span>.</span><br><span class="line">Green=<span class="number">61</span>.</span><br><span class="line">Blue=<span class="number">20</span>.</span><br><span class="line">Mem=&lt;&lt;Red:<span class="number">5</span>,Green:<span class="number">6</span>,Blue:<span class="number">5</span>&gt;&gt;.</span><br><span class="line">&lt;&lt;R1:<span class="number">5</span>,G2:<span class="number">6</span>,B3:<span class="number">5</span>&gt;&gt;=Mem.</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ol>
+<h3 id="元组"><a href="#元组" class="headerlink" title="元组"></a>元组</h3><p>把一些<strong>数量固定</strong>（在初始化时确定数量）的项目归组成单一的实体</p>
+<p>相当于struct，区别在于元组是匿名的</p>
+<p>用元组管理的项数不宜超过五六项，项数超过这一级别维护起来就会很头疼</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;area,<span class="number">100</span>,<span class="number">200</span>,<span class="string">&quot;你好&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>提取元组的值，使用模式匹配</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Point = &#123;point, <span class="number">10</span>, <span class="number">45</span>&#125;.</span><br><span class="line"></span><br><span class="line">&#123;point, X, Y&#125; = Point</span><br><span class="line">&#123;point, X, _&#125; = Point <span class="comment">% 下划线表示匿名变量</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="常用BIF"><a href="#常用BIF" class="headerlink" title="常用BIF"></a>常用BIF</h4><ul>
+<li>element(N, Tuple) -&gt; term()</li>
+<li>size(Item) -&gt; integer() &gt;= 0</li>
+<li>erlang:insert_element(Index, Tuple1, Term) -&gt; Tuple2</li>
+<li>setelement(Index, Tuple1, Value) -&gt; Tuple2</li>
+</ul>
+<h4 id="字典"><a href="#字典" class="headerlink" title="字典"></a>字典</h4><figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MY_Dict = dict:new(),</span><br><span class="line">MY_Dict1 = dict:append(<span class="string">&quot;key&quot;</span>, <span class="string">&quot;value&quot;</span>, MY_Dict),</span><br><span class="line">dict:fetch_keys(MY_Dict1).</span><br></pre></td></tr></table></figure>
+
+<h4 id="非平衡二叉树"><a href="#非平衡二叉树" class="headerlink" title="非平衡二叉树"></a>非平衡二叉树</h4><h4 id="平衡二叉树"><a href="#平衡二叉树" class="headerlink" title="平衡二叉树"></a>平衡二叉树</h4><h3 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h3><p>列表（list）被用来存放<strong>任意数量</strong>的事物</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">100</span>,area,<span class="string">&quot;你好&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<p>列表的第一个元素被称为列表头（head）。假设把列表头去掉，剩下的就被称为列表尾（tail）。</p>
+<p>访问列表头是一种非常高效的操作，因此基本上所有的列表处理函数都从提取列表头开始，<br>然后对它做一些操作，接着处理列表尾。</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ThingsToBuy = [&#123;apples, <span class="number">10</span>&#125;,&#123;pears,<span class="number">6</span>&#125;,&#123;milk,<span class="number">3</span>&#125;].</span><br><span class="line">ThingsToBuy1 = [&#123;oranges,<span class="number">4</span>&#125;,&#123;newspaper,<span class="number">1</span>&#125;|ThingsToBuy]</span><br></pre></td></tr></table></figure>
+
+<h4 id="列表推导"><a href="#列表推导" class="headerlink" title="列表推导"></a>列表推导</h4><p>能够生成元素并对生成的元素做测试的表达式。</p>
+<p>[Expression 11 Generat o 「s , Tests , Generators , Test s]</p>
+<ul>
+<li>语法：<code>[X || Qualifier1, Qualifier2, ... ]</code><br>Qualifier1可以是生成器、位串生成器或过滤器<ul>
+<li>生成器（generator），<code>Pattern &lt;- ListExpr</code></li>
+<li>位串（bitstring）生成器，<code>BitStringPattern &lt;= BitStringExpr</code></li>
+<li>过滤器（filter），判断函数（返回true或false）或布尔表达式<br>只有true的值会被加入列表</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">L=[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>].</span><br><span class="line">[<span class="number">2</span>*X || X &lt;- L]. <span class="comment">% 从L中提取X，X加倍</span></span><br><span class="line"></span><br><span class="line">[ &#123;X,Y&#125; I I x ＜－口， <span class="number">2</span>], y &lt;- [<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>] ].</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>lists:seq(1, N)返回一个包含从1到N所有整数的列表</li>
+</ul>
+<h4 id="常用BIF-1"><a href="#常用BIF-1" class="headerlink" title="常用BIF"></a>常用BIF</h4><ul>
+<li>hd(List) -&gt; term()<br>Returns the head of List, that is, the first element<br>Example: hd([a,b,c,d]) =) a.</li>
+<li>tl(List) -&gt; term()<br>Returns the tail of List, that is, the list minus the first element<br>Example: tl([a,b,c,d]) =) [b,c,d].</li>
+<li>length(List) -&gt; integer() &gt;= 0<br>Returns the length of the list L<br>Example: length([a,b,c,d]) =) 4.</li>
+</ul>
+<h4 id="lists模块提供的常用处理函数"><a href="#lists模块提供的常用处理函数" class="headerlink" title="lists模块提供的常用处理函数"></a>lists模块提供的常用处理函数</h4><ul>
+<li>member(Elem, List) -&gt; boolean()</li>
+<li>append(ListOfLists) -&gt; List1</li>
+<li>append(List1, List2) -&gt; List3</li>
+<li>reverse(List1) -&gt; List2</li>
+<li>reverse(List1, Tail) -&gt; List2<br>反转List1并将Tail插入到列表尾</li>
+<li>delete(Elem, List1) -&gt; List2</li>
+<li>filter(Pred, List1) -&gt; List2<br>List2是Pred函数返回True的结果</li>
+<li>map(Fun, List1) -&gt; List2</li>
+<li>foreach(Fun, List) -&gt; ok</li>
+<li>sort(List1) -&gt; List2</li>
+<li>sort(Fun, List1) -&gt; List2<br>使用自定义排序函数Fun来排序<br>对fun(A,B)，当A&lt;=B返回true，否则返回false</li>
+<li>nth(N, List) -&gt; Elem</li>
+<li>nthtail(N, List) -&gt; Tail</li>
+<li>sublist(List1, Len) -&gt; List2</li>
+<li>sublist(List1, Start, Len) -&gt; List2</li>
+<li>search(Pred, List) -&gt; {value, Value} | false</li>
+</ul>
+<h4 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h4><p>严格来说，Erlang里没有字符串。要在Erlang里表示字符串，可以选择一个由整数组成的<strong>列表</strong>或者一个二进制型</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">97</span>,<span class="number">98</span>,<span class="number">99</span>,<span class="number">100</span>,<span class="number">127</span>,<span class="number">128</span>]</span><br><span class="line"><span class="string">&quot;hello world&quot;</span></span><br><span class="line"></span><br><span class="line">&#x27;hello world&#x27;  <span class="comment">%原子，描述、常量、元组介绍</span></span><br></pre></td></tr></table></figure>
+
+<p>大写字母开头是变量（左值），其他或单引号包含是原子（右值）</p>
+<p>变量只能赋值一次，要修改只能解绑<code>f(X)</code></p>
+<p>当shell打印某个列表的值时，如果列表内的所有整数都代表可打印字符，它就会将其打印成<br>字符串字面量。否则，打印成列表记法</p>
+<h4 id="集合sets"><a href="#集合sets" class="headerlink" title="集合sets"></a>集合sets</h4><h4 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h4><h3 id="记录"><a href="#记录" class="headerlink" title="记录"></a>记录</h3><p>记录</p>
+<p><code>rr(“records.txt”).</code></p>
+<p>记录，进阶版的元组，提供键值对的存储和使用方式，可阅读性更好，但实质上只是一种语法糖（不是真正的数据类型），在其糖衣之下，它们都是靠元组来实现的。</p>
+<p>编译确定，速度快，不能动态改变</p>
+<ul>
+<li>当你可以用一些预先确定且数量固定的原子来表示数据时；</li>
+<li>当记录里的元素数量和元素名称不会随时间而改变时；</li>
+<li>当存储空间是个问题时，典型的案例是你有一大堆元组，并且每个元组都有相同的结构。</li>
+<li>第一个参数指定了记录的名字。第二个参数，是一个<br>由<strong>原子构成的元组</strong>，定义了记录中有哪些字段。</li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-record</span><span class="params">(Name, &#123;</span></span><br><span class="line"><span class="params">               <span class="comment">%key1和key2，带默认值</span></span></span><br><span class="line"><span class="params">               key1=Default1,</span></span><br><span class="line"><span class="params">               key2=Default2,</span></span><br><span class="line"><span class="params">               ...</span></span><br><span class="line"><span class="params">			   key3, <span class="comment">%value=undefined</span></span></span><br><span class="line"><span class="params">              &#125;)</span>.</span><br><span class="line"><span class="comment">%</span></span><br><span class="line"><span class="keyword">-record</span><span class="params">(todo, &#123;status=reminder,who=joe,text&#125;)</span>.</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>创建和更新记录</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">X1 = #todo&#123;status=urgent, text=<span class="string">&quot;Fix rrata in book&quot;</span>&#125;.</span><br><span class="line">X2 = X1#todo&#123;status=done&#125;.</span><br></pre></td></tr></table></figure></li>
+<li><p>提取记录字段</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#todo&#123;who=W, text=Txt&#125; = X2. </span><br><span class="line">W.</span><br><span class="line">Txt.</span><br><span class="line"><span class="comment">%%</span></span><br><span class="line">X2#todo.text.</span><br></pre></td></tr></table></figure></li>
+<li><p>函数</p>
+</li>
+</ol>
+<figure class="highlight erl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">clear_Status</span><span class="params">(#todo&#123;status=S, who=W&#125;=R)</span>-&gt;</span> <span class="comment">% 匹配记录字段</span></span><br><span class="line">	R#todo&#123;status=finished&#125; <span class="comment">% 创建新字段</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>函数中使用</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="映射组"><a href="#映射组" class="headerlink" title="映射组"></a>映射组</h3><p>也是键值对结构，但key可以不是原子，用于当<strong>键不能预先知道</strong>时用来表示键-值数据结构；</p>
+<ul>
+<li>当存在大量不同的键时用来表示数据；</li>
+<li>当方便使用很重要而效率无关紧要时作为万能的数据结构使用；</li>
+<li>用作“自解释型”的数据结构，也就是说，用户容易从键名猜出值的含义；</li>
+<li>用来表示键-值解析树，例如XML或配置文件；</li>
+<li>用JSON来和其他编程语言通信。</li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#&#123;Key1 op Vall, Key2 Op Val2, .., KeyN Op ValN&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Op</p>
+<ul>
+<li><code>=&gt;</code>，更新现有键或创建新键</li>
+<li><code>:=</code>，更新现有键</li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">F1 = #&#123;a=&gt;<span class="number">1</span>,b=&gt;<span class="number">2</span>&#125;.</span><br><span class="line">F2 = #&#123;b=&gt;<span class="number">2</span>,a=&gt;<span class="number">1</span>&#125;.</span><br><span class="line"><span class="comment">%F1=F2.</span></span><br><span class="line">F3 = F1#&#123;c=&gt;xx&#125;</span><br><span class="line">F4 = F3#&#123;c:=<span class="number">3</span>&#125;</span><br><span class="line"></span><br><span class="line">Facts=#&#123;&#123;wife,fred&#125;=&gt;<span class="string">&quot;Sue&quot;</span>, &#123;age, fred&#125;=&gt;<span class="number">45</span>, &#123;daughter, fred&#125;=&gt;</span><br><span class="line"><span class="string">&quot;Mary&quot;</span>,&#123;likes,jim&#125;=&gt;[...]&#125;.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="数值运算"><a href="#数值运算" class="headerlink" title="数值运算"></a>数值运算</h3><p>Operator Description Type Operands Prio</p>
+<ul>
+<li>X + X unary mixed 1</li>
+</ul>
+<ul>
+<li>X - X unary mixed 1<br>X * Y X * Y binary mixed 2<br>X / Y X / Y (floating point division) binary mixed 2<br>X div Y integer division of X and Y binary integer 2<br>X rem Y integer remainder of X divided by Y binary integer 2<br>X band Y bitwise and of X and Y binary integer 2<br>X + Y X + Y binary mixed 3<br>X - Y X - Y binary mixed 3<br>X bor Y bitwise or of X and Y binary integer 3<br>X bxor Y arithmetic bitwise xor X and Y binary integer 3<br>X bsl N arithmetic bitshift left of X by N bits binary integer 3<br>X bsr N bitshift right of X by N bits binary integer 3</li>
+</ul>
+<h3 id="操作符"><a href="#操作符" class="headerlink" title="操作符"></a>操作符</h3><table>
+<thead>
+<tr>
+<th>操 作 符</th>
+<th>结 合 性</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>:</td>
+<td></td>
+</tr>
+<tr>
+<td>#</td>
+<td></td>
+</tr>
+<tr>
+<td>（一元）+、（一元）、bnot、not</td>
+<td></td>
+</tr>
+<tr>
+<td>/、*、div、rem、band、and</td>
+<td>左结合</td>
+</tr>
+<tr>
+<td>+、-、bor、bxor、bsl、bsr、or、xor</td>
+<td>左结合</td>
+</tr>
+<tr>
+<td>++、–</td>
+<td>右结合</td>
+</tr>
+<tr>
+<td>==、/=、=&lt;、&lt;、&gt;=、&gt;、=:=、=/=</td>
+<td></td>
+</tr>
+<tr>
+<td>andalso</td>
+<td></td>
+</tr>
+<tr>
+<td>orelse</td>
+<td></td>
+</tr>
+<tr>
+<td>= !</td>
+<td>右结合</td>
+</tr>
+<tr>
+<td>catch</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="类型系统"><a href="#类型系统" class="headerlink" title="类型系统"></a>类型系统</h2><h2 id="类型的表示"><a href="#类型的表示" class="headerlink" title="类型的表示"></a>类型的表示</h2><p>语法：<code>T1::A|B|C </code><br>T1被定义为A、B或C其中之一</p>
+<p>这里的A，B，C可以用erlang的内置类型来表示，具体的内置类型可以在<a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/erlang.html">Erlang – erlang</a>查找。</p>
+<h3 id="类型声明"><a href="#类型声明" class="headerlink" title="类型声明"></a>类型声明</h3><p>使用opaque指令可以创建不透明类型</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">-type Union :: Type1 | Type2.</span><br><span class="line">-type Atom :: atom<span class="params">()</span> | Erlang_Atom.</span><br><span class="line">-type Fun :: fun<span class="params">()</span> | fun<span class="params">((...)</span>-&gt;Type).</span><br><span class="line">-opaque rich_text<span class="params">()</span>::[&#123;font<span class="params">()</span>, char<span class="params">()</span>&#125;].</span><br></pre></td></tr></table></figure>
+
+<h3 id="类型规范"><a href="#类型规范" class="headerlink" title="类型规范"></a>类型规范</h3><p>函数规范可以规定某个函数的参数类型和返回值类型，when用于引入额外的类型变量。</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-spec</span> file:open<span class="params">(FileName, Modes)</span>-&gt;</span><br><span class="line">               &#123;ok, Handle&#125; | &#123;error, Why&#125; when</span><br><span class="line">                                               FileName::string<span class="params">()</span>,</span><br><span class="line">                                               Modes::[Mode],</span><br><span class="line">                                               Mode::read|write,</span><br><span class="line">                                               Handle::file_handle<span class="params">()</span>,</span><br><span class="line">                                               Why::error_term<span class="params">()</span>.</span><br></pre></td></tr></table></figure>
+
+<h3 id="导出类型和本地类型"><a href="#导出类型和本地类型" class="headerlink" title="导出类型和本地类型"></a>导出类型和本地类型</h3><p>a.erl</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-module</span><span class="params">(a)</span>.</span><br><span class="line">-type rich_text<span class="params">()</span>::[&#123;font<span class="params">()</span>, char<span class="params">()</span>&#125;].</span><br><span class="line">-type font::integer<span class="params">()</span>.</span><br><span class="line">-export_type<span class="params">([rich_text/<span class="number">0</span>, font/<span class="number">0</span>])</span></span><br></pre></td></tr></table></figure>
+
+<p>b.erl</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-module</span><span class="params">(b)</span>.</span><br><span class="line"><span class="keyword">-spec</span> rich_text_length<span class="params">(a:rich_text())</span>-&gt;integer<span class="params">()</span>.</span><br></pre></td></tr></table></figure>
+
+<h2 id="dialyzer"><a href="#dialyzer" class="headerlink" title="dialyzer"></a>dialyzer</h2><p>​    <a target="_blank" rel="noopener" href="https://www.erlang.org/doc/apps/dialyzer/index.html">Erlang – Dialyzer Reference Manual</a></p>
+<h2 id="表达式"><a href="#表达式" class="headerlink" title="表达式"></a>表达式</h2><h3 id="case和if表达式"><a href="#case和if表达式" class="headerlink" title="case和if表达式"></a>case和if表达式</h3><p>执行Expression，模式匹配，执行Expr_seq1</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> Expression <span class="keyword">of</span></span><br><span class="line">    pattern1 [<span class="keyword">when</span> Guard] -&gt; Expr_seq1;</span><br><span class="line">	pattern2 [<span class="keyword">when</span> Guard] -&gt; Expr_seq2;</span><br><span class="line">	...</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span></span><br><span class="line">	Guard1-&gt;</span><br><span class="line">        Expr_seq1</span><br><span class="line">    Guard2-&gt;</span><br><span class="line">        Expr_seq2</span><br><span class="line">    ...</span><br><span class="line">	<span class="literal">true</span> -&gt; </span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="块表达式"><a href="#块表达式" class="headerlink" title="块表达式"></a>块表达式</h3><h3 id="布尔表达式"><a href="#布尔表达式" class="headerlink" title="布尔表达式"></a>布尔表达式</h3><ul>
+<li></li>
+<li></li>
+</ul>
+<h3 id="短路布尔表达式"><a href="#短路布尔表达式" class="headerlink" title="短路布尔表达式"></a>短路布尔表达式</h3><ul>
+<li>Expr1 orelse Expr2</li>
+<li>Expr1 andelse Expr2</li>
+</ul>
+<h2 id="热更新和动态代码载入"><a href="#热更新和动态代码载入" class="headerlink" title="热更新和动态代码载入"></a>热更新和动态代码载入</h2><p>codes.erl</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">start</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  spawn(codes, loop, []).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">sleep</span><span class="params">()</span> -&gt;</span> <span class="keyword">receive</span></span><br><span class="line">           <span class="keyword">after</span></span><br><span class="line">             <span class="number">2000</span> -&gt; ok</span><br><span class="line">           <span class="keyword">end</span>.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">loop</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  sleep(),</span><br><span class="line">  Val = test:test(),</span><br><span class="line">  io:format(<span class="string">&quot;Value is ~p~n&quot;</span>,[Val]),</span><br><span class="line">  loop().</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>test.erl</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">test</span><span class="params">()</span> -&gt;</span></span><br><span class="line">    <span class="number">1</span>.</span><br></pre></td></tr></table></figure>
+
+
+
+<p>外部热更新</p>
+<p>主程序热更新，旧程序不会改变，新旧程序同时存在</p>
+<h2 id="关卡"><a href="#关卡" class="headerlink" title="关卡"></a>关卡</h2><p>增加模式匹配的条件，常用作条件表达式（返回布尔值）</p>
+<ul>
+<li>原子true；</li>
+<li>其他常量（各种数据结构和已绑定变量），它们在关卡表达式里都会成为false；</li>
+<li>调用后面表1里的关卡判断函数和表2里的内置函数；</li>
+<li>数据结构比较（参见表6）；</li>
+<li>算术表达式（参见表3）；</li>
+<li>布尔表达式（参见8.7节）；</li>
+<li>短路布尔表达式（参见8.23节）。</li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">max</span><span class="params">(X,Y)</span> <span class="title">when</span> X&gt;Y-&gt;</span>X;</span><br><span class="line"><span class="function"><span class="title">max</span><span class="params">(X,Y)</span> -&gt;</span> Y.</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><ul>
+<li>逗号（,）分隔函数调用、数据构造和模式中的参数。</li>
+<li>分号（;）分隔子句。我们能在很多地方看到子句，例如函数定义，以及case、if、try..catch和receive表达式。</li>
+<li>句号（.）（后接空白）分隔函数整体，以及shell里的表达式。</li>
+</ul>
+<p>元数，指函数拥有的参数数量</p>
+<p>分号用于分隔子句，每个子句包含头部和主题两部分，用<code>-&gt;</code>隔开</p>
+<p>头部包含模式，在成功匹配时子句被调用</p>
+<p>没有for循环，只能用递归</p>
+<h3 id="fun：基本的抽象单元"><a href="#fun：基本的抽象单元" class="headerlink" title="fun：基本的抽象单元"></a>fun：基本的抽象单元</h3><p>函数式编程语言还表示函数可以被用作其他函数的参数，也可以返回函数。操作其他函数的函数被称为高阶函数（higher-order function），而在Erlang中用于代表函数的数据类型被称为fun，是一种匿名函数。</p>
+<ul>
+<li>对列表里的每一个元素执行相同的操作。在这个案例里，将fun作为参数传递给<br>lists:map/2和lists:filter/2等函数。fun的这种用法是极其普遍的。</li>
+<li>创建自己的控制抽象。这一技巧极其有用。例如，Erlang没有for循环，但我们可以轻松<br>创建自己的<strong>for循环</strong>。创建控制抽象的优点是可以让它们精确实现我们想要的做法，而不<br>是依赖一组预定义的控制抽象，因为它们的行为可能不完全是我们想要的。</li>
+<li>实现可重入解析代码（reentrant parsing code）、解析组合器（parser combinator）或惰性求<br>值器（lazy evaluator）等事物。在这个案例里，我们编写返回fun的函数。这种技术很强<br>大，但可能会导致程序难以调试</li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Test=<span class="keyword">fun</span>(X,Y)-&gt;X*Y <span class="keyword">end</span>.</span><br></pre></td></tr></table></figure>
+
+<h3 id="以fun作为参数的函数"><a href="#以fun作为参数的函数" class="headerlink" title="以fun作为参数的函数"></a>以fun作为参数的函数</h3><ul>
+<li>lists:map(F,L) 返回的是一个列表，它通过给列表L里的各个元素应用fun F生成</li>
+<li>lists:filter(P,L) 返回一个新的列表，内含L中所有符合条件的元素（条件是对元素E而言P(E)为true）</li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">L = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>].</span><br><span class="line">lists:map(<span class="keyword">fun</span>(X)-&gt;<span class="number">2</span>*X <span class="keyword">end</span>, L).</span><br><span class="line"><span class="comment">%%</span></span><br><span class="line">Even=<span class="keyword">fun</span>(X)-&gt;(X <span class="keyword">rem</span> <span class="number">2</span>)=:=<span class="number">0</span> <span class="keyword">end</span>.</span><br><span class="line">lists:filter(Even, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>]).</span><br></pre></td></tr></table></figure>
+
+<h3 id="返回fun的函数"><a href="#返回fun的函数" class="headerlink" title="返回fun的函数"></a>返回fun的函数</h3><ul>
+<li>lists:member(X,L) 如果X是列表L中的成员，lists:member(X, L)就返回true，否则返回false</li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Fruit = [apple,pear,orange].</span><br><span class="line">MakeTest = <span class="keyword">fun</span>(L)-&gt;</span><br><span class="line">               (<span class="keyword">fun</span>(X) -&gt; lists:member(X,L) <span class="keyword">end</span>) </span><br><span class="line">           <span class="keyword">end</span>.</span><br><span class="line">IsFruit=MakeTest(Fruit).</span><br><span class="line">IsFruit(pear).</span><br><span class="line"></span><br><span class="line"><span class="comment">%%相当于</span></span><br><span class="line">lists:meber(pear, Fruit).</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="定义控制抽象"><a href="#定义控制抽象" class="headerlink" title="定义控制抽象"></a>定义控制抽象</h3><h2 id="模块、编译和预处理器"><a href="#模块、编译和预处理器" class="headerlink" title="模块、编译和预处理器"></a>模块、编译和预处理器</h2><p>编译器是<code>.erl</code>文件，编译后是<code>.beam</code>文件</p>
+<h2 id="编译和运行程序"><a href="#编译和运行程序" class="headerlink" title="编译和运行程序"></a>编译和运行程序</h2><p>三种方式</p>
+<ol>
+<li><p>Erlang shell中编译运行</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">c(hello).</span><br><span class="line">hello:hello().</span><br></pre></td></tr></table></figure></li>
+<li><p>命令行中编译运行</p>
+<ul>
+<li>-noshell 以不带交互式shell的方式启动Erlang（因此不会看到Erlang的“徽标”，也就是通常系统启动时首先显示的那些信息）。</li>
+<li>-s hello start 运行hello:start()函数。注意：使用-s Mod …选项时，Mod必须是已编译的。</li>
+<li>-s init stop 在之前的命令完成后执行init:stop()函数，从而停止系统。</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">erlc hello.erl</span><br><span class="line">erl -noshell -s hello start -s init stop</span><br></pre></td></tr></table></figure></li>
+<li><p>作为Escript运行</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env escript</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">main</span><span class="params">(Args)</span>-&gt;</span></span><br><span class="line">    io:format(<span class="string">&quot;hello world ~n&quot;</span>).</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>编译</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">erlc hello.erl</span><br><span class="line">erl -noshell -s hello start -s init stop</span><br></pre></td></tr></table></figure>
+
+<p>好处是可以借助makefile等自动化构建</p>
+<p>进程-对象</p>
+<p>模块-类</p>
+<h1 id="并发编程"><a href="#并发编程" class="headerlink" title="并发编程"></a>并发编程</h1><p>并发的实现可分为基于操作系统的并发和基于语言的并发。</p>
+<ul>
+<li>在Erlang里，并发性由Erlang虚拟机提供，而非操作系统或任何的外部库。</li>
+<li>在大多数顺序编程语言里（C语言等），并发性都是以接口的形式提供，指向主机操作系统的内部并发函数。</li>
+</ul>
+<p>erlang是基于进程的并发。每个进程都带有一个邮箱，这个邮箱是和进程同步创建的。</p>
+<ul>
+<li>self(). % 显示当前进程号</li>
+<li>i() % 显示所有进程信息</li>
+</ul>
+<h2 id="发送和接收消息"><a href="#发送和接收消息" class="headerlink" title="发送和接收消息"></a>发送和接收消息</h2><figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">%创建进程</span></span><br><span class="line">Pid = spawn(<span class="keyword">fun</span>)</span><br><span class="line">Pid = spawn(module, <span class="keyword">fun</span>, args) <span class="comment">% 确保运行进程能够正确升级为新版模块代码（即使用中被再次编译）的恰当方式</span></span><br><span class="line"></span><br><span class="line"><span class="comment">%发送消息</span></span><br><span class="line">Pid ! Msg</span><br><span class="line"><span class="comment">%接收消息</span></span><br><span class="line"><span class="keyword">receive</span></span><br><span class="line">	&#123;From, Message&#125;-&gt;</span><br><span class="line">        ...</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>对于命令，发送原子</p>
+<p>需要需要回复的消息，发送<code>&#123;self(), Msg&#125;</code>，接收<code>&#123;From, Msg&#125;</code></p>
+<p>对loop中每个模式，封装为API（参数为请求模块的Pid）实现信息隐藏。</p>
+<h3 id="接收高级选项"><a href="#接收高级选项" class="headerlink" title="接收高级选项"></a>接收高级选项</h3><ol>
+<li><p>带超时的接收</p>
+<ul>
+<li>使用after指定</li>
+<li>超时值为0，立即执行</li>
+<li>超时值为原子<code>infinity</code>，永远不会超时</li>
+</ul>
+ <figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">receive</span></span><br><span class="line">    &#123;From, Message&#125;-&gt;</span><br><span class="line">        ...</span><br><span class="line"><span class="keyword">after</span> Time-&gt;</span><br><span class="line">    Expressions</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<ol start="2">
+<li><p>选择性接收</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">   </span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="进程注册"><a href="#进程注册" class="headerlink" title="进程注册"></a>进程注册</h2><p>如果想给一个进程发送消息，就需要知道它的PID，但是当进程创建时，只有父进程才知道它的PID。系统里没有其他进程知道它的存在。这通常很不方便，因为你必须把PID发送给系统里所有想要和它通信的进程。另一方面，这也很安全。如果不透露某个进程的PID，其他进程就无法以任何方式与其交互。</p>
+<p>进程注册是Erlang中一种<strong>公布进程标识符</strong>的方法，使用register将进程和一个指定的注册名（必须是atom类型）绑定，之后可以使用注册名来向这个进程发送消息。</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Pid=sspawn(area_server0,loop,[]).</span><br><span class="line"><span class="function"><span class="title">register</span><span class="params">(area,Pid)</span>.</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">area</span>!&#123;<span class="title">rectangle</span>,4,5&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>详细的BIF介绍如下：</p>
+<table>
+<thead>
+<tr>
+<th><strong>BIF</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>register(Name, Pid)</td>
+<td>Associates the name Name, an atom, with the process Pid.</td>
+</tr>
+<tr>
+<td>registered()</td>
+<td>Returns a list of names that have been registered using register/2.</td>
+</tr>
+<tr>
+<td>whereis(Name)</td>
+<td>Returns the pid registered under Name, or undefined if the name is not registered.</td>
+</tr>
+</tbody></table>
+<h2 id="进程别名"><a href="#进程别名" class="headerlink" title="进程别名"></a>进程别名</h2><p>发送消息的第三种方式是使用进程别名，前两种是Pid和进程注册名。</p>
+<p>进程别名本质上是一种引用类型。</p>
+<ul>
+<li>创建别名</li>
+<li>删除别名</li>
+</ul>
+<h2 id="进程字典"><a href="#进程字典" class="headerlink" title="进程字典"></a>进程字典</h2><p>进程字典是一个属于本进程的键值对数据结构，每个进程都存在一个进程区域存放进程字典。进程字典只存在本进程，不存在跨进程。</p>
+<ul>
+<li><code>put(Key,value)-&gt;OldValue</code><br>注意会返回旧值</li>
+<li><code>get(Key-&gt;Value)</code></li>
+<li><code>get()-[&#123;Key,Value&#125;]</code></li>
+<li><code>erase(Key)-&gt;Value</code></li>
+<li><code>erase()-&gt;[&#123;Key,Value&#125;]</code> </li>
+</ul>
+<p>注意：进程字典在实际中较少用，因为可能会给程序引入不易察觉的bug（有时会忘记使用了进程字典），让调试变得困难。</p>
+<p>建议使用进程字典来保存“<strong>一次性写入</strong>”的变量。如果某个键一次性获得一个值而且不会改变它，那么将其保存在进程字典里在某些时候还是可以接受的。</p>
+<h1 id="错误处理"><a href="#错误处理" class="headerlink" title="错误处理"></a>错误处理</h1><h2 id="错误的分类"><a href="#错误的分类" class="headerlink" title="错误的分类"></a>错误的分类</h2><p>程序的错误大致可分为以下四类：</p>
+<ul>
+<li><strong>Compile-time errors</strong>，编译产生的错误，例如一些语法错误，可以借助编译器和静态代码分析器找出错误。</li>
+<li><strong>Logical errors</strong>，程序的行为与预想中的不同，例如点击按钮没有反应。</li>
+<li><strong>Run-time errors</strong>，使程序发生崩溃的严重错误，例如运算符作用在错误的类型。</li>
+<li><strong>Generated errors</strong>，在代码中调用<code>exit/1</code>和<code>throw/1</code>来生成错误。</li>
+</ul>
+<p>在erlang中，将运行时错误和生成错误表示为以下三类：</p>
+<table>
+<thead>
+<tr>
+<th><strong>Class</strong></th>
+<th><strong>Origin</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>error</td>
+<td>Run-time error, for example, 1+a, or the process called error/1,2</td>
+</tr>
+<tr>
+<td>exit</td>
+<td>The process called exit/1</td>
+</tr>
+<tr>
+<td>throw</td>
+<td>The process called throw/1</td>
+</tr>
+</tbody></table>
+<p>可以使用<code>raise/3</code>函数来生成以上三种错误：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">erlang:raise(Class, Reason, Stacktrace) -&gt; badarg</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/reference_manual/errors.html#exit_reasons">Reason</a>的取值如下：</p>
+<table>
+<thead>
+<tr>
+<th><strong>Reason</strong></th>
+<th><strong>Type of Error</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>badarg</td>
+<td>Bad argument. The argument is of wrong data type, or is otherwise badly formed.</td>
+</tr>
+<tr>
+<td>badarith</td>
+<td>Bad argument in an arithmetic expression.</td>
+</tr>
+<tr>
+<td>{badmatch,V}</td>
+<td>Evaluation of a match expression failed. The value V did not match.</td>
+</tr>
+<tr>
+<td>function_clause</td>
+<td>No matching function clause is found when evaluating a function call.</td>
+</tr>
+<tr>
+<td>{case_clause,V}</td>
+<td>No matching branch is found when evaluating a case expression. The value V did not match.</td>
+</tr>
+<tr>
+<td>if_clause</td>
+<td>No true branch is found when evaluating an if expression.</td>
+</tr>
+<tr>
+<td>{try_clause,V}</td>
+<td>No matching branch is found when evaluating the of-section of a try expression. The value V did not match.</td>
+</tr>
+<tr>
+<td>undef</td>
+<td>The function cannot be found when evaluating a function call.</td>
+</tr>
+<tr>
+<td>{badfun,F}</td>
+<td>Something is wrong with a fun F.</td>
+</tr>
+<tr>
+<td>{badarity,F}</td>
+<td>A fun is applied to the wrong number of arguments. F describes the fun and the arguments.</td>
+</tr>
+<tr>
+<td>timeout_value</td>
+<td>The timeout value in a receive..after expression is evaluated to something else than an integer or infinity.</td>
+</tr>
+<tr>
+<td>noproc</td>
+<td>Trying to link or monitor to a non-existing process or port.</td>
+</tr>
+<tr>
+<td>noconnection</td>
+<td>A link or monitor to a remote process was broken because a connection between the nodes could not be established or was severed.</td>
+</tr>
+<tr>
+<td>{nocatch,V}</td>
+<td>Trying to evaluate a throw outside a catch. V is the thrown term.</td>
+</tr>
+<tr>
+<td>system_limit</td>
+<td>A system limit has been reached. See <strong><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/efficiency_guide/advanced.html">Efficiency Guide</a></strong> for information about system limits.</td>
+</tr>
+</tbody></table>
+<p>另外，可以使用throw/1函数函数生成throw类型错误：</p>
+<ul>
+<li>throw(Any) -&gt; no_return()</li>
+</ul>
+<p>产生exit类型错误的函数如下：</p>
+<ul>
+<li>exit(Reason) -&gt; no_return()</li>
+<li>exit(Pid, Reason) -&gt; true</li>
+</ul>
+<h2 id="Catch-and-Throw"><a href="#Catch-and-Throw" class="headerlink" title="Catch and Throw"></a>Catch and Throw</h2><p>Catch和Throw提供对表达式（顺序编程代码）的监控，在进程内部生成并处理错误。</p>
+<ol>
+<li><p>捕获错误，在try中编写可能出错的代码，可以使用可选的of进行分支选择。</p>
+</li>
+<li><p>匹配错误</p>
+<ul>
+<li><p>冒号前的ExceptionType取值为error、exit、throw中一种。</p>
+</li>
+<li><p>冒号后的ExPattern用于匹配catch的返回值，以便进行处理。</p>
+<ul>
+<li><p>若程序崩溃（error类型错误），catch子句返回元组<code>&#123;&#39;EXIT&#39;,&#123;Reason,Stack&#125;&#125;</code></p>
+</li>
+<li><p>若程序退出（exit类型错误），catch子句返回Any，Any为exit函数参数</p>
+</li>
+<li><p>若程序抛出异常（throw类型错误），catch子句返回Any，Any为throw函数参数</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>处理错误，若模式匹配成功可以在-&gt;后处理，处理完成后执行after子句的内容。</p>
+</li>
+</ol>
+<p>程序结构如下：</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> FuncOrExpressionSeq <span class="keyword">of</span></span><br><span class="line">    Patern1 [<span class="keyword">when</span> Guard1] -&gt; Expressions1;</span><br><span class="line">    Patern1 [<span class="keyword">when</span> Guard2] -&gt; Expressions2;</span><br><span class="line">    ...</span><br><span class="line"><span class="keyword">catch</span></span><br><span class="line">	ExceptionType1: ExPattern1 [<span class="keyword">when</span> ExGuard1] -&gt; ExExpressions1;</span><br><span class="line">	ExceptionType2: ExPattern2 [<span class="keyword">when</span> ExGuard2] -&gt; ExExpressions2;</span><br><span class="line">    ...</span><br><span class="line"><span class="keyword">after</span></span><br><span class="line">    AfterExpressions</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="并发程序中的错误处理"><a href="#并发程序中的错误处理" class="headerlink" title="并发程序中的错误处理"></a>并发程序中的错误处理</h2><p>并发程序中的错误处理就是<strong>使用一个进程来监控另一个进程的行为</strong>的过程，这个过程可以用两个概念来表示：进程链接（links）和退出（EXIT）信号。</p>
+<p>在进程运行过程中，可以和其他进程或端口创建链接，当一个进程终止时，会对所有<strong>链接进程</strong>发送<strong>EXIT信号</strong>，格式为：<code>&#123;&#39;EXIT&#39;, Exiting_Process_Id, Reason&#125;</code>，Exiting_Process_Id是终止进程的标识符，Reason可以是任何Term。对于接收到EXIT信号的进程：</p>
+<ul>
+<li>若EXIT信号中的Reason是原子normal，EXIT信号会被忽略</li>
+<li>若EXIT信号中的Reason不是原子normal，默认的处理是终止当前进程并对所有链接进程发送EXIT信号。</li>
+</ul>
+<p>可以重写处理策略，使接收到EXIT信号执行必要的操作来修复并重启非正常退出的进程。</p>
+<h3 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h3><p>本质上，进程和端口之间的通信都通过发送和接受异步信号来完成，消息就是一种常用的信号。</p>
+<ol>
+<li>发送信号，调用指定的BIF来发送指定的信号。</li>
+<li>接收信号。信号是由进程异步、自动接收的，不需要做特殊处理。<br>注意：信号的接收和消息的接收不是一回事，并非发生在receive字句内，而是可能在程序执行的任意时刻。</li>
+</ol>
+<ul>
+<li><strong>message</strong><ul>
+<li>发送<ul>
+<li>使用<code>!</code>运算符</li>
+<li>erlang:send(Dest, Msg) -&gt; Msg</li>
+<li>erlang:send(Dest, Msg, Options) -&gt; Res</li>
+<li>erlang:send_after(Time, Dest, Msg) -&gt; TimerRef</li>
+<li>erlang:send_after(Time, Dest, Msg, Options) -&gt; TimerRef</li>
+<li>erlang:send_nosuspend(Dest, Msg) -&gt; boolean()</li>
+<li>erlang:send_nosuspend(Dest, Msg, Options) -&gt; boolean()</li>
+</ul>
+</li>
+<li>接收<ul>
+<li>对非活动进程发送，抛弃。</li>
+<li>对活动进程发送，添加到消息队列，使用receive表达式从消息队列获取消息。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>link, unlink</strong>，更改关于链接的信息<ul>
+<li>发送<ul>
+<li>link(PidOrPort) -&gt; true</li>
+<li>unlink(Id) -&gt; true</li>
+</ul>
+</li>
+<li>接收</li>
+</ul>
+</li>
+<li><strong>exit</strong><ul>
+<li>发送</li>
+<li>接收</li>
+</ul>
+</li>
+<li><strong>monitor, demonitor</strong>，更改关于监视者的信息</li>
+<li><strong>down, change</strong>，若接收进程是活动进程，转换为message，否则丢弃。down由被监控进程发送，所有可见资源释放后发送。</li>
+<li><strong>group_leader</strong>，更改进程组的组长<ul>
+<li>group_leader(GroupLeader, Pid) -&gt; true</li>
+</ul>
+</li>
+<li><strong>spawn_reply</strong></li>
+<li><strong>alive_request</strong></li>
+<li><strong>process_info_request, garbage_collect_request, check_process_code_request</strong></li>
+</ul>
+<h3 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h3><p>进程可以和另一个进程或端口建立链接，其中任何一个进程都可以创建和删除链接关系。</p>
+<ul>
+<li>创建链接<ul>
+<li>link(PidOrPort) -&gt; true</li>
+<li>spawn_link(Fun) -&gt; pid()</li>
+<li>spawn_link(Node, Fun) -&gt; pid()</li>
+<li>spawn_link(Module, Function, Args) -&gt; pid()</li>
+<li>spawn_link(Node, Module, Function, Args) -&gt; pid()</li>
+</ul>
+</li>
+<li>删除链接<ul>
+<li>unlink(Id) -&gt; true</li>
+</ul>
+</li>
+</ul>
+<h3 id="监控Monitors"><a href="#监控Monitors" class="headerlink" title="监控Monitors"></a>监控Monitors</h3><p>除了双向的link外，还可以使用单向的monitor来监控一个进程。</p>
+<p>创建监控</p>
+<ul>
+<li>monitor(Type :: process, Item :: monitor_process_identifier()) -&gt;<pre><code>MonitorRef
+</code></pre>
+</li>
+<li>monitor_node(Node, Flag) -&gt; true</li>
+<li>erlang:monitor_node(Node, Flag, Options) -&gt; true</li>
+<li>spawn_monitor(Fun) -&gt; {pid(), reference()}</li>
+<li>spawn_monitor(Node, Fun) -&gt; {pid(), reference()}</li>
+<li>spawn_monitor(Module, Function, Args) -&gt; {pid(), reference()}</li>
+<li>spawn_monitor(Node, Module, Function, Args) -&gt; {pid(), reference()}</li>
+</ul>
+<p>删除监控</p>
+<ul>
+<li>demonitor(MonitorRef) -&gt; true</li>
+<li>demonitor(MonitorRef, OptionList) -&gt; boolean()</li>
+</ul>
+<h3 id="修复和重启"><a href="#修复和重启" class="headerlink" title="修复和重启"></a>修复和重启</h3><h1 id="分布式"><a href="#分布式" class="headerlink" title="分布式"></a>分布式</h1><h2 id="为何使用分布式系统"><a href="#为何使用分布式系统" class="headerlink" title="为何使用分布式系统"></a>为何使用分布式系统</h2><ul>
+<li>性能<br>可以通过安排程序的不同部分在不同的机器上并行运行来让程序跑得更快。</li>
+<li>可靠性<br>可以通过让系统运行在数台机器上来实现容错式系统。如果一台机器出了故障，可以在另<br>一台机器上继续。</li>
+<li>可扩展性<br>随着我们把应用程序越做越大，即使机器的处理能力再强大也迟早会耗尽。到那时，就必<br>须添加更多的机器来提升处理能力。添加一台新机器应当是一次简单的操作，不需要对应<br>用程序的架构做出大的修改。</li>
+<li>天生分布式的程序<br>许多应用程序天生就是分布式的。如果编写一个多用户游戏或聊天系统，就会有来自世界<br>各地的分散用户。如果我们在某个地理位置上拥有大量的用户，就会希望把计算资源放置<br>在接近这些用户的地方。</li>
+<li>fun<br>我想要编写的fun程序大部分都是分布式的。其中许多涉及与全世界各地的人与机器进行交互。</li>
+</ul>
+<h2 id="分布式erlang"><a href="#分布式erlang" class="headerlink" title="分布式erlang"></a>分布式erlang</h2><p>分布式erlang以节点为中心。节点是一个运行的erlang系统，节点可以在同一台机器或在不同机器上，许多个节点组成一个分布式系统。</p>
+<p>命名。在一个分布式系统内，所有节点都必须使用同种命名模式，例如全是短命名，或者全是长命名。</p>
+<p>通信</p>
+<p>统一标识，分布式节点上的进程，其标识方式与在本地节点上时完全一样，因此可以使用<code>Pid ！Msg</code> 给集群内任意节点上的进程发送消息。</p>
+<p>分裂、链接的操作也可对任意节点的任意进程作用。</p>
+<p>为了能够相互通信， Erlang 的节点问必须共享一个私密的cookie 值。</p>
+<p>适合编写那些可信任其他参与者的集群应用程序。</p>
+<ul>
+<li><p>第1阶段：在一个常规的非分布式Erlang系统上编写和测试名称服务器。</p>
+</li>
+<li><p>第2阶段：在同一台机器的两个节点上测试名称服务器。</p>
+</li>
+<li><p>第3阶段：在同一局域网内分属两台不同机器的节点上测试名称服务器。</p>
+</li>
+<li><p>第4阶段：在分属两个不同国家和域的两台机器上测试名称服务器。</p>
+</li>
+</ul>
+<p>参数-sname gandalf的意思是“在本地主机上启动一个名为gandalf的Erlang节点”</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">erl -sname gandalf</span><br><span class="line">erl -sname bilbo</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>用-name参数启动Erlang</li>
+<li>确保两个节点拥有相同的cookie。这正是启动两个节点时都使用命令行参数<code>-setcookie abc</code>的原因。</li>
+<li>确保相关节点的完全限定主机名（fully qualified hostname）可以被DNS解析。对于我来说，域名myerl.example.com完全属于我的家庭网络，通过在/etc/hosts里添加一个条目来实现本地解析。</li>
+<li>确保两个系统拥有相同版本的代码和相同版本的Erlang</li>
+</ol>
+<h3 id="创建节点"><a href="#创建节点" class="headerlink" title="创建节点"></a>创建节点</h3><p>创建节点需要用命令行选项-name或-sname，节点名的格式是<code>name@host</code>，name是自定义的节点名，使用-name选项host需要使用完整的host，使用-sname选项只需要用到第一部分。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">% erl -name dilbert</span><br><span class="line">(dilbert@uab.ericsson.se)1&gt; node().</span><br><span class="line">&#x27;dilbert@uab.ericsson.se&#x27;</span><br><span class="line"></span><br><span class="line">% erl -sname dilbert</span><br><span class="line">(dilbert@uab)1&gt; node().</span><br><span class="line">dilbert@uab</span><br></pre></td></tr></table></figure>
+
+<p>也可以使用**<a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/net_kernel.html#start-1">net_kernel:start/1</a>**函数在运行时指定节点名。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">% erl</span><br><span class="line">1&gt; node().</span><br><span class="line">nonode@nohost</span><br><span class="line">2&gt; net_kernel:start([dilbert,shortnames]).</span><br><span class="line">&#123;ok,&lt;0.102.0&gt;&#125;</span><br><span class="line">(dilbert@uab)3&gt; node().</span><br><span class="line">dilbert@uab</span><br></pre></td></tr></table></figure>
+
+<p>以下是详细的命令行选项说明：</p>
+<table>
+<thead>
+<tr>
+<th><strong>Command-Line Flag</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-connect_all false</td>
+<td>Only explicit connection set-ups are used.</td>
+</tr>
+<tr>
+<td>-hidden</td>
+<td>Makes a node into a hidden node.</td>
+</tr>
+<tr>
+<td>-name Name</td>
+<td>Makes a runtime system into a node, using long node names.</td>
+</tr>
+<tr>
+<td>-setcookie Cookie</td>
+<td>Same as calling erlang:set_cookie(Cookie).</td>
+</tr>
+<tr>
+<td>-setcookie Node Cookie</td>
+<td>Same as calling erlang:set_cookie(Node, Cookie).</td>
+</tr>
+<tr>
+<td>-sname Name</td>
+<td>Makes a runtime system into a node, using short node names.</td>
+</tr>
+</tbody></table>
+<p>需要通过RPC服务来解决跨网络通信问题。</p>
+<h3 id="连接节点"><a href="#连接节点" class="headerlink" title="连接节点"></a>连接节点</h3><p>分布式erlang中的节点是松散连接的，在第一次使用另一个节点名时会自动连接两个节点，例如使用spawn(Node,M,F,A) 或 **net_adm:ping(Node)**等函数。</p>
+<p>默认情况下，连接具有传递性，即若B连接C，当新进程A尝试连接B时，还会尝试连接C。可以使用命令行选项<code>-connect_all false</code>来关闭传递连接。</p>
+<p>当节点关闭时，会调用erlang:disconnect_node(Node)函数关闭所有连接。</p>
+<p>可以使用函数nodes()查看已连接的节点。</p>
+<p>一般按以下四个顺序测试分布式程序</p>
+<ol>
+<li><p>非分布式Erlang系统测试</p>
+</li>
+<li><p>同一台机器的两个节点<br>只需要在同一台计算机上启动两个Erlang节点</p>
+</li>
+<li><p>同一<strong>局域网</strong>内分属两台不同机器的节点<br>节点的IP地址不同</p>
+<ol>
+<li>用-name参数启动Erlang</li>
+<li>确保两个节点拥有相同的cookie</li>
+<li>确保相关节点的完全限定主机名（fully qualified hostname）可以被DNS解析</li>
+<li>确保两个系统拥有相同版本的代码和相同版本的Erlang</li>
+</ol>
+</li>
+<li><p>不同国家和域（互联网）的两台机器上的节点<br>和第3阶段是一样的，但现在我们必须更加关注安全性</p>
+<ol>
+<li><p>确保4369端口对TCP和UDP流量都开放。这个端口会被一个名为epmd的程序使用（它是<br>Erlang Port Mapper Daemon的缩写，即Erlang端口映射守护进程）。</p>
+</li>
+<li><p>选择一个或一段连续端口给分布式Erlang使用，并确保这些端口是开放的。如果这些端<br>口位于Min和Max之间（只想用一个端口就让Min=Max），就用以下命令启动Erlang：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">erl -name... -setcookie ... -kernel</span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+</ol>
+<p>分布式编程的大坑是安全策略，局域网中可以先用-sname测试，</p>
+<p>配置主机名</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># sudo vim /etc/hostname</span><br><span class="line">sudo hostnamectl set-hostname your-new-hostname</span><br><span class="line">sudo systemctl restart NetworkManager</span><br><span class="line">hostname</span><br></pre></td></tr></table></figure>
+
+<p>配置域名</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1 localhost</span><br><span class="line">192.168.1.100 myhost.example.com myhost</span><br></pre></td></tr></table></figure>
+
+<h4 id="分布式erlang端口安全"><a href="#分布式erlang端口安全" class="headerlink" title="分布式erlang端口安全"></a>分布式erlang端口安全</h4><p>在分布式 Erlang 系统中，节点之间可以通过端口进行通信。要确保端口的安全性，可以采取以下措施：</p>
+<ol>
+<li>限制端口范围：只打开必要的端口，并限制其范围，以减少攻击者的可能性。可以使用防火墙等工具来限制端口范围。</li>
+<li>使用安全通信协议：Erlang 支持加密的通信协议，如 TLS，可以使用这些协议来确保通信的安全性。使用这些协议可以防止窃听和中间人攻击。</li>
+<li>使用访问控制列表：可以使用访问控制列表来限制哪些节点可以访问端口。这可以防止未经授权的访问，并减少攻击的可能性。</li>
+<li>更新 Erlang 版本：Erlang 的新版本通常包含安全更新和修复程序，因此请确保使用最新版本的 Erlang。</li>
+<li>使用安全的操作系统：Erlang 运行在操作系统上，因此使用安全的操作系统可以增加系统的安全性。</li>
+<li>遵循最佳实践：遵循安全最佳实践，如安全密码管理和多因素身份验证等，可以帮助保护分布式 Erlang 系统的安全。</li>
+</ol>
+<p>综上所述，要确保分布式 Erlang 端口的安全，需要采取多种措施，包括限制端口范围、使用安全通信协议、使用访问控制列表、更新 Erlang 版本、使用安全的操作系统以及遵循最佳实践。</p>
+<h4 id="centos打开所有端口"><a href="#centos打开所有端口" class="headerlink" title="centos打开所有端口"></a>centos打开所有端口</h4><p>在 CentOS 中打开所有端口并不是一种安全的做法，因为这将使您的系统容易受到网络攻击。然而，如果您确实需要打开所有端口，可以按照以下步骤进行操作：</p>
+<ol>
+<li><p>使用 root 用户登录系统。</p>
+</li>
+<li><p>修改防火墙规则，可以使用以下命令禁用防火墙：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">arduinoCopy codesystemctl stop firewalld</span><br><span class="line">systemctl disable firewalld</span><br></pre></td></tr></table></figure>
+
+<p>或者使用以下命令允许所有端口的流量通过：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cssCopy codeiptables -F</span><br><span class="line">iptables -A INPUT -j ACCEPT</span><br><span class="line">iptables -A OUTPUT -j ACCEPT</span><br></pre></td></tr></table></figure>
+
+<p>注意：上述命令将禁用 CentOS 中的防火墙，因此建议在必要时使用此方法，并在使用后重新启用防火墙以保护您的系统。</p>
+</li>
+<li><p>启用所有端口的流量，可以使用以下命令打开所有端口：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Copy code</span><br><span class="line">setenforce 0</span><br></pre></td></tr></table></figure>
+
+<p>或者修改 SELinux 配置文件 /etc/selinux/config 中的 SELINUX 参数，将其设置为 disabled，然后重新启动系统。</p>
+<p>注意：禁用 SELinux 将使系统更加容易受到攻击。因此，在必要时使用此方法，并在使用后重新启用 SELinux 以保护您的系统。</p>
+</li>
+</ol>
+<p>请注意，在打开所有端口之前，应该评估您的安全需求和风险，并采取适当的安全措施来保护您的系统和数据。</p>
+<h4 id="net-adm"><a href="#net-adm" class="headerlink" title="net_adm"></a>net_adm</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">net_adm:ping(&#x27;gandalf@www.server.com&#x27;).</span><br><span class="line">net_adm:ping(&#x27;gandalf@segandalf.server.com&#x27;).</span><br><span class="line"></span><br><span class="line">net_adm:ping(&#x27;ssvr@gandalf.server.com&#x27;).</span><br></pre></td></tr></table></figure>
+
+<h3 id="分布式编程"><a href="#分布式编程" class="headerlink" title="分布式编程"></a>分布式编程</h3><table>
+<thead>
+<tr>
+<th><strong>BIF</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>erlang:disconnect_node(Node)</td>
+<td>Forces the disconnection of a node.</td>
+</tr>
+<tr>
+<td>erlang:get_cookie()</td>
+<td>Returns the magic cookie of the current node.</td>
+</tr>
+<tr>
+<td>erlang:get_cookie(Node)</td>
+<td>Returns the magic cookie for node Node.</td>
+</tr>
+<tr>
+<td>is_alive()</td>
+<td>Returns true if the runtime system is a node and can connect to other nodes, false otherwise.</td>
+</tr>
+<tr>
+<td>monitor_node(Node, true|false)</td>
+<td>Monitors the status of Node. A message{nodedown, Node} is received if the connection to it is lost.</td>
+</tr>
+<tr>
+<td>node()</td>
+<td>Returns the name of the current node. Allowed in guards.</td>
+</tr>
+<tr>
+<td>node(Arg)</td>
+<td>Returns the node where Arg, a pid, reference, or port, is located.</td>
+</tr>
+<tr>
+<td>nodes()</td>
+<td>Returns a list of all visible nodes this node is connected to.</td>
+</tr>
+<tr>
+<td>nodes(Arg)</td>
+<td>Depending on Arg, this function can return a list not only of visible nodes, but also hidden nodes and previously known nodes, and so on.</td>
+</tr>
+<tr>
+<td>erlang:set_cookie(Cookie)</td>
+<td>Sets the magic cookie, Cookie to use when connecting all nodes that have no explicit cookie set with erlang:set_cookie/2.</td>
+</tr>
+<tr>
+<td>erlang:set_cookie(Node, Cookie)</td>
+<td>Sets the magic cookie used when connecting Node. If Node is the current node, Cookie is used when connecting all nodes that have no explicit cookie set with this function.</td>
+</tr>
+<tr>
+<td>spawn[_link|_opt](Node, Fun)</td>
+<td>Creates a process at a remote node.</td>
+</tr>
+<tr>
+<td>spawn[_link|opt](Node, Module, FunctionName, Args)</td>
+<td>Creates a process at a remote node.</td>
+</tr>
+</tbody></table>
+<h3 id="分布式编程的库和内置函数"><a href="#分布式编程的库和内置函数" class="headerlink" title="分布式编程的库和内置函数"></a>分布式编程的库和内置函数</h3><table>
+<thead>
+<tr>
+<th><strong>Module</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>global</td>
+<td>A global name registration facility.</td>
+</tr>
+<tr>
+<td>global_group</td>
+<td>Grouping nodes to global name registration groups.</td>
+</tr>
+<tr>
+<td>net_adm</td>
+<td>Various Erlang net administration routines.</td>
+</tr>
+<tr>
+<td>net_kernel</td>
+<td>Erlang networking kernel.</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th><strong>Module</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>slave</td>
+<td>Start and control of slave nodes.</td>
+</tr>
+</tbody></table>
+<h3 id="rpc"><a href="#rpc" class="headerlink" title="rpc"></a>rpc</h3><p>提供了许多远程过程调用服务</p>
+<ul>
+<li>call(Node, Module, Function, Args) -&gt; Res | {badrpc, Reason}</li>
+<li>call(Node, Module, Function, Args, Timeout) -&gt;<pre><code>Res | &#123;badrpc, Reason&#125;
+</code></pre>
+</li>
+<li>cast(Node, Module, Function, Args) -&gt; true</li>
+</ul>
+<h3 id="global"><a href="#global" class="headerlink" title="global"></a>global</h3><p>用来在分布式系统里注册名称和加锁，以及维护一个全连接网络。</p>
+<h3 id="global-group"><a href="#global-group" class="headerlink" title="global_group"></a>global_group</h3><h3 id="slave"><a href="#slave" class="headerlink" title="slave"></a>slave</h3><h2 id="基于套接字的分布式模型"><a href="#基于套接字的分布式模型" class="headerlink" title="基于套接字的分布式模型"></a>基于套接字的分布式模型</h2><p>适合在并非人人都可信的开放式环境中编写分布式程序。</p>
+<h2 id="端口"><a href="#端口" class="headerlink" title="端口"></a>端口</h2><h3 id="创建端口"><a href="#创建端口" class="headerlink" title="创建端口"></a>创建端口</h3><p>创建端口的进程被称为该端口的<strong>相连进程</strong>。相连进程有其特殊的重要性：所有发往端口的消息都必须标明相连进程的PID，所有来自外部程序的消息都会发往相连进程。</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">open_port</span><span class="params">(PortName, PortSettings)</span> -&gt;</span> port()</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>PortName<ul>
+<li>{spawn, Command}<br>启动一个<strong>外部程序</strong>。Command是这个外部程序的名称。除非能找到一个名为Command的内链驱动，否则Command会在Erlang工作空间之外运行。</li>
+<li>{fd, In, Out}<br>允许一个Erlang进程访问Erlang使用的任何当前打开<strong>文件描述符</strong>。文件描述符In可以用作标准输入，文件描述符Out可以用作标准输出</li>
+</ul>
+</li>
+<li>PortSettings<ul>
+<li>{packet, N}<br>数据包（packet）前面有N（1、2或4）个字节的长度计数。</li>
+<li>stream<br>发送消息时不带数据包长度信息。应用程序必须知道如何处理这些数据包。</li>
+<li>{line, Max}<br>发送消息时使用一次一行的形式。如果有一行超过了Max字节，就会在Max字节处被拆分。</li>
+<li>{cd, Dir}<br>只适用于{spawn, Command}选项。外部程序从Dir里启动。</li>
+<li>{env, Env}<br>只适用于{spawn, Command}选项。外部程序的环境通过Env列表里的环境变量进行扩展。<br>Env列表由若干个{VarName, Value}对组成，其中VarName和Value是字符串。</li>
+</ul>
+</li>
+</ul>
+<h3 id="端口通信"><a href="#端口通信" class="headerlink" title="端口通信"></a>端口通信</h3><p>相连进程通过发送和接收消息来和端口通信，向端口发送消息的格式如下：</p>
+<table>
+<thead>
+<tr>
+<th><strong>Message</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>{Pid,{command,Data}}</td>
+<td>Sends Data to the port.</td>
+</tr>
+<tr>
+<td>{Pid,close}</td>
+<td>Closes the port. Unless the port is already closed, the port replies with {Port,closed} when all buffers have been flushed and the port really closes.</td>
+</tr>
+<tr>
+<td>{Pid,{connect,NewPid}}</td>
+<td>Sets the port owner of Port to NewPid. Unless the port is already closed, the port replies with{Port,connected} to the old port owner. Note that the old port owner is still linked to the port, but the new port owner is not.</td>
+</tr>
+</tbody></table>
+<p>也可以通过BIF和端口进行通信</p>
+<table>
+<thead>
+<tr>
+<th><strong>Port BIF</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>port_command(Port,Data)</td>
+<td>Sends Data to the port.</td>
+</tr>
+<tr>
+<td>port_close(Port)</td>
+<td>Closes the port.</td>
+</tr>
+<tr>
+<td>port_connect(Port,NewPid)</td>
+<td>Sets the port owner of Portto NewPid. The old port owner Pid stays linked to the port and must call unlink(Port) if this is not desired.</td>
+</tr>
+<tr>
+<td>erlang:port_info(Port,Item)</td>
+<td>Returns information as specified by Item.</td>
+</tr>
+<tr>
+<td>erlang:ports()</td>
+<td>Returns a list of all ports on the current node.</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+    
+      <div>
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:24px;">（完）</div>
+    
+</div>
+      </div>
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/erlang/" rel="tag"># erlang</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/03/16/Linux/" rel="prev" title="Linux命令行基础使用">
+      <i class="fa fa-chevron-left"></i> Linux命令行基础使用
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/04/12/otp/" rel="next" title="otp">
+      otp <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#erlang%E5%9F%BA%E7%A1%80"><span class="nav-number">1.</span> <span class="nav-text">erlang基础</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#erlang%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">erlang简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.</span> <span class="nav-text">环境配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E7%AE%80%E4%BB%8B"><span class="nav-number">1.3.</span> <span class="nav-text">数据类型简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#term"><span class="nav-number">1.3.1.</span> <span class="nav-text">term</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB"><span class="nav-number">1.4.</span> <span class="nav-text">模式识别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Pattern-Expression"><span class="nav-number">1.4.1.</span> <span class="nav-text">Pattern &#x3D; Expression</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#calling-a-function"><span class="nav-number">1.4.2.</span> <span class="nav-text">calling a function</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.5.</span> <span class="nav-text">常用数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%9E%8B%E4%B8%8E%E4%BD%8D%E8%AF%AD%E6%B3%95"><span class="nav-number">1.5.1.</span> <span class="nav-text">二进制型与位语法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E7%BB%84"><span class="nav-number">1.5.2.</span> <span class="nav-text">元组</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8BIF"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">常用BIF</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E5%85%B8"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">字典</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%9E%E5%B9%B3%E8%A1%A1%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">1.5.2.3.</span> <span class="nav-text">非平衡二叉树</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B3%E8%A1%A1%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">1.5.2.4.</span> <span class="nav-text">平衡二叉树</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%97%E8%A1%A8"><span class="nav-number">1.5.3.</span> <span class="nav-text">列表</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%97%E8%A1%A8%E6%8E%A8%E5%AF%BC"><span class="nav-number">1.5.3.1.</span> <span class="nav-text">列表推导</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8BIF-1"><span class="nav-number">1.5.3.2.</span> <span class="nav-text">常用BIF</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lists%E6%A8%A1%E5%9D%97%E6%8F%90%E4%BE%9B%E7%9A%84%E5%B8%B8%E7%94%A8%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0"><span class="nav-number">1.5.3.3.</span> <span class="nav-text">lists模块提供的常用处理函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.5.3.4.</span> <span class="nav-text">字符串</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9B%86%E5%90%88sets"><span class="nav-number">1.5.3.5.</span> <span class="nav-text">集合sets</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%98%9F%E5%88%97"><span class="nav-number">1.5.3.6.</span> <span class="nav-text">队列</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%B0%E5%BD%95"><span class="nav-number">1.5.4.</span> <span class="nav-text">记录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%98%A0%E5%B0%84%E7%BB%84"><span class="nav-number">1.5.5.</span> <span class="nav-text">映射组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97"><span class="nav-number">1.5.6.</span> <span class="nav-text">数值运算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%AC%A6"><span class="nav-number">1.5.7.</span> <span class="nav-text">操作符</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.6.</span> <span class="nav-text">类型系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%A4%BA"><span class="nav-number">1.7.</span> <span class="nav-text">类型的表示</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E5%A3%B0%E6%98%8E"><span class="nav-number">1.7.1.</span> <span class="nav-text">类型声明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E8%A7%84%E8%8C%83"><span class="nav-number">1.7.2.</span> <span class="nav-text">类型规范</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%BC%E5%87%BA%E7%B1%BB%E5%9E%8B%E5%92%8C%E6%9C%AC%E5%9C%B0%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.7.3.</span> <span class="nav-text">导出类型和本地类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dialyzer"><span class="nav-number">1.8.</span> <span class="nav-text">dialyzer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">1.9.</span> <span class="nav-text">表达式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#case%E5%92%8Cif%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">1.9.1.</span> <span class="nav-text">case和if表达式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9D%97%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">1.9.2.</span> <span class="nav-text">块表达式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%83%E5%B0%94%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">1.9.3.</span> <span class="nav-text">布尔表达式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9F%AD%E8%B7%AF%E5%B8%83%E5%B0%94%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">1.9.4.</span> <span class="nav-text">短路布尔表达式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%83%AD%E6%9B%B4%E6%96%B0%E5%92%8C%E5%8A%A8%E6%80%81%E4%BB%A3%E7%A0%81%E8%BD%BD%E5%85%A5"><span class="nav-number">1.10.</span> <span class="nav-text">热更新和动态代码载入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E5%8D%A1"><span class="nav-number">1.11.</span> <span class="nav-text">关卡</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0"><span class="nav-number">1.12.</span> <span class="nav-text">函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#fun%EF%BC%9A%E5%9F%BA%E6%9C%AC%E7%9A%84%E6%8A%BD%E8%B1%A1%E5%8D%95%E5%85%83"><span class="nav-number">1.12.1.</span> <span class="nav-text">fun：基本的抽象单元</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A5fun%E4%BD%9C%E4%B8%BA%E5%8F%82%E6%95%B0%E7%9A%84%E5%87%BD%E6%95%B0"><span class="nav-number">1.12.2.</span> <span class="nav-text">以fun作为参数的函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%94%E5%9B%9Efun%E7%9A%84%E5%87%BD%E6%95%B0"><span class="nav-number">1.12.3.</span> <span class="nav-text">返回fun的函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E6%8E%A7%E5%88%B6%E6%8A%BD%E8%B1%A1"><span class="nav-number">1.12.4.</span> <span class="nav-text">定义控制抽象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E5%9D%97%E3%80%81%E7%BC%96%E8%AF%91%E5%92%8C%E9%A2%84%E5%A4%84%E7%90%86%E5%99%A8"><span class="nav-number">1.13.</span> <span class="nav-text">模块、编译和预处理器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%92%8C%E8%BF%90%E8%A1%8C%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.14.</span> <span class="nav-text">编译和运行程序</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">并发编程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E5%92%8C%E6%8E%A5%E6%94%B6%E6%B6%88%E6%81%AF"><span class="nav-number">2.1.</span> <span class="nav-text">发送和接收消息</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A5%E6%94%B6%E9%AB%98%E7%BA%A7%E9%80%89%E9%A1%B9"><span class="nav-number">2.1.1.</span> <span class="nav-text">接收高级选项</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E6%B3%A8%E5%86%8C"><span class="nav-number">2.2.</span> <span class="nav-text">进程注册</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E5%88%AB%E5%90%8D"><span class="nav-number">2.3.</span> <span class="nav-text">进程别名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E5%AD%97%E5%85%B8"><span class="nav-number">2.4.</span> <span class="nav-text">进程字典</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">错误处理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">3.1.</span> <span class="nav-text">错误的分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Catch-and-Throw"><span class="nav-number">3.2.</span> <span class="nav-text">Catch and Throw</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E7%A8%8B%E5%BA%8F%E4%B8%AD%E7%9A%84%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-number">3.3.</span> <span class="nav-text">并发程序中的错误处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7"><span class="nav-number">3.3.1.</span> <span class="nav-text">信号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%93%BE%E6%8E%A5"><span class="nav-number">3.3.2.</span> <span class="nav-text">链接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7Monitors"><span class="nav-number">3.3.3.</span> <span class="nav-text">监控Monitors</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E5%92%8C%E9%87%8D%E5%90%AF"><span class="nav-number">3.3.4.</span> <span class="nav-text">修复和重启</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F"><span class="nav-number">4.</span> <span class="nav-text">分布式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BD%95%E4%BD%BF%E7%94%A8%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F"><span class="nav-number">4.1.</span> <span class="nav-text">为何使用分布式系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8Ferlang"><span class="nav-number">4.2.</span> <span class="nav-text">分布式erlang</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E8%8A%82%E7%82%B9"><span class="nav-number">4.2.1.</span> <span class="nav-text">创建节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E8%8A%82%E7%82%B9"><span class="nav-number">4.2.2.</span> <span class="nav-text">连接节点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8Ferlang%E7%AB%AF%E5%8F%A3%E5%AE%89%E5%85%A8"><span class="nav-number">4.2.2.1.</span> <span class="nav-text">分布式erlang端口安全</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#centos%E6%89%93%E5%BC%80%E6%89%80%E6%9C%89%E7%AB%AF%E5%8F%A3"><span class="nav-number">4.2.2.2.</span> <span class="nav-text">centos打开所有端口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#net-adm"><span class="nav-number">4.2.2.3.</span> <span class="nav-text">net_adm</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%96%E7%A8%8B"><span class="nav-number">4.2.3.</span> <span class="nav-text">分布式编程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%96%E7%A8%8B%E7%9A%84%E5%BA%93%E5%92%8C%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0"><span class="nav-number">4.2.4.</span> <span class="nav-text">分布式编程的库和内置函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rpc"><span class="nav-number">4.2.5.</span> <span class="nav-text">rpc</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#global"><span class="nav-number">4.2.6.</span> <span class="nav-text">global</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#global-group"><span class="nav-number">4.2.7.</span> <span class="nav-text">global_group</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#slave"><span class="nav-number">4.2.8.</span> <span class="nav-text">slave</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E5%A5%97%E6%8E%A5%E5%AD%97%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E6%A8%A1%E5%9E%8B"><span class="nav-number">4.3.</span> <span class="nav-text">基于套接字的分布式模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AB%AF%E5%8F%A3"><span class="nav-number">4.4.</span> <span class="nav-text">端口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E7%AB%AF%E5%8F%A3"><span class="nav-number">4.4.1.</span> <span class="nav-text">创建端口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AB%AF%E5%8F%A3%E9%80%9A%E4%BF%A1"><span class="nav-number">4.4.2.</span> <span class="nav-text">端口通信</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Honghangzhi"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Honghangzhi</p>
+  <div class="site-description" itemprop="description">不积跬步，无以千里</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Honghangzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'Wk2wsEFrasa9yOsstHf3YRlp-gzGzoHsz',
+      appKey     : 'zKA4ww3CAjsjGZ52EFJPkpRn',
+      placeholder: "欢迎交流讨论...",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
