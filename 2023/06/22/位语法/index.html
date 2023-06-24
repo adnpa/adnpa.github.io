@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10000,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="二进制型与位语法（bit-syntax）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="二进制型与位语法">
+<meta property="og:url" content="http://example.com/2023/06/22/%E4%BD%8D%E8%AF%AD%E6%B3%95/index.html">
+<meta property="og:site_name" content="HZ&#39;Blog">
+<meta property="og:description" content="二进制型与位语法（bit-syntax）">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-06-22T15:05:11.000Z">
+<meta property="article:modified_time" content="2023-06-24T21:09:27.570Z">
+<meta property="article:author" content="Honghangzhi">
+<meta property="article:tag" content="erlang">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2023/06/22/%E4%BD%8D%E8%AF%AD%E6%B3%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>二进制型与位语法 | HZ'Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">HZ'Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/22/%E4%BD%8D%E8%AF%AD%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Honghangzhi">
+      <meta itemprop="description" content="不积跬步，无以千里">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HZ'Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          二进制型与位语法
+        </h1>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-06-22 23:05:11" itemprop="dateCreated datePublished" datetime="2023-06-22T23:05:11+08:00">2023-06-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-06-25 05:09:27" itemprop="dateModified" datetime="2023-06-25T05:09:27+08:00">2023-06-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                  <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                    <a href="/categories/%E7%BC%96%E7%A8%8B/erlang/" itemprop="url" rel="index"><span itemprop="name">erlang</span></a>
+                  </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/06/22/%E4%BD%8D%E8%AF%AD%E6%B3%95/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/06/22/%E4%BD%8D%E8%AF%AD%E6%B3%95/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>二进制型与位语法（bit-syntax）<span id="more"></span></p>
+<p>[<a target="_blank" rel="noopener" href="https://www.erlang.org/doc/reference_manual/expressions.html#bit_syntax">https://www.erlang.org/doc/reference_manual/expressions.html#bit_syntax</a></p>
+<h1 id="二进制型"><a href="#二进制型" class="headerlink" title="二进制型"></a>二进制型</h1><p>二进制型就是由尖括号 <strong>&lt;&lt;** 和 **&gt;&gt;</strong> 包围的整数（0-255）或字符串。</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">6</span>&gt; &lt;&lt;<span class="number">1</span>,<span class="string">&quot;abc&quot;</span>&gt;&gt;.     </span><br><span class="line">&lt;&lt;<span class="number">1</span>,<span class="number">97</span>,<span class="number">98</span>,<span class="number">99</span>&gt;&gt;</span><br><span class="line"><span class="number">7</span>&gt; &lt;&lt;<span class="number">256</span>,<span class="string">&quot;abc&quot;</span>&gt;&gt;. </span><br><span class="line">&lt;&lt;<span class="number">0</span>,<span class="number">97</span>,<span class="number">98</span>,<span class="number">99</span>&gt;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>IoList是包含字符列表和二进制型的列表，可以嵌套来标识复杂的结构</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">5&gt; [&quot;hello&quot;, [32], &lt;&lt;&quot;world&quot;&gt;&gt;].</span><br><span class="line">[&quot;hello&quot;,&quot; &quot;,&lt;&lt;&quot;world&quot;&gt;&gt;]</span><br><span class="line">6&gt; iolist_to_binary([&quot;hello&quot;, [32], &lt;&lt;&quot;world&quot;&gt;&gt;]). </span><br><span class="line">&lt;&lt;&quot;hello world&quot;&gt;&gt;</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/iteye_13453/article/details/82343274">https://blog.csdn.net/iteye_13453/article/details/82343274</a></p>
+<p>BIF</p>
+<ul>
+<li><p>list_to_binary(IoList) -&gt; binary()<br>将IOList拍扁为一个大二进制数据</p>
+</li>
+<li><p>split_binary(Bin, Pos) -&gt; {binary(), binary()}</p>
+</li>
+<li><p>term_to_binary(Term) -&gt; ext_binary()</p>
+</li>
+<li><p>term_to_binary(Term, Options) -&gt; ext_binary()</p>
+</li>
+<li><p>binary_to_term(Binary) -&gt; term()</p>
+</li>
+<li><p>binary_to_term(Binary, Opts) -&gt; term() | {term(), Used}</p>
+</li>
+<li><p>bit_size(Bitstring) -&gt; integer() &gt;= 0<br>返回所占字节数</p>
+</li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 创建包含两个字节的二进制</span></span><br><span class="line">&lt;&lt;<span class="number">16</span>, <span class="number">32</span>&gt;&gt;.</span><br><span class="line"></span><br><span class="line"><span class="comment">% 创建包含字符 &#x27;A&#x27; 和 &#x27;B&#x27; 的二进制</span></span><br><span class="line">&lt;&lt;<span class="number">65</span>, <span class="number">66</span>&gt;&gt;.</span><br><span class="line">&lt;&lt;$A, $B&gt;&gt;.  <span class="comment">% 使用字符表示</span></span><br><span class="line"><span class="comment">%  &lt;&lt;&quot;abc&quot;&gt;&gt;实际上是 `&lt;&lt;$a,$b,$c&gt;&gt;`的语法糖</span></span><br><span class="line"></span><br><span class="line"><span class="comment">% 创建包含字符串 &quot;Hello&quot; 的二进制</span></span><br><span class="line">&lt;&lt;<span class="string">&quot;Hello&quot;</span>&gt;&gt;.</span><br><span class="line"></span><br><span class="line"><span class="comment">% 嵌套二进制</span></span><br><span class="line">&lt;&lt;<span class="number">1</span>, &lt;&lt;<span class="number">2</span>, <span class="number">3</span>&gt;&gt;, <span class="number">4</span>&gt;&gt;.</span><br><span class="line"></span><br><span class="line"><span class="comment">% 创建具有变量的二进制</span></span><br><span class="line">Value = <span class="number">42</span>,</span><br><span class="line">&lt;&lt;Value&gt;&gt;.</span><br><span class="line"></span><br><span class="line"><span class="comment">% 创建二进制的部分片段</span></span><br><span class="line">Binary = &lt;&lt;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&gt;&gt;,</span><br><span class="line">SubBinary = &lt;&lt;Binary/binary, <span class="number">3</span>:<span class="number">1</span>&gt;&gt;.  <span class="comment">% 从 Binary 的第 3 字节开始，取 1 字节</span></span><br><span class="line"></span><br><span class="line"><span class="comment">% 对应大于255的整数似乎会截断</span></span><br><span class="line"><span class="number">1</span>&gt; byte_size(&lt;&lt;<span class="number">999999999999999999999999999999999999999999999999999999999999999</span>&gt;&gt;).   </span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">2</span>&gt; byte_size(term_to_binary(<span class="number">999999999999999999999999999999999999999999999999999999999999999</span>)). </span><br><span class="line"><span class="number">31</span></span><br><span class="line"><span class="comment">%</span></span><br><span class="line"><span class="number">3</span>&gt; split_binary(list_to_binary(<span class="string">&quot;0123456789&quot;</span>),<span class="number">3</span>). </span><br><span class="line">&#123;&lt;&lt;<span class="string">&quot;012&quot;</span>&gt;&gt;,&lt;&lt;<span class="string">&quot;3456789&quot;</span>&gt;&gt;&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：二进制是<strong>不可变</strong>的数据类型，一旦创建，就不能直接修改其中的字节或位。但可以使用模式匹配和一些函数来提取和处理二进制数据。<br> 操作二进制型，可以使用以下两种方式： </p>
+<ul>
+<li> 内置函数 </li>
+<li> 位语法 </li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">%X占3位 Y占7位 Z占6位 共16位</span></span><br><span class="line">M = &lt;&lt;X:<span class="number">3</span>, Y:<span class="number">7</span>, Z:<span class="number">6</span>&gt;&gt;.</span><br><span class="line"></span><br><span class="line">Red=<span class="number">2</span>.</span><br><span class="line">Green=<span class="number">61</span>.</span><br><span class="line">Blue=<span class="number">20</span>.</span><br><span class="line">Mem=&lt;&lt;Red:<span class="number">5</span>,Green:<span class="number">6</span>,Blue:<span class="number">5</span>&gt;&gt;.</span><br><span class="line">&lt;&lt;R1:<span class="number">5</span>,G2:<span class="number">6</span>,B3:<span class="number">5</span>&gt;&gt;=Mem.</span><br><span class="line">binary作为**模式**时，没有指定size的binary必须放在最后，&lt;&lt;Char, Rest/binary&gt;&gt;</span><br><span class="line">用于构造二进制型时，binary可以在任意位置，&lt;&lt;Acc/binary, Char&gt;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>type还是建议标上，否则容易发生segment的格式错误</p>
+<p>关于位数有以下几种</p>
+<ul>
+<li>bit_size(Bitstring)<br>字节数乘以八</li>
+<li>byte_size(Bitstring)</li>
+<li>iolist_size(Item)</li>
+<li>map_size(Map)</li>
+<li>size(Item) -&gt; integer() &gt;= 0<br>返回字节数</li>
+</ul>
+<h1 id="位语法"><a href="#位语法" class="headerlink" title="位语法"></a>位语法</h1><p>用于从二进制数据里<strong>提取</strong>或<strong>加入</strong>单独的位或者位串，语法如下：</p>
+<p>位串由一系列的段（segment）组成，每个segment用逗号 <strong>,</strong> 分隔。<br>segment的表示如下，size和type是可选的：</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;&lt;E1,...,En&gt;&gt;</span><br><span class="line"></span><br><span class="line">Ei = Value |</span><br><span class="line">     Value:Size |</span><br><span class="line">     Value/TypeSpecifierList |</span><br><span class="line">     Value:Size/TypeSpecifierList</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>整数段<br>bit=size*units<br>高位会被截断，<code>&lt;&lt;16#ff:4&gt;&gt;</code>变成<code>&lt;&lt;15:4&gt;&gt;</code></p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;&lt;<span class="number">1</span>:<span class="number">1</span>, <span class="number">0</span>:<span class="number">7</span>&gt;&gt;.</span><br></pre></td></tr></table></figure></li>
+<li><p>浮点段<br>bits=size*units，size必须是16,32,64<br>构造位串时<br>位串匹配时</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">21</span>&gt; &lt;&lt;<span class="number">3.14159</span>:<span class="number">64</span>/float&gt;&gt;.</span><br><span class="line">&lt;&lt;<span class="number">64</span>,<span class="number">9</span>,<span class="number">33</span>,<span class="number">249</span>,<span class="number">240</span>,<span class="number">27</span>,<span class="number">134</span>,<span class="number">110</span>&gt;&gt;</span><br><span class="line"><span class="number">23</span>&gt; &lt;&lt;<span class="number">3.14159</span>:<span class="number">64</span>/float&gt;&gt; =:= &lt;&lt;<span class="number">3.14159</span>:<span class="number">64</span>/float&gt;&gt;. </span><br><span class="line"><span class="literal">true</span></span><br></pre></td></tr></table></figure></li>
+<li><p>二进制段<br>type可以是binary, bitstring, bytes, and bits任意一种<br>binary类型长度必须是整字节</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>&gt; &lt;&lt;(&lt;&lt;<span class="string">&quot;abc&quot;</span>&gt;&gt;)/bitstring&gt;&gt;.</span><br><span class="line">&lt;&lt;<span class="string">&quot;abc&quot;</span>&gt;&gt;</span><br><span class="line"><span class="number">2</span>&gt; &lt;&lt;(&lt;&lt;<span class="string">&quot;abc&quot;</span>&gt;&gt;)/binary-unit:<span class="number">1</span>&gt;&gt;.</span><br><span class="line">&lt;&lt;<span class="string">&quot;abc&quot;</span>&gt;&gt;</span><br><span class="line"><span class="number">3</span>&gt; &lt;&lt;(&lt;&lt;<span class="string">&quot;abc&quot;</span>&gt;&gt;)/binary&gt;&gt;.</span><br><span class="line">&lt;&lt;<span class="string">&quot;abc&quot;</span>&gt;&gt;</span><br><span class="line"></span><br><span class="line"><span class="number">1</span>&gt; &lt;&lt;(&lt;&lt;<span class="number">1</span>:<span class="number">1</span>&gt;&gt;)/binary&gt;&gt;.</span><br><span class="line">** exception error: bad argument</span><br><span class="line"><span class="number">2</span>&gt; &lt;&lt;(&lt;&lt;<span class="number">1</span>:<span class="number">1</span>&gt;&gt;)/bitstring&gt;&gt;.</span><br><span class="line">&lt;&lt;<span class="number">1</span>:<span class="number">1</span>&gt;&gt;</span><br></pre></td></tr></table></figure></li>
+<li><p>Unicode段<br>type为utf8, utf16, and utf32</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">  </span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>TODO：具体使用还是不熟悉</p>
+<h1 id="位串"><a href="#位串" class="headerlink" title="位串"></a>位串</h1><p>位串（bitstring），位数不是8的整数倍的二进制型，可用于简化网络编程</p>
+<p>获取size</p>
+<ul>
+<li>bit_size(Bitstring) -&gt; integer() &gt;= 0<br>返回比特数</li>
+<li>byte_size(Bitstring) -&gt; integer() &gt;= 0<br>返回字节数</li>
+<li>size(Item) -&gt; integer() &gt;= 0<br>获取元组或binary中的字节数</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    
+      <div>
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:24px;">（完）</div>
+    
+</div>
+      </div>
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/erlang/" rel="tag"># erlang</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/06/22/Erlang%E8%BF%90%E8%A1%8C%E8%BF%87%E7%A8%8B/" rel="prev" title="erlang运行过程">
+      <i class="fa fa-chevron-left"></i> erlang运行过程
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/06/23/%E5%B9%B6%E5%8F%91%E5%92%8C%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%96%E7%A8%8B/" rel="next" title="并发和分布式编程">
+      并发和分布式编程 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">二进制型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%8D%E8%AF%AD%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">位语法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%8D%E4%B8%B2"><span class="nav-number">3.</span> <span class="nav-text">位串</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Honghangzhi"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Honghangzhi</p>
+  <div class="site-description" itemprop="description">不积跬步，无以千里</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Honghangzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'Wk2wsEFrasa9yOsstHf3YRlp-gzGzoHsz',
+      appKey     : 'zKA4ww3CAjsjGZ52EFJPkpRn',
+      placeholder: "欢迎交流讨论...",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

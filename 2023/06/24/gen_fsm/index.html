@@ -21,20 +21,20 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10000,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="介绍四大行为模式之一的gen_server">
+  <meta name="description" content="介绍四大行为模式之一的gen_fsm">
 <meta property="og:type" content="article">
-<meta property="og:title" content="gen_server">
-<meta property="og:url" content="http://example.com/2023/04/12/gen_server/index.html">
+<meta property="og:title" content="gen_fsm">
+<meta property="og:url" content="http://example.com/2023/06/24/gen_fsm/index.html">
 <meta property="og:site_name" content="HZ&#39;Blog">
-<meta property="og:description" content="介绍四大行为模式之一的gen_server">
+<meta property="og:description" content="介绍四大行为模式之一的gen_fsm">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-04-12T15:20:59.000Z">
-<meta property="article:modified_time" content="2023-06-24T16:23:52.579Z">
+<meta property="article:published_time" content="2023-06-24T14:20:59.000Z">
+<meta property="article:modified_time" content="2023-06-24T21:10:40.550Z">
 <meta property="article:author" content="Honghangzhi">
 <meta property="article:tag" content="erlang">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/2023/04/12/gen_server/">
+<link rel="canonical" href="http://example.com/2023/06/24/gen_fsm/">
 
 
 <script id="page-configurations">
@@ -47,7 +47,7 @@
   };
 </script>
 
-  <title>gen_server | HZ'Blog</title>
+  <title>gen_fsm | HZ'Blog</title>
   
 
 
@@ -195,7 +195,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/12/gen_server/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/24/gen_fsm/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -208,7 +208,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          gen_server
+          gen_fsm
         </h1>
 
         <div class="post-meta">
@@ -220,14 +220,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2023-04-12 23:20:59" itemprop="dateCreated datePublished" datetime="2023-04-12T23:20:59+08:00">2023-04-12</time>
+              <time title="创建时间：2023-06-24 22:20:59" itemprop="dateCreated datePublished" datetime="2023-06-24T22:20:59+08:00">2023-06-24</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-06-25 00:23:52" itemprop="dateModified" datetime="2023-06-25T00:23:52+08:00">2023-06-25</time>
+                <time title="修改时间：2023-06-25 05:10:40" itemprop="dateModified" datetime="2023-06-25T05:10:40+08:00">2023-06-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -248,8 +248,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2023/04/12/gen_server/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/04/12/gen_server/" itemprop="commentCount"></span>
+    <a title="valine" href="/2023/06/24/gen_fsm/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/06/24/gen_fsm/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -259,14 +259,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.2k</span>
+              <span>324</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>1 分钟</span>
             </span>
 
         </div>
@@ -278,128 +278,36 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>介绍四大行为模式之一的gen_server</p>
+        <p>介绍四大行为模式之一的gen_fsm</p>
 <span id="more"></span>
 
-<p>gen_server用于实现客户端/服务器模型，代码包括三部分：api，回调函数，实现函数（Internal functions）</p>
-<p>回调模块的编写步骤：</p>
-<ol>
-<li><p>确定回调模块名。</p>
-</li>
-<li><p>编写接口函数。</p>
-</li>
-<li><p>在回调模块里编写六个必需的回调函数。</p>
+<p><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/design_principles/statem.html">Erlang – gen_statem Behaviour</a></p>
+<h1 id="实现fsm"><a href="#实现fsm" class="headerlink" title="实现fsm"></a>实现fsm</h1><p>FSM （有限状态机）是一种抽象模型，它由有限数量的状态（ state ）以及事件（ event ）构成。当程序处于各个状态时，它可以从环境中接收一些特定的事件一一井且只接收这些事件。当事件抵达，而FSM 处于特定的状态时， 程序就会执行一些与当前状态对应的预先决定好的动作，使得当前状态转移为另一个新的状态。然后FSM 以此新状态、等待下一个新的事件。</p>
+<p>在Erlang中，每个状态（ state ）以一个内含<strong>尾递归</strong>的函数表示，而事件（ event ）则以<strong>消息</strong>（ message ）表示。</p>
+<p>实例</p>
 <ul>
-<li><p>init 服务器初始化</p>
-</li>
-<li><p>handle_call 处理同步请求</p>
-</li>
-<li><p>handle_cast 处理异步请求</p>
-</li>
-<li><p>handle_info 处理其他请求时必须实现</p>
-</li>
-<li><p>terminate 终止服务器</p>
-</li>
-<li><p>code_change 处理其他请求时必须实现</p>
+<li>状态<ul>
+<li>白天<ul>
+<li>事件<ul>
+<li>eclipse</li>
+<li>sunset</li>
+</ul>
 </li>
 </ul>
 </li>
-<li><p>回调函数更多是处理请求的发送和回复，具体的逻辑要编写一些私有函数（Internal functions）来实现。</p>
+<li>黑夜<ul>
+<li>事件<ul>
+<li>sunrise</li>
+</ul>
 </li>
-</ol>
-<p>面积服务器例子如下：</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">%%% API</span></span><br><span class="line"><span class="function"><span class="title">area</span><span class="params">(Thing)</span> -&gt;</span></span><br><span class="line">  gen_server:call(?MODULE, &#123;area, Thing&#125;).</span><br><span class="line"><span class="comment">%%% Spawning and gen_server implementation</span></span><br><span class="line"><span class="function"><span class="title">handle_call</span><span class="params">(&#123;area, Thing&#125;, _From, N)</span> -&gt;</span></span><br><span class="line">  &#123;reply, compute_area(Thing), N + <span class="number">1</span>&#125;.</span><br><span class="line"><span class="comment">%%% Internal functions</span></span><br><span class="line"><span class="function"><span class="title">compute_area</span><span class="params">(&#123;square, X&#125;)</span> -&gt;</span> X * X;</span><br><span class="line"><span class="function"><span class="title">compute_area</span><span class="params">(&#123;rectangle, X, Y&#125;)</span> -&gt;</span> X * Y.</span><br></pre></td></tr></table></figure>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">day</span><span class="params">()</span> -&gt;</span></span><br><span class="line">    <span class="keyword">receive</span></span><br><span class="line">	eclipse -&gt; day();</span><br><span class="line">	sunset  -&gt; night()</span><br><span class="line">    <span class="keyword">end</span>.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">night</span><span class="params">()</span> -&gt;</span></span><br><span class="line">    <span class="keyword">receive</span></span><br><span class="line">	sunrise -&gt;</span><br><span class="line">	    make_roosters_crow(),</span><br><span class="line">	    day()</span><br><span class="line">    <span class="keyword">end</span>.</span><br></pre></td></tr></table></figure>
 
-<h3 id="启动gen-server"><a href="#启动gen-server" class="headerlink" title="启动gen_server"></a>启动gen_server</h3><ul>
-<li><p><strong>start</strong><br>启动独立（standalone ）的gen_server，不包括在监督树的一部分。</p>
-<ul>
-<li>start(Module :: module(),<pre><code>Args :: term(),
-Options :: [start_opt()]) -&gt;
-   start_ret()
-</code></pre>
-</li>
-<li>start(ServerName :: server_name(),<pre><code>Module :: module(),
-Args :: term(),
-Options :: [start_opt()]) -&gt;
-   start_ret()
-</code></pre>
-</li>
-</ul>
-</li>
-<li><p><strong>start_link</strong><br>启动一个在监控树中的gen_server，这个函数应该直接或间接<strong>被supervision调用</strong></p>
-<ul>
-<li><p>start_link(Module :: module(),</p>
-<pre><code>Args :: term(),
-Options :: [start_opt()]) -&gt;
-   start_ret()
-</code></pre>
-</li>
-<li><p>start_link(ServerName :: server_name(),</p>
-<pre><code>Module :: module(),
-Args :: term(),
-Options :: [start_opt()]) -&gt;
-   start_ret()
-</code></pre>
-<ul>
-<li><p>按Name 指定的别名把进程注册到本地。</p>
-</li>
-<li><p>Mod 是回调模块的名字，其中应当包含各种回调函数以及与server相关的代码</p>
-</li>
-<li><p>Args 是一个Erlang 数据项 ，会被传递给相应的callback 函数用于初始化server 状态。</p>
-</li>
-<li><p>Opts 是一个列表，其中包括与进程和调试相关的各种选项</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><ul>
-<li><p>Module:init(Args) -&gt; Result</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Args = term()</span><br><span class="line">Result = &#123;ok,State&#125;</span><br><span class="line">  | &#123;ok,State,Timeout&#125;</span><br><span class="line">  | &#123;ok,State,hibernate&#125;</span><br><span class="line">  | &#123;ok,State,&#123;continue,Continue&#125;&#125;</span><br><span class="line">  | &#123;stop,Reason&#125;</span><br><span class="line">  | ignore</span><br><span class="line"> State = term()</span><br><span class="line"> Timeout = timeout()</span><br><span class="line"> Reason = term()</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="同步请求"><a href="#同步请求" class="headerlink" title="同步请求"></a>同步请求</h3><p>实现远程过程调用，将所有的数据包装成Request来发送</p>
-<ul>
-<li>call(ServerRef :: server_ref(), Request :: term()) -&gt;<pre><code>Reply :: term()
-</code></pre>
-</li>
-<li>call(ServerRef :: server_ref(), Request :: term(), Timeout :: timeout()) -&gt;<pre><code>Reply :: term()
-</code></pre>
-</li>
-<li>Module:handle_call(Request, From, State) -&gt; Result</li>
-</ul>
-<p>复杂程度更高的应用程序经常会让gen_server回复一个noreply返回值，并把真正的回复任务委派给另一个进程。要了解更多这方面的信息，请阅读“Design Principles”①（设计原则）文档，以及sys和proc_lib模块的手册页。</p>
-<h3 id="异步请求"><a href="#异步请求" class="headerlink" title="异步请求"></a>异步请求</h3><p>实现了一个播发（cast），也就是没有返回值的调用（实<br>际上就是一个消息，但习惯上称它为播发来与远程过程调用相区分）。异步请求是<strong>不期待回应</strong>的，因此handle_cast没有From参数。</p>
-<ul>
-<li>cast(ServerRef :: server_ref(), Request :: term()) -&gt; ok</li>
-<li>Module:handle_cast(Request, State) -&gt; Result<ul>
-<li>返回<ul>
-<li>{noreply, NewState} 改变服务器状态</li>
-<li>{stop, …} 停止服务器</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="处理自发性消息"><a href="#处理自发性消息" class="headerlink" title="处理自发性消息"></a>处理自发性消息</h3><p>回调函数handle_info(Info, State)被用来处理发给服务器的自发性消息。自发性消息是一切未经显式调用gen_server:call或gen_server:cast而到达服务器的消息。</p>
-<ul>
-<li>Module:handle_info(Info, State) -&gt; Result</li>
-</ul>
-<h3 id="热更新"><a href="#热更新" class="headerlink" title="热更新"></a>热更新</h3><ul>
-<li>Module:code_change(OldVsn, State, Extra) -&gt; {ok, NewState} | {error, Reason}</li>
-</ul>
-<h3 id="停止gen-server"><a href="#停止gen-server" class="headerlink" title="停止gen_server"></a>停止gen_server</h3><p>若gen_server是监控树的一部分，不需要关闭，由监控者的关闭策略来关闭。</p>
-<p>如果是独立的gen_server，使用terminate函数关闭</p>
-<ul>
-<li>Module:terminate(Reason, State)</li>
-</ul>
-<p>当我们从单个服务器转向系统时，就会用到很多服务器。我们希望能以一致的方式监视它们、重启退出的服务器以及记录错误。这就是下一章的主题</p>
-<p>构建系统</p>
-<ul>
-<li>当服务器崩溃时，需要一种机制来检测这种情况并重启它，为此将用到监控树（supervisiontree）这个概念。创建一个<strong>监控</strong>器来管理服务器，如果服务器崩溃就重启它们。</li>
-<li>如果服务器确实崩溃了，我们希望知道它崩溃的原因，这样就能在未来修复这个问题。<br>为了记录所有错误，可以使用OTP的错误记录器。我们会展示<strong>如何配置错误记录器</strong>，以及如何根据错误日志生成错误报告。</li>
-<li>计算质数（特别是大质数）时，CPU可能会过热，这就需要开启一个强力风扇来避免这种情况。要做到这一点，需要考虑警报。我们会用OTP<strong>事件处理框架</strong>来生成和处理警报</li>
-</ul>
+<h1 id="gen-statem"><a href="#gen-statem" class="headerlink" title="gen_statem"></a>gen_statem</h1><p>TODO</p>
 
     </div>
 
@@ -428,13 +336,10 @@ Options :: [start_opt()]) -&gt;
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2021/07/22/%E4%BD%BF%E7%94%A8Hexo%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/" rel="prev" title="使用 Hexo 和 Github Pages 搭建博客">
-      <i class="fa fa-chevron-left"></i> 使用 Hexo 和 Github Pages 搭建博客
+    <a href="/2023/06/24/gen_server/" rel="prev" title="gen_server">
+      <i class="fa fa-chevron-left"></i> gen_server
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2023/06/22/Linux%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/" rel="next" title="Linux系统监控">
-      Linux系统监控 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -494,7 +399,7 @@ Options :: [start_opt()]) -&gt;
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8gen-server"><span class="nav-number">1.</span> <span class="nav-text">启动gen_server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">2.</span> <span class="nav-text">初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E8%AF%B7%E6%B1%82"><span class="nav-number">3.</span> <span class="nav-text">同步请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E8%AF%B7%E6%B1%82"><span class="nav-number">4.</span> <span class="nav-text">异步请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E8%87%AA%E5%8F%91%E6%80%A7%E6%B6%88%E6%81%AF"><span class="nav-number">5.</span> <span class="nav-text">处理自发性消息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%83%AD%E6%9B%B4%E6%96%B0"><span class="nav-number">6.</span> <span class="nav-text">热更新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%81%9C%E6%AD%A2gen-server"><span class="nav-number">7.</span> <span class="nav-text">停止gen_server</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0fsm"><span class="nav-number">1.</span> <span class="nav-text">实现fsm</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#gen-statem"><span class="nav-number">2.</span> <span class="nav-text">gen_statem</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -510,7 +415,7 @@ Options :: [start_opt()]) -&gt;
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
