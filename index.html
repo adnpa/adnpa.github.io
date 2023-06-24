@@ -191,7 +191,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/23/%E5%88%97%E8%A1%A8%E5%92%8C%E5%85%83%E7%BB%84/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/23/%E5%B9%B6%E5%8F%91%E5%92%8C%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%96%E7%A8%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -205,7 +205,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2023/06/23/%E5%88%97%E8%A1%A8%E5%92%8C%E5%85%83%E7%BB%84/" class="post-title-link" itemprop="url">列表和元组</a>
+            <a href="/2023/06/23/%E5%B9%B6%E5%8F%91%E5%92%8C%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%96%E7%A8%8B/" class="post-title-link" itemprop="url">erlang并发和分布式编程</a>
         </h2>
 
         <div class="post-meta">
@@ -216,17 +216,23 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2023-06-23 16:30:11 / 修改时间：16:31:04" itemprop="dateCreated datePublished" datetime="2023-06-23T16:30:11+08:00">2023-06-23</time>
+              <time title="创建时间：2023-06-23 16:30:11" itemprop="dateCreated datePublished" datetime="2023-06-23T16:30:11+08:00">2023-06-23</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-06-24 23:55:30" itemprop="dateModified" datetime="2023-06-24T23:55:30+08:00">2023-06-24</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                   <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                    <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                    <a href="/categories/%E7%BC%96%E7%A8%8B/erlang/" itemprop="url" rel="index"><span itemprop="name">erlang</span></a>
                   </span>
             </span>
 
@@ -239,8 +245,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2023/06/23/%E5%88%97%E8%A1%A8%E5%92%8C%E5%85%83%E7%BB%84/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/06/23/%E5%88%97%E8%A1%A8%E5%92%8C%E5%85%83%E7%BB%84/" itemprop="commentCount"></span>
+    <a title="valine" href="/2023/06/23/%E5%B9%B6%E5%8F%91%E5%92%8C%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%96%E7%A8%8B/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/06/23/%E5%B9%B6%E5%8F%91%E5%92%8C%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%96%E7%A8%8B/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -250,14 +256,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.9k</span>
+              <span>5.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>5 分钟</span>
             </span>
 
         </div>
@@ -269,123 +275,329 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h1><p>容器，存储可变数量数据，类似是带头节点的单链表，所有操作从头开始。</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[area,<span class="number">100</span>,<span class="number">200</span>,<span class="string">&quot;你好&quot;</span>]</span><br></pre></td></tr></table></figure>
-<h2 id="模式匹配的列表操作"><a href="#模式匹配的列表操作" class="headerlink" title="模式匹配的列表操作"></a>模式匹配的列表操作</h2><p>列表的第一个元素被称为列表头（head），把列表头去掉，剩下的就被称为列表尾（tail）。<br>[H|T] ，其中一个是元素，一个是列表，并且前面必须是元素，后面是列表，开头可以有多个元素</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ThingsToBuy = [&#123;apples, <span class="number">10</span>&#125;,&#123;pears,<span class="number">6</span>&#125;,&#123;milk,<span class="number">3</span>&#125;].</span><br><span class="line">ThingsToBuy1 = [&#123;oranges,<span class="number">4</span>&#125;,&#123;newspaper,<span class="number">1</span>&#125;|ThingsToBuy]</span><br></pre></td></tr></table></figure>
-<h4 id="列表推导（list-comprehension）"><a href="#列表推导（list-comprehension）" class="headerlink" title="列表推导（list comprehension）"></a>列表推导（list comprehension）</h4><p>能够生成元素并对生成的元素做测试的表达式。</p>
+          <p><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/reference_manual/processes.html">https://www.erlang.org/doc/reference_manual/processes.html</a><br><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/reference_manual/distributed.html">https://www.erlang.org/doc/reference_manual/distributed.html</a></p>
+<h1 id="Erlang中的通信"><a href="#Erlang中的通信" class="headerlink" title="Erlang中的通信"></a>Erlang中的通信</h1><p>在Erlang中，通信通过相互传递异步信号实现，通信的对象有进程和端口，进程用于内部通信，端口用于外部通信，常见的信号有exit, link, unlink, monitor, and demonitor signals等。</p>
+<h1 id="并发编程"><a href="#并发编程" class="headerlink" title="并发编程"></a>并发编程</h1><p>Erlang中的并发是基于进程的并发，每个进程都带有一个邮箱，这个邮箱是和进程同步创建的。</p>
 <ul>
-<li><p>语法：<code>[X || Qualifier1, Qualifier2, ... ]</code><br>Qualifier1可以是生成器、位串生成器或过滤器 </p>
+<li>self(). % 显示当前进程号</li>
+<li>i() % 显示所有进程信息</li>
+</ul>
+<p>在erlang中进行并发编程有三类基本并发函数：创建进程、发送消息和接受消息。</p>
+<h2 id="创建进程"><a href="#创建进程" class="headerlink" title="创建进程"></a>创建进程</h2><p>进程是自包含、独立的计算单元，单节点的创建方式有以下两种</p>
 <ul>
-<li>生成器（generator），<code>Pattern &lt;- ListExpr</code></li>
-<li>位串（bitstring）生成器，<code>BitStringPattern &lt;= BitStringExpr</code></li>
-<li>过滤器（filter）<br>判断函数（返回true或false）或布尔表达式，只有true的值会被加入列表<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">L=[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>].</span><br><span class="line"><span class="comment">% 从L中提取X，并加倍</span></span><br><span class="line">[<span class="number">2</span>*X || X &lt;- L].</span><br><span class="line"></span><br><span class="line"><span class="comment">%</span></span><br><span class="line">[ &#123;X,Y&#125; || x&lt;-[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>], y &lt;- [<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>] ].</span><br><span class="line"></span><br><span class="line"><span class="comment">% 强制判断</span></span><br><span class="line">[throw(<span class="string">&quot;this_fun_not_use_uid_prop&quot;</span>) || z_prop_kit:get_prop_max(EncodeProp) =:= <span class="number">1</span>],</span><br></pre></td></tr></table></figure>
-<h4 id="归集器"><a href="#归集器" class="headerlink" title="归集器"></a>归集器</h4>尾递归优化方法，程序<strong>只遍历列表一次</strong>，把奇偶参数分别添加到合适的列表里。这些列表被称为归集器（accumulator）。<br>区别在于：奇偶列表里的元素顺序是反转的<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">odds_and_evens</span><span class="params">(L)</span>-&gt;</span></span><br><span class="line">  odds_and_evens_acc(L, [], []).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">odds_and_evens_acc</span><span class="params">([H|T],Odds, Events)</span>-&gt;</span></span><br><span class="line">  <span class="keyword">case</span> (H <span class="keyword">rem</span> <span class="number">2</span>) <span class="keyword">of</span></span><br><span class="line">    <span class="number">1</span>-&gt;</span><br><span class="line">      odds_and_evens_acc(T, [H|Odds], Events);</span><br><span class="line">    <span class="number">0</span>-&gt;</span><br><span class="line">      odds_and_evens_acc(T, Odds, [H|Events])</span><br><span class="line">  <span class="keyword">end</span>;</span><br><span class="line"><span class="function"><span class="title">odds_and_evens_acc</span><span class="params">([],Odds, Events)</span>-&gt;</span></span><br><span class="line">  &#123;Odds, Events&#125;.</span><br></pre></td></tr></table></figure>
-<h4 id="常用BIF"><a href="#常用BIF" class="headerlink" title="常用BIF"></a>常用BIF</h4></li>
-</ul>
+<li><p>spawn(Fun) -&gt; pid()<br>不关心动态代码升级，或者确定程序不会在未来进行修改时用</p>
 </li>
-<li><p>hd(List) -&gt; term()<br>取列表头</p>
+<li><p>spawn(Module, Function, Args) -&gt; pid()<br>支持热更新，确保运行进程能够正确 升级为新版模块代码</p>
+<h2 id="发送消息"><a href="#发送消息" class="headerlink" title="发送消息"></a>发送消息</h2><p>向一个进程发送消息有三种方式：Pid、注册名和别名</p>
 </li>
-<li><p>tl(List) -&gt; term()<br>取除列表头的部分</p>
+<li><p>Pid</p>
 </li>
-<li><p>length(List) -&gt; integer() &gt;= 0<br>列表长度</p>
-<h4 id="lists模块提供的处理函数"><a href="#lists模块提供的处理函数" class="headerlink" title="lists模块提供的处理函数"></a>lists模块提供的处理函数</h4></li>
-<li><p>member(Elem, List) -&gt; boolean()<br>是否是成员</p>
-</li>
-<li><p>append(ListOfLists) -&gt; List1</p>
-</li>
-<li><p>append(List1, List2) -&gt; List3</p>
-</li>
-<li><p>reverse(List1) -&gt; List2</p>
-</li>
-<li><p>reverse(List1, Tail) -&gt; List2<br>反转List1并将Tail插入到列表尾</p>
-</li>
-<li><p>delete(Elem, List1) -&gt; List2</p>
-</li>
-<li><p>filter(Pred, List1) -&gt; List2<br>List2是Pred函数返回True的结果</p>
-</li>
-<li><p>sort(List1) -&gt; List2</p>
-</li>
-<li><p>sort(Fun, List1) -&gt; List2<br>使用自定义排序函数Fun来排序<br>对fun(A,B)，当A&lt;=B返回true，否则返回false</p>
-</li>
-<li><p>nth(N, List) -&gt; Elem</p>
-</li>
-<li><p>nthtail(N, List) -&gt; Tail</p>
-</li>
-<li><p>sublist(List1, Len) -&gt; List2</p>
-</li>
-<li><p>sublist(List1, Start, Len) -&gt; List2</p>
-</li>
-<li><p>search(Pred, List) -&gt; {value, Value} | false</p>
-</li>
-</ul>
-<p>遍历，基本都是用匿名函数</p>
+<li><p>注册名</p>
 <ul>
-<li><p>foldl(Fun, Acc0, List) -&gt; Acc1<br>对List里的元素连续调用Fun(Elem, AccIn)，Acc0是累加器的初始值</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">  Fun = <span class="keyword">fun</span></span><br><span class="line">          (Elem, Acc) -&gt;</span><br><span class="line">            [Elem | Acc]</span><br><span class="line">        <span class="keyword">end</span>,</span><br><span class="line">  lists:foldl(Fun, [], [a, b]).</span><br><span class="line"><span class="comment">% [b,a]</span></span><br></pre></td></tr></table></figure></li>
-<li><p>foldr(Fun, Acc0, List) -&gt; Acc1<br>和foldl的遍历顺序相反，是从右到左</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">  Fun = <span class="keyword">fun</span></span><br><span class="line">          (Elem, Acc) -&gt;</span><br><span class="line">            [Elem | Acc]</span><br><span class="line">        <span class="keyword">end</span>,</span><br><span class="line">  lists:foldr(Fun, [], [a, b]).</span><br><span class="line"><span class="comment">% [a,b]</span></span><br></pre></td></tr></table></figure></li>
-<li><p>map(Fun, List1) -&gt; List2<br>获取映射</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">  Fun = <span class="keyword">fun</span></span><br><span class="line">          (a) -&gt;</span><br><span class="line">            x;</span><br><span class="line">          (b)-&gt;</span><br><span class="line">            y</span><br><span class="line">        <span class="keyword">end</span>,</span><br><span class="line">  lists:map(Fun, [a,b]).</span><br><span class="line"><span class="comment">% [x,y]</span></span><br></pre></td></tr></table></figure></li>
-<li><p>mapfoldl(Fun, Acc0, List1) -&gt; {List2, Acc1}<br>结合map和foldl</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">  Fun = <span class="keyword">fun</span></span><br><span class="line">          (X, Acc) -&gt;</span><br><span class="line">            &#123;<span class="number">2</span>*X, [X + <span class="number">1</span> | Acc]&#125;</span><br><span class="line">        <span class="keyword">end</span>,</span><br><span class="line">  lists:mapfoldl(Fun, [], [<span class="number">1</span>, <span class="number">2</span>]).</span><br><span class="line"><span class="comment">% &#123;[2,4],[3,2]&#125;</span></span><br></pre></td></tr></table></figure></li>
-<li><p>mapfoldr(Fun, Acc0, List1) -&gt; {List2, Acc1}<br>结合map和foldr</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">  Fun = <span class="keyword">fun</span></span><br><span class="line">          (X, Acc) -&gt;</span><br><span class="line">            &#123;<span class="number">2</span>*X, [X + <span class="number">1</span> | Acc]&#125;</span><br><span class="line">        <span class="keyword">end</span>,</span><br><span class="line">  lists:mapfoldl(Fun, [], [<span class="number">1</span>, <span class="number">2</span>]).</span><br><span class="line"><span class="comment">% &#123;[2,4],[2,3]&#125;</span></span><br></pre></td></tr></table></figure></li>
-<li><p>foreach(Fun, List) -&gt; ok<br>对List的每个元素执行Fun操作</p>
-</li>
+<li>register(RegName, PidOrPort) -&gt; true<br>注册进程，注册名必须是atom类型</li>
+<li>registered()<br>返回所有已注册的名字</li>
+<li>whereis(Name)<br>通过注册名获取Pid<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>&gt; c(area_server_final).</span><br><span class="line">&#123;ok,area_server_final&#125;</span><br><span class="line"><span class="number">2</span>&gt; Pid = spawn(area_server_final, loop, []).      </span><br><span class="line">&lt;<span class="number">0.62</span>.<span class="number">0</span>&gt;</span><br><span class="line"><span class="number">3</span>&gt; register(area,Pid).</span><br><span class="line"><span class="literal">true</span></span><br><span class="line"><span class="number">4</span>&gt; area!&#123;rectangle,<span class="number">4</span>,<span class="number">5</span>&#125;.</span><br><span class="line">&#123;rectangle,<span class="number">4</span>,<span class="number">5</span>&#125;</span><br><span class="line"><span class="number">9</span>&gt; erlang:send(Pid, &#123;circle, <span class="number">2</span>&#125;). </span><br></pre></td></tr></table></figure></li>
 </ul>
-<p>元组列表的操作</p>
+</li>
+<li><p>别名<br>进程别名本质上是一种引用类型，别名设计的典型用例是请求/回复场景。发送回复时使用进程别名可以使回复接收方在操作超时或进程之间的连接丢失时防止回复到达其消息队列。</p>
 <ul>
-<li><p>keydelete(Key, N, TupleList1) -&gt; TupleList2</p>
+<li>创建别名</li>
+<li>删除别名<h2 id="接收消息"><a href="#接收消息" class="headerlink" title="接收消息"></a>接收消息</h2>进程实际上隐藏了信息，我们无法直接访问这个函数的执行信息，但是可以通过发送和接受消息来进行交互，这点和服务器很像。在Fun中递归调用自身实现重复发送和接受消息。</li>
+</ul>
 </li>
-<li><p>keyfind(Key, N, TupleList) -&gt; Tuple | false</p>
+<li><p>start 隐藏spawn和rpc</p>
 </li>
-<li><p>keymap(Fun, N, TupleList1) -&gt; TupleList2</p>
+<li><p>rpc 隐藏通信过程</p>
 </li>
-<li><p>keymember(Key, N, TupleList) -&gt; boolean()</p>
+<li><p>loop 处理逻辑，要导出才能被spawn调用</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-export</span><span class="params">([start/<span class="number">0</span>, area/<span class="number">2</span>, loop/<span class="number">0</span>])</span>.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">start</span><span class="params">()</span> -&gt;</span></span><br><span class="line">    spawn(area_server, loop, []).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">area</span><span class="params">(Pid, What)</span> -&gt;</span></span><br><span class="line">    rpc(Pid, What).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">rpc</span><span class="params">(Pid, Request)</span> -&gt;</span></span><br><span class="line">    Pid ! &#123;self(), Request&#125;,</span><br><span class="line">    <span class="keyword">receive</span></span><br><span class="line">     &#123;Pid, Response&#125; -&gt;</span><br><span class="line">         Response</span><br><span class="line"> <span class="keyword">end</span>.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">loop</span><span class="params">()</span> -&gt;</span></span><br><span class="line">    <span class="keyword">receive</span></span><br><span class="line">     &#123;From, &#123;rectangle, Width, Height&#125;&#125; -&gt;</span><br><span class="line">         From ! &#123;self(), Width * Height&#125;,</span><br><span class="line">         loop();</span><br><span class="line">     &#123;From, &#123;circle, R&#125;&#125; -&gt;</span><br><span class="line">         From ! &#123;self(), <span class="number">3.14159</span> * R * R&#125;,</span><br><span class="line">         loop();</span><br><span class="line">     &#123;From, Other&#125; -&gt;</span><br><span class="line">         From ! &#123;self(), &#123;error, Other&#125;&#125;,</span><br><span class="line">         loop()</span><br><span class="line"> <span class="keyword">end</span>.</span><br></pre></td></tr></table></figure>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">12</span>&gt; area_server:start().  </span><br><span class="line">&lt;<span class="number">0.89</span>.<span class="number">0</span>&gt;</span><br><span class="line"><span class="number">13</span>&gt; Server=area_server:start().   </span><br><span class="line">&lt;<span class="number">0.91</span>.<span class="number">0</span>&gt;</span><br><span class="line"><span class="number">14</span>&gt; area_server:area(Server, &#123;rectangle, <span class="number">1</span>,<span class="number">2</span>&#125;).</span><br><span class="line"><span class="number">2</span></span><br></pre></td></tr></table></figure>
+<h3 id="接收高级选项"><a href="#接收高级选项" class="headerlink" title="接收高级选项"></a>接收高级选项</h3></li>
+</ul>
+<ol>
+<li> 带超时的接收 </li>
+</ol>
+<ul>
+<li>使用after指定</li>
+<li>超时值为0，立即执行</li>
+<li>超时值为原子<code>infinity</code>，永远不会超时<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">receive</span></span><br><span class="line">    &#123;From, Message&#125;-&gt;</span><br><span class="line">        ...</span><br><span class="line"><span class="keyword">after</span> Time-&gt;</span><br><span class="line">    Expressions</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<ol start="2">
+<li><p> 选择性接收 </p>
+<h2 id="进程的终止"><a href="#进程的终止" class="headerlink" title="进程的终止"></a>进程的终止</h2></li>
+<li><p>当指定的函数执行完毕，进程正常终止，退出原因是原子 normal</p>
 </li>
-<li><p>keymerge(N, TupleList1, TupleList2) -&gt; TupleList3</p>
+<li><p>异常终止，在erlang中，将运行时错误和生成错误表示为以下三类：</p>
+<ul>
+<li>exit(Reason)</li>
+<li>erlang:error(Reason)</li>
+<li>erlang:error(Reason, Args)<h2 id="顺序代码的错误处理"><a href="#顺序代码的错误处理" class="headerlink" title="顺序代码的错误处理"></a>顺序代码的错误处理</h2><h3 id="错误的分类"><a href="#错误的分类" class="headerlink" title="错误的分类"></a>错误的分类</h3>程序的错误大致可分为以下四类：</li>
+</ul>
 </li>
-<li><p>keyreplace(Key, N, TupleList1, NewTuple) -&gt; TupleList2</p>
-</li>
-<li><p>keysearch(Key, N, TupleList) -&gt; {value, Tuple} | false</p>
-</li>
-<li><p>keysort(N, TupleList1) -&gt; TupleList2</p>
-</li>
-<li><p>keystore(Key, N, TupleList1, NewTuple) -&gt; TupleList2</p>
-</li>
-<li><p>keytake(Key, N, TupleList1) -&gt; {value, Tuple, TupleList2} | false</p>
-<h4 id="z-lib提供的处理函数"><a href="#z-lib提供的处理函数" class="headerlink" title="z_lib提供的处理函数"></a>z_lib提供的处理函数</h4></li>
-<li><p>get_list_range/1<br>get_list_range(List::[term()]) -&gt; return() where return() = {Len::integer(), Min::term(), Max::term()} | false.<br>获得列表的最大最小值</p>
-</li>
-<li><p>get_value(List, Key, Default) -&gt; any()<br>从元组列表或Tree中，获得指定的键值，如果键不存在，使用默认值</p>
-</li>
-<li><p>get_value(List, Key, ValuePos, Default) -&gt; any()<br>从元组列表或Tree中，获得指定的键值，如果键不存在，使用默认值，可以指定值的位置</p>
-</li>
-<li><p>get_value(List, Key, KeyPos, ValuePos, Default)<br>可以指定键和值的位置</p>
-</li>
-<li><p>get_values(KVList, KeyDefaultList)<br>从元组列表或Tree中，获得指定的键值，如果键不存在，使用默认值</p>
-</li>
-<li><p>get_values(KVList, ValuePos,KeyDefaultList)</p>
-</li>
-<li><p>get_values(KVList, KeyPos, ValuePos, KeyDefaultList)</p>
+</ol>
+<ul>
+<li><strong>Compile-time errors</strong>，编译产生的错误，例如一些语法错误，可以借助编译器和静态代码分析器找出错误。</li>
+<li><strong>Logical errors</strong>，程序的行为与预想中的不同，例如点击按钮没有反应。</li>
+<li><strong>Run-time errors</strong>，使程序发生崩溃的严重错误，例如运算符作用在错误的类型，也可以用error(Reason)来生成。</li>
+<li><strong>Generated errors</strong>，在代码中调用 <a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/erlang.html#exit-1">exit/1</a>和<code>[throw/1](https://www.erlang.org/doc/man/erlang.html#throw-1)</code>来生成错误。</li>
+</ul>
+<p>Erlang中，将<strong>Run-time errors</strong>和<strong>Generated errors</strong>表示为三类：error、exit、throw。</p>
+<h3 id="用try-catch处理异常"><a href="#用try-catch处理异常" class="headerlink" title="用try catch处理异常"></a>用try catch处理异常</h3><p>程序结构：</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> FuncOrExpressionSeq <span class="keyword">of</span></span><br><span class="line">    Patern1 [<span class="keyword">when</span> Guard1] -&gt; Expressions1;</span><br><span class="line">    Patern1 [<span class="keyword">when</span> Guard2] -&gt; Expressions2;</span><br><span class="line">    ...</span><br><span class="line"><span class="keyword">catch</span></span><br><span class="line">	ExceptionType1: ExPattern1 [<span class="keyword">when</span> ExGuard1] -&gt; ExExpressions1;</span><br><span class="line">	ExceptionType2: ExPattern2 [<span class="keyword">when</span> ExGuard2] -&gt; ExExpressions2;</span><br><span class="line">    ...</span><br><span class="line"><span class="keyword">after</span></span><br><span class="line">    AfterExpressions</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li> 捕获错误，在try中编写可能出错的代码，可以使用可选的of进行分支选择。 </li>
+<li> 匹配错误 </li>
+</ol>
+<ul>
+<li> 冒号前的ExceptionType取值为error、exit、throw中一种。 </li>
+<li> 冒号后的ExPattern用于匹配<strong>catch的返回值</strong>，一般是错误的原因，以便进行处理。 </li>
+<li>可选的Stacktrace用于匹配exit类型错误的堆栈信息</li>
+</ul>
+<ol start="3">
+<li> 处理错误，若模式匹配成功可以在-&gt;后处理，处理完成后执行after子句的内容。 </li>
+</ol>
+<p>实例</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">try</span></span><br><span class="line"><span class="comment">%%    exit(basketball),</span></span><br><span class="line"><span class="comment">%%    error(football),</span></span><br><span class="line">    throw(&#123;my_exception, <span class="string">&quot;Something happened&quot;</span>&#125;)</span><br><span class="line">  <span class="keyword">catch</span></span><br><span class="line">    exit:Reason -&gt;</span><br><span class="line">      io:format(<span class="string">&quot;error Reason:~w~n&quot;</span>, [Reason]);</span><br><span class="line">    error: Reason -&gt;</span><br><span class="line">      io:format(<span class="string">&quot;error Reason:~w~n&quot;</span>, [Reason]);</span><br><span class="line">    throw:&#123;my_exception, Desc&#125; -&gt;</span><br><span class="line">      io:format(standard_error, <span class="string">&quot;Error: ~s~n&quot;</span>, [Desc])</span><br><span class="line">  <span class="keyword">end</span>.</span><br></pre></td></tr></table></figure>
+<p>常见错误原因</p>
+<table>
+<thead>
+<tr>
+<th><strong>Reason</strong></th>
+<th><strong>Type of Error</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>badarg</td>
+<td>Bad argument. The argument is of wrong data type, or is otherwise badly formed.</td>
+</tr>
+<tr>
+<td>badarith</td>
+<td>Bad argument in an arithmetic expression.</td>
+</tr>
+<tr>
+<td>{badmatch,V}</td>
+<td>Evaluation of a match expression failed. The value V did not match.</td>
+</tr>
+<tr>
+<td>function_clause</td>
+<td>No matching function clause is found when evaluating a function call.</td>
+</tr>
+<tr>
+<td>{case_clause,V}</td>
+<td>No matching branch is found when evaluating a case expression. The value V did not match.</td>
+</tr>
+<tr>
+<td>if_clause</td>
+<td>No true branch is found when evaluating an if expression.</td>
+</tr>
+<tr>
+<td>{try_clause,V}</td>
+<td>No matching branch is found when evaluating the of-section of a try expression. The value V did not match.</td>
+</tr>
+<tr>
+<td>undef</td>
+<td>The function cannot be found when evaluating a function call.</td>
+</tr>
+<tr>
+<td>{badfun,F}</td>
+<td>Something is wrong with a fun F.</td>
+</tr>
+<tr>
+<td>{badarity,F}</td>
+<td>A fun is applied to the wrong number of arguments. F describes the fun and the arguments.</td>
+</tr>
+<tr>
+<td>timeout_value</td>
+<td>The timeout value in a receive..after expression is evaluated to something else than an integer or infinity.</td>
+</tr>
+<tr>
+<td>noproc</td>
+<td>Trying to link or monitor to a non-existing process or port.</td>
+</tr>
+<tr>
+<td>noconnection</td>
+<td>A link or monitor to a remote process was broken because a connection between the nodes could not be established or was severed.</td>
+</tr>
+<tr>
+<td>{nocatch,V}</td>
+<td>Trying to evaluate a throw outside a catch. V is the thrown term.</td>
+</tr>
+<tr>
+<td>system_limit</td>
+<td>A system limit has been reached. See <a target="_blank" rel="noopener" href="https://www.erlang.org/doc/efficiency_guide/advanced.html">Efficiency Guide</a></td>
+</tr>
+<tr>
+<td>for information about system limits.</td>
+<td></td>
+</tr>
+</tbody></table>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">try</span></span><br><span class="line"><span class="comment">%%    1 / 0,</span></span><br><span class="line">    <span class="keyword">case</span> <span class="number">1</span> <span class="keyword">of</span></span><br><span class="line">      <span class="number">0</span>-&gt;</span><br><span class="line">        ok</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">catch</span></span><br><span class="line">    error: badarith -&gt;</span><br><span class="line">      io:format(<span class="string">&quot;arith error&quot;</span>);</span><br><span class="line">    error:&#123;case_clause,V&#125;-&gt;</span><br><span class="line">      io:format(<span class="string">&quot;Unmatch Pattern: ~w~n&quot;</span>,[V])</span><br><span class="line">  <span class="keyword">end</span>.</span><br></pre></td></tr></table></figure>
+<h3 id="用catch处理异常"><a href="#用catch处理异常" class="headerlink" title="用catch处理异常"></a>用catch处理异常</h3><p>使用catch语句捕获异常，<strong>单独的catch语句和try catch里的catch的使用方式不同</strong>，会将错误转换为元组或Term。</p>
+<ul>
+<li>catch exit(Reason)-&gt; {‘EXIT’,Reason}</li>
+<li>catch error(Reason) -&gt; {‘EXIT’,{Reason,Stack}} </li>
+<li>catch throw(Any) -&gt; Any<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">18</span>&gt; exit(foobar).</span><br><span class="line">** exception exit: foobar</span><br><span class="line"><span class="number">19</span>&gt; <span class="keyword">catch</span> exit(foobar).</span><br><span class="line">&#123;&#x27;EXIT&#x27;,foobar&#125;</span><br><span class="line"><span class="comment">%</span></span><br><span class="line"><span class="number">20</span>&gt; error(football).     </span><br><span class="line">** exception error: football</span><br><span class="line"><span class="number">21</span>&gt; <span class="keyword">catch</span> error(foobar). </span><br><span class="line">&#123;&#x27;EXIT&#x27;,&#123;foobar,[&#123;shell,apply_fun,<span class="number">3</span>,</span><br><span class="line">                        [&#123;file,<span class="string">&quot;shell.erl&quot;</span>&#125;,&#123;line,<span class="number">899</span>&#125;]&#125;,</span><br><span class="line">                 &#123;erl_eval,do_apply,<span class="number">6</span>,[&#123;file,<span class="string">&quot;erl_eval.erl&quot;</span>&#125;,&#123;line,<span class="number">674</span>&#125;]&#125;,</span><br><span class="line">                 &#123;erl_eval,expr,<span class="number">5</span>,[&#123;file,<span class="string">&quot;erl_eval.erl&quot;</span>&#125;,&#123;line,<span class="number">431</span>&#125;]&#125;,</span><br><span class="line">                 &#123;shell,exprs,<span class="number">7</span>,[&#123;file,<span class="string">&quot;shell.erl&quot;</span>&#125;,&#123;line,<span class="number">686</span>&#125;]&#125;,</span><br><span class="line">                 &#123;shell,eval_exprs,<span class="number">7</span>,[&#123;file,<span class="string">&quot;shell.erl&quot;</span>&#125;,&#123;line,<span class="number">641</span>&#125;]&#125;,</span><br><span class="line">                 &#123;shell,eval_loop,<span class="number">3</span>,[&#123;file,<span class="string">&quot;shell.erl&quot;</span>&#125;,&#123;line,<span class="number">626</span>&#125;]&#125;]&#125;&#125;</span><br><span class="line"><span class="comment">%</span></span><br><span class="line"><span class="number">22</span>&gt; throw(test).         </span><br><span class="line">** exception throw: test</span><br><span class="line"><span class="number">23</span>&gt; <span class="keyword">catch</span> throw(test). </span><br><span class="line">test</span><br></pre></td></tr></table></figure>
+<h2 id="并发中的异常处理"><a href="#并发中的异常处理" class="headerlink" title="并发中的异常处理"></a>并发中的异常处理</h2><blockquote>
+<p>让其他进程修复错误”和“任其崩溃”</p>
+</blockquote>
 </li>
 </ul>
-<h1 id="元组"><a href="#元组" class="headerlink" title="元组"></a>元组</h1><p>容器，存放固定数目的数据，类似于数组，可随机存取。用元组管理的项数不宜超过五六项。</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;area,<span class="number">100</span>,<span class="number">200</span>,<span class="string">&quot;你好&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="常用BIF-1"><a href="#常用BIF-1" class="headerlink" title="常用BIF"></a>常用BIF</h4><ul>
-<li>element(N, Tuple) -&gt; term()<br>获取指定位置数据</li>
-<li>size(Item) -&gt; integer() &gt;= 0<br>获取元组长度</li>
-<li>erlang:insert_element(Index, Tuple1, Term) -&gt; Tuple2<br>在Index位置插入Term</li>
-<li>erlang:append_element(Tuple1, Term) -&gt; Tuple2<br>在尾部插入</li>
-<li>erlang:delete_element(Index, Tuple1) -&gt; Tuple2<br>删除指定位置元素</li>
-<li>setelement(Index, Tuple1, Value) -&gt; Tuple2<br>将Index位置更新为Value，返回新元组</li>
-<li>erlang:make_tuple(Arity, InitialValue) -&gt; tuple()<br>创建具有Arity个InitialValue的元组</li>
-<li>erlang:make_tuple(Arity, DefaultValue, InitList) -&gt; tuple()<br>创建具有Arity个DefaultValue的元组，并以InitList指定<br>如下指定第5个元素为zz，第2个元素（多次出现以最后一个为准）为aa<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; erlang:make_tuple(<span class="number">5</span>, [], [&#123;<span class="number">2</span>,ignored&#125;,&#123;<span class="number">5</span>,zz&#125;,&#123;<span class="number">2</span>,aa&#125;]).</span><br><span class="line">&#123;[],aa,[],[],zz&#125;</span><br></pre></td></tr></table></figure>
-遍历元组的方法，核心是传入索引<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">foreach</span><span class="params">(Tuple, F, A)</span> -&gt;</span></span><br><span class="line">  foreach(Tuple, <span class="number">1</span>, tuple_size(Tuple), F, A).</span><br><span class="line"><span class="function"><span class="title">foreach</span><span class="params">(Tuple, I, N, F, A)</span> <span class="title">when</span> I =&lt; N -&gt;</span></span><br><span class="line">  F(A, element(I, Tuple)),</span><br><span class="line">  foreach(Tuple, I + <span class="number">1</span>, N, F, A);</span><br><span class="line"><span class="function"><span class="title">foreach</span><span class="params">(_Tuple, _I, _N, _F, A)</span> -&gt;</span></span><br><span class="line">  A.</span><br></pre></td></tr></table></figure>
-<h4 id="字典"><a href="#字典" class="headerlink" title="字典"></a>字典</h4>元组可用于实现字典<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MY_Dict = dict:new(),</span><br><span class="line">MY_Dict1 = dict:append(<span class="string">&quot;key&quot;</span>, <span class="string">&quot;value&quot;</span>, MY_Dict),</span><br><span class="line">dict:fetch_keys(MY_Dict1).</span><br></pre></td></tr></table></figure></li>
+<p>基本思想是用一个进程监视另一个进程，发生错误时修复错误。<br>监视关系有两种，Link和monitor，进程间可以建立link关系，对<strong>进程、端口</strong>和节点的<strong>时间偏移量</strong> 可以建立monitor关系。</p>
+<ul>
+<li>连接（link）<ul>
+<li>link(PidOrPort) -&gt; true</li>
+<li>链接进程退出，收到的是退出信号，这意味着只有<strong>系统进程</strong>能够处理错误，普通进程会<strong>传递退出信号</strong>并一同退出<br>转换为系统进程的函数：process_flag(trap_exit, true)</li>
 </ul>
-<h1 id=""><a href="#" class="headerlink" title=""></a></h1>
+</li>
+<li>监视（monitor）<ul>
+<li>monitor(Type :: process, Item :: monitor_process_identifier()) -&gt; MonitorRef</li>
+<li>monitor(Type :: port, Item :: monitor_port_identifier()) -&gt; MonitorRef</li>
+<li>monitor(Type :: time_offset, Item :: clock_service) -&gt; MonitorRef</li>
+<li>监视进程收到的是DOWN<strong>消息</strong>而不是退出信号，通常会被服务器用来监视客户端的行为<br>DOWN信号：{‘DOWN’, Ref, process, Pid2, Reason}</li>
+</ul>
+</li>
+</ul>
+<p>案例</p>
+<ul>
+<li><p>退出时监控者执行某些计算</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">on_exit</span><span class="params">(Pid, Fun)</span> -&gt;</span></span><br><span class="line">	spawn(<span class="keyword">fun</span>() -&gt;</span><br><span class="line">		Ref = monitor(process, Pid),</span><br><span class="line">		<span class="keyword">receive</span></span><br><span class="line">			&#123;&#x27;DOWN&#x27;, Ref, process, Pid, Why&#125; -&gt;</span><br><span class="line">				Fun(Why)</span><br><span class="line">		<span class="keyword">end</span></span><br><span class="line">				<span class="keyword">end</span>).</span><br></pre></td></tr></table></figure>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 创建工作者进程</span></span><br><span class="line"><span class="number">2</span>&gt; Fun = <span class="keyword">fun</span>() -&gt;</span><br><span class="line">            <span class="keyword">receive</span></span><br><span class="line">          	  X -&gt; list_to_atom(X)</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">          <span class="keyword">end</span>.</span><br><span class="line">#Fun&lt;erl_eval.<span class="number">20.118419387</span>&gt;</span><br><span class="line"><span class="number">3</span>&gt; Pid = spawn(Fun).</span><br><span class="line"></span><br><span class="line"><span class="comment">% 监控进程</span></span><br><span class="line"><span class="number">8</span>&gt; tt:on_exit(Pid,<span class="keyword">fun</span>(Why)-&gt;io:format(<span class="string">&quot;~p died with: ~p~n&quot;</span>, [Pid, Why])<span class="keyword">end</span>).</span><br><span class="line">&lt;<span class="number">0.79</span>.<span class="number">0</span>&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment">% 使进程发送错误</span></span><br><span class="line"><span class="number">9</span>&gt; Pid ! hello.</span><br><span class="line">&lt;<span class="number">0.64</span>.<span class="number">0</span>&gt; died with: &#123;badarg,[&#123;erlang,list_to_atom,[hello],[]&#125;]&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>让一组进程共同终止</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">start</span><span class="params">(Fs)</span> -&gt;</span></span><br><span class="line">  spawn(<span class="keyword">fun</span>() -&gt;</span><br><span class="line">    [spawn_link(F) || F &lt;- Fs],</span><br><span class="line">    <span class="keyword">receive</span></span><br><span class="line">    <span class="keyword">after</span></span><br><span class="line">      infinity -&gt; <span class="literal">true</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span>).</span><br></pre></td></tr></table></figure>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">67</span>&gt;  Fun1 = <span class="keyword">fun</span>()-&gt;<span class="number">1</span><span class="keyword">end</span>.</span><br><span class="line">#Fun&lt;erl_eval.<span class="number">20.118419387</span>&gt;</span><br><span class="line"><span class="number">68</span>&gt; Fun2 = <span class="keyword">fun</span>()-&gt;<span class="number">2</span><span class="keyword">end</span>.</span><br><span class="line">#Fun&lt;erl_eval.<span class="number">20.118419387</span>&gt;</span><br><span class="line"><span class="number">69</span>&gt; Pid=spawn_test:start([Fun1,Fun2]). </span><br><span class="line">&lt;<span class="number">0.231</span>.<span class="number">0</span>&gt;</span><br></pre></td></tr></table></figure></li>
+<li><p>创建永不终止的进程（退出时重启进程）</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">keep_alive</span><span class="params">(Name, Fun)</span> -&gt;</span></span><br><span class="line">	register(Name, Pid = spawn(Fun)),</span><br><span class="line">	on_exit(Pid, <span class="keyword">fun</span>(_Why) -&gt; keep_alive(Name, Fun) <span class="keyword">end</span>).</span><br></pre></td></tr></table></figure>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">4</span>&gt; tt:keep_alive(worker,Fun).    </span><br><span class="line">&lt;<span class="number">0.64</span>.<span class="number">0</span>&gt;</span><br><span class="line"><span class="number">5</span>&gt; worker!hello.</span><br><span class="line">hello</span><br><span class="line"><span class="number">6</span>&gt;</span><br><span class="line">=ERROR REPORT==== <span class="number">21</span>-Jun-<span class="number">2023</span>::<span class="number">17</span>:<span class="number">35</span>:<span class="number">47</span> ===</span><br><span class="line">Error in process &lt;<span class="number">0.63</span>.<span class="number">0</span>&gt; with exit value:</span><br><span class="line">&#123;badarg,[&#123;erlang,list_to_atom,[hello],[]&#125;]&#125;</span><br><span class="line"><span class="number">6</span>&gt; worker!hello.</span><br><span class="line"></span><br><span class="line"><span class="number">7</span>&gt; worker!hello.</span><br><span class="line">=ERROR REPORT==== <span class="number">21</span>-Jun-<span class="number">2023</span>::<span class="number">17</span>:<span class="number">35</span>:<span class="number">51</span> ===</span><br><span class="line">Error in process &lt;<span class="number">0.69</span>.<span class="number">0</span>&gt; with exit value:</span><br><span class="line">&#123;badarg,[&#123;erlang,list_to_atom,[hello],[]&#125;]&#125;</span><br><span class="line">hello</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h2></li>
+</ul>
+<p>TODO</p>
+<h2 id="链接Link"><a href="#链接Link" class="headerlink" title="链接Link"></a>链接Link</h2><p>TODO</p>
+<h2 id="监督Monitor"><a href="#监督Monitor" class="headerlink" title="监督Monitor"></a>监督Monitor</h2><p>TODO</p>
+<h2 id="进程字典"><a href="#进程字典" class="headerlink" title="进程字典"></a>进程字典</h2><p>进程字典是一个属于<strong>本进程</strong>的键值对数据结构，每个进程都存在一个进程区域存放进程字典。</p>
+<ul>
+<li><code>put(Key,value)-&gt;OldValue</code><br>注意会返回旧值</li>
+<li><code>get(Key-&gt;Value)</code></li>
+<li><code>get()-[&#123;Key,Value&#125;]</code></li>
+<li><code>erase(Key)-&gt;Value</code></li>
+<li><code>erase()-&gt;[&#123;Key,Value&#125;]</code><figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">7</span>&gt; put(a,<span class="number">1</span>).</span><br><span class="line">undefined</span><br><span class="line"><span class="number">8</span>&gt; get(a).</span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">9</span>&gt; put(a,<span class="number">2</span>). </span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">10</span>&gt; get().</span><br><span class="line">[&#123;a,<span class="number">2</span>&#125;]</span><br></pre></td></tr></table></figure>
+注意：进程字典在实际中较少用，因为可能会给程序引入不易察觉的bug（有时会忘记使用了进程字典），让调试变得困难。<br>建议使用进程字典来保存“<strong>一次性写入</strong>”的变量。如果某个键一次性获得一个值而且不会改变它，那么将其保存在进程字典里在某些时候还是可以接受的。<h1 id="分布式编程"><a href="#分布式编程" class="headerlink" title="分布式编程"></a>分布式编程</h1></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th><strong>BIF</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>erlang:disconnect_node(Node)</td>
+<td>Forces the disconnection of a node.</td>
+</tr>
+<tr>
+<td>erlang:get_cookie()</td>
+<td>Returns the magic cookie of the current node.</td>
+</tr>
+<tr>
+<td>erlang:get_cookie(Node)</td>
+<td>Returns the magic cookie for node Node.</td>
+</tr>
+<tr>
+<td>is_alive()</td>
+<td>Returns true if the runtime system is a node and can connect to other nodes, false otherwise.</td>
+</tr>
+<tr>
+<td>monitor_node(Node, true&#124;false)</td>
+<td>Monitors the status of Node. A message{nodedown, Node} is received if the connection to it is lost.</td>
+</tr>
+<tr>
+<td>node()</td>
+<td>Returns the name of the current node. Allowed in guards.</td>
+</tr>
+<tr>
+<td>node(Arg)</td>
+<td>Returns the node where Arg, a pid, reference, or port, is located.</td>
+</tr>
+<tr>
+<td>nodes()</td>
+<td>Returns a list of all visible nodes this node is connected to.</td>
+</tr>
+<tr>
+<td>nodes(Arg)</td>
+<td>Depending on Arg, this function can return a list not only of visible nodes, but also hidden nodes and previously known nodes, and so on.</td>
+</tr>
+<tr>
+<td>erlang:set_cookie(Cookie)</td>
+<td>Sets the magic cookie, Cookie to use when connecting all nodes that have no explicit cookie set with erlang:set_cookie/2.</td>
+</tr>
+<tr>
+<td>erlang:set_cookie(Node, Cookie)</td>
+<td>Sets the magic cookie used when connecting Node. If Node is the current node, Cookie is used when connecting all nodes that have no explicit cookie set with this function.</td>
+</tr>
+<tr>
+<td>spawn[_link&#124;_opt](Node, Fun)</td>
+<td>Creates a process at a remote node.</td>
+</tr>
+<tr>
+<td>spawn[_link&#124;opt](Node, Module, FunctionName, Args)</td>
+<td>Creates a process at a remote node.</td>
+</tr>
+</tbody></table>
+<p>引用<br>A term that is <a target="_blank" rel="noopener" href="https://www.erlang.org/doc/efficiency_guide/advanced.html#unique_references">unique</a> among connected nodes. A reference can be created by calling the <a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/erlang.html#make_ref-0">make_ref/0</a> BIF. The <a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/erlang.html#is_reference-1">is_reference/1</a> BIF can be used to test if a term is a reference.</p>
+<h2 id="节点"><a href="#节点" class="headerlink" title="节点"></a>节点</h2><p>分布式erlang以节点为中心，节点是一个命名的ERTS，可以在同一台机器或在不同机器上，许多个节点组成一个分布式系统。</p>
+<ul>
+<li><p>节点命名，在一个分布式系统内，所有节点都必须使用同种命名模式，例如全是短命名，或者全是长命名。</p>
+<ul>
+<li><p>命名格式：<a href="mailto:&#110;&#97;&#109;&#101;&#64;&#104;&#111;&#115;&#116;&#46;&#x6e;&#x61;&#x6d;&#101;">&#110;&#97;&#109;&#101;&#64;&#104;&#111;&#115;&#116;&#46;&#x6e;&#x61;&#x6d;&#101;</a></p>
+<ul>
+<li>name为<code>-sname</code>或<code>-name</code>指定的节点名</li>
+<li>host.name为主机标识，例如：”<a target="_blank" rel="noopener" href="http://www.example.com&quot;或&quot;server1&quot;/">www.example.com&quot;或&quot;server1&quot;</a><br>配置hostname</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/hostname</span><br><span class="line">sudo hostnamectl set-hostname your-new-hostname</span><br><span class="line">sudo systemctl restart NetworkManager</span><br><span class="line">%%</span><br><span class="line">sudo hostname new-hostname</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>节点间通信，为了能够相互通信， Erlang 的节点问必须共享一个私密的cookie 值。</p>
+<ul>
+<li><p>本机通信，可以使用短命名</p>
+</li>
+<li><p>局域网通信，可以使用短命名</p>
+</li>
+<li><p>外网通信</p>
+<p>为了找到host，需要配置host文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/hosts</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1   localhost</span><br><span class="line">::1         localhost</span><br><span class="line"></span><br><span class="line">192.168.142.129 server.com server</span><br><span class="line">192.168.142.130 client.com client</span><br></pre></td></tr></table></figure></li>
+<li><p>检测连通性<br><code>net_adm:ping(&#39;gandalf@server.com&#39;).</code></p>
+</li>
+</ul>
+</li>
+<li><p>连接节点，采用松散连接的方式，会在第一次用到节点名时连接：spawn(Node,M,F,A) or net_adm:ping(Node)</p>
+</li>
+</ul>
+<p>注意事项：</p>
+<p>hostname必须有点，单独一个server会报错，必须是<a target="_blank" rel="noopener" href="http://www.server.com的形式/">www.server.com的形式</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(bilbo@client)1&gt; rpc:call(&#x27;gandalf@server&#x27;, kvs, store, [weather, cold]).</span><br><span class="line">=ERROR REPORT==== 24-Jun-2023::15:57:51.579811 ===</span><br><span class="line">** System running to use fully qualified hostnames **</span><br><span class="line">** Hostname server is illegal **</span><br></pre></td></tr></table></figure>
+
+<h2 id="防火墙和端口"><a href="#防火墙和端口" class="headerlink" title="防火墙和端口"></a>防火墙和端口</h2><p>关闭防火墙</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop firewalld</span><br><span class="line">systemctl disable firewalld</span><br></pre></td></tr></table></figure>
+
+<p>打开所有端口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setenforce 0</span><br></pre></td></tr></table></figure>
+
+<h2 id="局域网通信"><a href="#局域网通信" class="headerlink" title="局域网通信"></a>局域网通信</h2><p>服务器</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[hz@server socket_dist]$ erl -name gandalf -setcookie abc</span><br><span class="line">Erlang/OTP <span class="number">25</span> [erts-<span class="number">13.2</span>.<span class="number">1</span>] [source] [<span class="number">64</span>-bit] [smp:<span class="number">4</span>:<span class="number">4</span>] [ds:<span class="number">4</span>:<span class="number">4</span>:<span class="number">10</span>] [async-threads:<span class="number">1</span>] [jit:ns]</span><br><span class="line"></span><br><span class="line">Eshell V13.<span class="number">2.1</span>  (abort with ^G)</span><br><span class="line">(gandalf@server.com)<span class="number">1</span>&gt; kvs:start().</span><br><span class="line"><span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p>客户端</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[hz@client ~]$ erl -name bilbo -setcookie abc</span><br><span class="line">Erlang/OTP 25 [erts-13.2.1] [source] [64-bit] [smp:4:4] [ds:4:4:10] [async-threads:1] [jit:ns]</span><br><span class="line"></span><br><span class="line">Eshell V13.2.1  (abort with ^G)</span><br><span class="line">(bilbo@client.com)1&gt; net_adm:ping(&#x27;gandalf@server.com&#x27;).</span><br><span class="line">pong</span><br><span class="line">(bilbo@client.com)2&gt; rpc:call(&#x27;gandalf@server.com&#x27;, kvs, store, [weather, cold]).</span><br><span class="line">true</span><br><span class="line">(bilbo@client.com)3&gt; rpc:call(&#x27;gandalf@server.com&#x27;, kvs, lookup, [weather]). </span><br><span class="line">&#123;ok,cold&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="外网通信"><a href="#外网通信" class="headerlink" title="外网通信"></a>外网通信</h2><ol>
+<li><p>确保4369端口对TCP和UDP流量，都开放</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">sudo iptables -L</span><br><span class="line"># 如果防火墙规则中没有针对4369端口的条目，则新增</span><br><span class="line">sudo iptables -A INPUT -p tcp --dport 4369 -j ACCEPT</span><br><span class="line">sudo iptables -A INPUT -p udp --dport 4369 -j ACCEPT</span><br><span class="line"># 让设置生效</span><br><span class="line">sudo yum install iptables-services</span><br><span class="line">sudo systemctl enable iptables</span><br><span class="line">sudo service iptables save</span><br><span class="line"># </span><br><span class="line">sudo iptables -L</span><br></pre></td></tr></table></figure></li>
+<li><p>选择一个或一段连续端口给分布式Erlang使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">erl -name gandalf -setcookie abc -kernel inet_dist_listen_min 1024 \ inet_dist_listen_max 65536</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="TODO"><a href="#TODO" class="headerlink" title="TODO"></a>TODO</h3><p>在阿里云的ecs上测试，用net_adm:ping不通，暂不知道是端口还是host设置有问题，待解决。</p>
+
       
     </div>
 
@@ -406,7 +618,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/23/hello-world/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/22/erlang%E4%B8%AD%E7%9A%84%E5%AE%B9%E5%99%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -420,7 +632,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2023/06/23/hello-world/" class="post-title-link" itemprop="url">Hello World</a>
+            <a href="/2023/06/22/erlang%E4%B8%AD%E7%9A%84%E5%AE%B9%E5%99%A8/" class="post-title-link" itemprop="url">erlang中的容器</a>
         </h2>
 
         <div class="post-meta">
@@ -432,15 +644,24 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2023-06-23 14:37:38" itemprop="dateCreated datePublished" datetime="2023-06-23T14:37:38+08:00">2023-06-23</time>
+              <time title="创建时间：2023-06-22 14:30:11" itemprop="dateCreated datePublished" datetime="2023-06-22T14:30:11+08:00">2023-06-22</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-22 01:17:50" itemprop="dateModified" datetime="2021-07-22T01:17:50+08:00">2021-07-22</time>
+                <time title="修改时间：2023-06-24 23:53:57" itemprop="dateModified" datetime="2023-06-24T23:53:57+08:00">2023-06-24</time>
               </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                  <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                    <a href="/categories/%E7%BC%96%E7%A8%8B/erlang/" itemprop="url" rel="index"><span itemprop="name">erlang</span></a>
+                  </span>
+            </span>
 
           
   
@@ -451,8 +672,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2023/06/23/hello-world/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/06/23/hello-world/" itemprop="commentCount"></span>
+    <a title="valine" href="/2023/06/22/erlang%E4%B8%AD%E7%9A%84%E5%AE%B9%E5%99%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/06/22/erlang%E4%B8%AD%E7%9A%84%E5%AE%B9%E5%99%A8/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -462,7 +683,296 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>299</span>
+              <span>3.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h1><p>容器，存储可变数量数据，类似是带头节点的单链表，所有操作从头开始。</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[area,<span class="number">100</span>,<span class="number">200</span>,<span class="string">&quot;你好&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<h2 id="模式匹配的列表操作"><a href="#模式匹配的列表操作" class="headerlink" title="模式匹配的列表操作"></a>模式匹配的列表操作</h2><p>列表的第一个元素被称为列表头（head），把列表头去掉，剩下的就被称为列表尾（tail）。<br>[H|T] ，其中一个是元素，一个是列表，并且前面必须是元素，后面是列表，开头可以有多个元素</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ThingsToBuy = [&#123;apples, <span class="number">10</span>&#125;,&#123;pears,<span class="number">6</span>&#125;,&#123;milk,<span class="number">3</span>&#125;].</span><br><span class="line">ThingsToBuy1 = [&#123;oranges,<span class="number">4</span>&#125;,&#123;newspaper,<span class="number">1</span>&#125;|ThingsToBuy]</span><br></pre></td></tr></table></figure>
+
+<h4 id="列表推导（list-comprehension）"><a href="#列表推导（list-comprehension）" class="headerlink" title="列表推导（list comprehension）"></a>列表推导（list comprehension）</h4><p>能够生成元素并对生成的元素做测试的表达式。</p>
+<ul>
+<li>语法：<code>[X || Qualifier1, Qualifier2, ... ]</code><br>Qualifier1可以是生成器、位串生成器或过滤器 <ul>
+<li>生成器（generator），<code>Pattern &lt;- ListExpr</code></li>
+<li>位串（bitstring）生成器，<code>BitStringPattern &lt;= BitStringExpr</code></li>
+<li>过滤器（filter）<br>判断函数（返回true或false）或布尔表达式，只有true的值会被加入列表</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">L=[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>].</span><br><span class="line"><span class="comment">% 从L中提取X，并加倍</span></span><br><span class="line">[<span class="number">2</span>*X || X &lt;- L].</span><br><span class="line"></span><br><span class="line"><span class="comment">%</span></span><br><span class="line">[ &#123;X,Y&#125; || x&lt;-[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>], y &lt;- [<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>] ].</span><br><span class="line"></span><br><span class="line"><span class="comment">% 强制判断</span></span><br><span class="line">[throw(<span class="string">&quot;this_fun_not_use_uid_prop&quot;</span>) || z_prop_kit:get_prop_max(EncodeProp) =:= <span class="number">1</span>],</span><br></pre></td></tr></table></figure>
+
+<h4 id="归集器"><a href="#归集器" class="headerlink" title="归集器"></a>归集器</h4><p>尾递归优化方法，程序<strong>只遍历列表一次</strong>，把奇偶参数分别添加到合适的列表里。这些列表被称为归集器（accumulator）。<br>区别在于：奇偶列表里的元素顺序是反转的</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">odds_and_evens</span><span class="params">(L)</span>-&gt;</span></span><br><span class="line">  odds_and_evens_acc(L, [], []).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">odds_and_evens_acc</span><span class="params">([H|T],Odds, Events)</span>-&gt;</span></span><br><span class="line">  <span class="keyword">case</span> (H <span class="keyword">rem</span> <span class="number">2</span>) <span class="keyword">of</span></span><br><span class="line">    <span class="number">1</span>-&gt;</span><br><span class="line">      odds_and_evens_acc(T, [H|Odds], Events);</span><br><span class="line">    <span class="number">0</span>-&gt;</span><br><span class="line">      odds_and_evens_acc(T, Odds, [H|Events])</span><br><span class="line">  <span class="keyword">end</span>;</span><br><span class="line"><span class="function"><span class="title">odds_and_evens_acc</span><span class="params">([],Odds, Events)</span>-&gt;</span></span><br><span class="line">  &#123;Odds, Events&#125;.</span><br></pre></td></tr></table></figure>
+
+<h4 id="常用BIF"><a href="#常用BIF" class="headerlink" title="常用BIF"></a>常用BIF</h4><ul>
+<li>hd(List) -&gt; term()<br>取列表头</li>
+<li>tl(List) -&gt; term()<br>取除列表头的部分</li>
+<li>length(List) -&gt; integer() &gt;= 0<br>列表长度</li>
+</ul>
+<h4 id="lists模块提供的处理函数"><a href="#lists模块提供的处理函数" class="headerlink" title="lists模块提供的处理函数"></a>lists模块提供的处理函数</h4><ul>
+<li>member(Elem, List) -&gt; boolean()<br>是否是成员</li>
+<li>append(ListOfLists) -&gt; List1</li>
+<li>append(List1, List2) -&gt; List3</li>
+<li>reverse(List1) -&gt; List2</li>
+<li>reverse(List1, Tail) -&gt; List2<br>反转List1并将Tail插入到列表尾</li>
+<li>delete(Elem, List1) -&gt; List2</li>
+<li>filter(Pred, List1) -&gt; List2<br>List2是Pred函数返回True的结果</li>
+<li>sort(List1) -&gt; List2</li>
+<li>sort(Fun, List1) -&gt; List2<br>使用自定义排序函数Fun来排序<br>对fun(A,B)，当A&lt;=B返回true，否则返回false</li>
+<li>nth(N, List) -&gt; Elem</li>
+<li>nthtail(N, List) -&gt; Tail</li>
+<li>sublist(List1, Len) -&gt; List2</li>
+<li>sublist(List1, Start, Len) -&gt; List2</li>
+<li>search(Pred, List) -&gt; {value, Value} | false</li>
+</ul>
+<p>遍历，基本都是用匿名函数</p>
+<ul>
+<li>foldl(Fun, Acc0, List) -&gt; Acc1<br>对List里的元素连续调用Fun(Elem, AccIn)，Acc0是累加器的初始值</li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">  Fun = <span class="keyword">fun</span></span><br><span class="line">          (Elem, Acc) -&gt;</span><br><span class="line">            [Elem | Acc]</span><br><span class="line">        <span class="keyword">end</span>,</span><br><span class="line">  lists:foldl(Fun, [], [a, b]).</span><br><span class="line"><span class="comment">% [b,a]</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>foldr(Fun, Acc0, List) -&gt; Acc1<br>和foldl的遍历顺序相反，是从右到左</li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">  Fun = <span class="keyword">fun</span></span><br><span class="line">          (Elem, Acc) -&gt;</span><br><span class="line">            [Elem | Acc]</span><br><span class="line">        <span class="keyword">end</span>,</span><br><span class="line">  lists:foldr(Fun, [], [a, b]).</span><br><span class="line"><span class="comment">% [a,b]</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>map(Fun, List1) -&gt; List2<br>获取映射</li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">  Fun = <span class="keyword">fun</span></span><br><span class="line">          (a) -&gt;</span><br><span class="line">            x;</span><br><span class="line">          (b)-&gt;</span><br><span class="line">            y</span><br><span class="line">        <span class="keyword">end</span>,</span><br><span class="line">  lists:map(Fun, [a,b]).</span><br><span class="line"><span class="comment">% [x,y]</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>mapfoldl(Fun, Acc0, List1) -&gt; {List2, Acc1}<br>结合map和foldl</li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">  Fun = <span class="keyword">fun</span></span><br><span class="line">          (X, Acc) -&gt;</span><br><span class="line">            &#123;<span class="number">2</span>*X, [X + <span class="number">1</span> | Acc]&#125;</span><br><span class="line">        <span class="keyword">end</span>,</span><br><span class="line">  lists:mapfoldl(Fun, [], [<span class="number">1</span>, <span class="number">2</span>]).</span><br><span class="line"><span class="comment">% &#123;[2,4],[3,2]&#125;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>mapfoldr(Fun, Acc0, List1) -&gt; {List2, Acc1}<br>结合map和foldr</li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">  Fun = <span class="keyword">fun</span></span><br><span class="line">          (X, Acc) -&gt;</span><br><span class="line">            &#123;<span class="number">2</span>*X, [X + <span class="number">1</span> | Acc]&#125;</span><br><span class="line">        <span class="keyword">end</span>,</span><br><span class="line">  lists:mapfoldl(Fun, [], [<span class="number">1</span>, <span class="number">2</span>]).</span><br><span class="line"><span class="comment">% &#123;[2,4],[2,3]&#125;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>foreach(Fun, List) -&gt; ok<br>对List的每个元素执行Fun操作</li>
+</ul>
+<p>元组列表的操作</p>
+<ul>
+<li>keydelete(Key, N, TupleList1) -&gt; TupleList2</li>
+<li>keyfind(Key, N, TupleList) -&gt; Tuple | false</li>
+<li>keymap(Fun, N, TupleList1) -&gt; TupleList2</li>
+<li>keymember(Key, N, TupleList) -&gt; boolean()</li>
+<li>keymerge(N, TupleList1, TupleList2) -&gt; TupleList3</li>
+<li>keyreplace(Key, N, TupleList1, NewTuple) -&gt; TupleList2</li>
+<li>keysearch(Key, N, TupleList) -&gt; {value, Tuple} | false</li>
+<li>keysort(N, TupleList1) -&gt; TupleList2</li>
+<li>keystore(Key, N, TupleList1, NewTuple) -&gt; TupleList2</li>
+<li>keytake(Key, N, TupleList1) -&gt; {value, Tuple, TupleList2} | false</li>
+</ul>
+<h4 id="z-lib提供的处理函数"><a href="#z-lib提供的处理函数" class="headerlink" title="z_lib提供的处理函数"></a>z_lib提供的处理函数</h4><ul>
+<li>get_list_range/1<br>get_list_range(List::[term()]) -&gt; return() where return() = {Len::integer(), Min::term(), Max::term()} | false.<br>获得列表的最大最小值</li>
+<li>get_value(List, Key, Default) -&gt; any()<br>从元组列表或Tree中，获得指定的键值，如果键不存在，使用默认值</li>
+<li>get_value(List, Key, ValuePos, Default) -&gt; any()<br>从元组列表或Tree中，获得指定的键值，如果键不存在，使用默认值，可以指定值的位置</li>
+<li>get_value(List, Key, KeyPos, ValuePos, Default)<br>可以指定键和值的位置</li>
+<li>get_values(KVList, KeyDefaultList)<br>从元组列表或Tree中，获得指定的键值，如果键不存在，使用默认值</li>
+<li>get_values(KVList, ValuePos,KeyDefaultList)</li>
+<li>get_values(KVList, KeyPos, ValuePos, KeyDefaultList)</li>
+</ul>
+<h1 id="元组"><a href="#元组" class="headerlink" title="元组"></a>元组</h1><p>容器，存放固定数目的数据，类似于数组，可随机存取。用元组管理的项数不宜超过五六项。</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;area,<span class="number">100</span>,<span class="number">200</span>,<span class="string">&quot;你好&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="常用BIF-1"><a href="#常用BIF-1" class="headerlink" title="常用BIF"></a>常用BIF</h4><ul>
+<li>element(N, Tuple) -&gt; term()<br>获取指定位置数据</li>
+<li>size(Item) -&gt; integer() &gt;= 0<br>获取元组长度</li>
+<li>erlang:insert_element(Index, Tuple1, Term) -&gt; Tuple2<br>在Index位置插入Term</li>
+<li>erlang:append_element(Tuple1, Term) -&gt; Tuple2<br>在尾部插入</li>
+<li>erlang:delete_element(Index, Tuple1) -&gt; Tuple2<br>删除指定位置元素</li>
+<li>setelement(Index, Tuple1, Value) -&gt; Tuple2<br>将Index位置更新为Value，返回新元组</li>
+<li>erlang:make_tuple(Arity, InitialValue) -&gt; tuple()<br>创建具有Arity个InitialValue的元组</li>
+<li>erlang:make_tuple(Arity, DefaultValue, InitList) -&gt; tuple()<br>创建具有Arity个DefaultValue的元组，并以InitList指定<br>如下指定第5个元素为zz，第2个元素（多次出现以最后一个为准）为aa</li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; erlang:make_tuple(<span class="number">5</span>, [], [&#123;<span class="number">2</span>,ignored&#125;,&#123;<span class="number">5</span>,zz&#125;,&#123;<span class="number">2</span>,aa&#125;]).</span><br><span class="line">&#123;[],aa,[],[],zz&#125;</span><br></pre></td></tr></table></figure>
+
+<p>遍历元组的方法，核心是传入索引</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">foreach</span><span class="params">(Tuple, F, A)</span> -&gt;</span></span><br><span class="line">  foreach(Tuple, <span class="number">1</span>, tuple_size(Tuple), F, A).</span><br><span class="line"><span class="function"><span class="title">foreach</span><span class="params">(Tuple, I, N, F, A)</span> <span class="title">when</span> I =&lt; N -&gt;</span></span><br><span class="line">  F(A, element(I, Tuple)),</span><br><span class="line">  foreach(Tuple, I + <span class="number">1</span>, N, F, A);</span><br><span class="line"><span class="function"><span class="title">foreach</span><span class="params">(_Tuple, _I, _N, _F, A)</span> -&gt;</span></span><br><span class="line">  A.</span><br></pre></td></tr></table></figure>
+
+<h4 id="字典"><a href="#字典" class="headerlink" title="字典"></a>字典</h4><p>元组可用于实现字典</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MY_Dict = dict:new(),</span><br><span class="line">MY_Dict1 = dict:append(<span class="string">&quot;key&quot;</span>, <span class="string">&quot;value&quot;</span>, MY_Dict),</span><br><span class="line">dict:fetch_keys(MY_Dict1).</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="映射组"><a href="#映射组" class="headerlink" title="映射组"></a>映射组</h1><p>也是键值对结构，但key可以不是原子，用于当<strong>键不能预先知道</strong>时用来表示键-值数据结构；</p>
+<ul>
+<li>当存在大量不同的键时用来表示数据；</li>
+<li>当方便使用很重要而效率无关紧要时作为万能的数据结构使用；</li>
+<li>用作“自解释型”的数据结构，也就是说，用户容易从键名猜出值的含义；</li>
+<li>用来表示键-值解析树，例如XML或配置文件；</li>
+<li>用JSON来和其他编程语言通信。</li>
+</ul>
+<ol>
+<li><p>操作符</p>
+<ul>
+<li><code>=&gt;</code>，更新现有键或创建新键</li>
+<li><code>:=</code>，更新现有键    </li>
+</ul>
+</li>
+<li><p>原生操作</p>
+<ul>
+<li>创建映射组</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1&gt; #&#123;a=&gt;1,b=&gt;2&#125;.   #&#123;a =&gt; 1,b =&gt; 2&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>更新映射组</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">F1 = #&#123;a=&gt;1,b=&gt;2&#125;. F2 = #&#123;b=&gt;2,a=&gt;1&#125;. %F1=F2. F3 = F1#&#123;c=&gt;xx&#125; F4 = F3#&#123;c:=3&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>使用api操作</p>
+<ul>
+<li>创建映射组<br>maps:new().</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1&gt; MapGroup = maps:new().</span><br><span class="line">#&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>向映射组中添加映射<br>put(Key, Value, Map1) -&gt; Map2</li>
+</ul>
+</li>
+</ol>
+<pre><code><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2&gt; MapGroup1 = maps:put(a, 1, MapGroup).</span><br><span class="line">#&#123;a =&gt; 1&#125;</span><br></pre></td></tr></table></figure>
+
+- 从映射组中获取**值**
+  * get(Key, Map) -&gt; Value
+  * get(Key, Map, Default) -&gt; Value | Default
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">3&gt; Value = maps:get(a, MapGroup1). </span><br><span class="line">1</span><br><span class="line">4&gt; Value1 = maps:get(c, MapGroup1, 1).</span><br><span class="line">1</span><br></pre></td></tr></table></figure>
+
+- 更新
+
+  * update(Key, Value, Map1) -&gt; Map2
+    Map1不是Map抛badmap
+    Key不存在抛badkey
+
+  * update_with(Key, Fun, Map1) -&gt; Map2
+
+  * update_with(Key, Fun, Init, Map1) -&gt; Map2
+
+
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MapGroup2 = maps:update(a, <span class="number">2</span>, MapGroup1).</span><br></pre></td></tr></table></figure>
+- 从映射组中删除映射
+  * remove(Key, Map1) -&gt; Map2
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">5&gt; MapGroup2= maps:remove(a, MapGroup1).</span><br><span class="line">#&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+  - **遍历**映射组，打印每个映射
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">6&gt; Fun = fun(Key, Value, Acc) -&gt;</span><br><span class="line">                io:format(&quot;Key: ~p, Value: ~p~n&quot;, [Key, Value]), Acc       </span><br><span class="line">          end,</span><br><span class="line">maps:fold(Fun, [], MapGroup).</span><br><span class="line">[]</span><br></pre></td></tr></table></figure>
+</code></pre>
+<ol start="4">
+<li><p>模式匹配<br>和列表一样，在函数<strong>参数</strong>中使用映射组可以提取相应的字段</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">get_puid(#login&#123;puid=V&#125;) -&gt; V.</span><br></pre></td></tr></table></figure></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/22/Linux%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Honghangzhi">
+      <meta itemprop="description" content="不积跬步，无以千里">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HZ'Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/06/22/Linux%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/" class="post-title-link" itemprop="url">Linux命令行基础使用</a>
+        </h2>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-06-22 13:36:33" itemprop="dateCreated datePublished" datetime="2023-06-22T13:36:33+08:00">2023-06-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-06-24 23:55:15" itemprop="dateModified" datetime="2023-06-24T23:55:15+08:00">2023-06-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                  <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                    <a href="/categories/%E5%B7%A5%E5%85%B7/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                  </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/06/22/Linux%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/06/22/Linux%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -481,15 +991,108 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/06/23/hello-world/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
+          <h2 id="进程相关"><a href="#进程相关" class="headerlink" title="进程相关"></a>进程相关</h2><h3 id="查看进程"><a href="#查看进程" class="headerlink" title="查看进程"></a>查看进程</h3><ul>
+<li><p>ps：显示当前所有<strong>进程</strong>的运行情况。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[hz@aliyun erlang-project]$ ps</span><br><span class="line">  PID TTY          TIME CMD</span><br><span class="line">13316 pts/0    00:00:00 bash</span><br><span class="line">16999 pts/0    00:00:00 ps</span><br></pre></td></tr></table></figure></li>
+<li><p>top：<strong>实时显示</strong>当前所有<strong>任务</strong>的资源占用情况。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND                                                                                </span><br><span class="line"> 1173 root      10 -10  166140  49928  10452 S   1.7  2.8   2:24.79 AliYunDunMonito                                                                        </span><br><span class="line">13233 hz        20   0  709408  46020  15864 S   1.0  2.6   0:06.84 node                                                                                   </span><br><span class="line"> 1109 root      20   0  815440  14616   7292 S   0.3  0.8   0:08.32 aliyun-service                                                                         </span><br><span class="line">    1 root      20   0   43628   4000   2600 S   0.0  0.2   0:00.77 systemd                                                                                </span><br><span class="line">    2 root      20   0       0      0      0 S   0.0  0.0   0:00.00 kthreadd                                                                               </span><br><span class="line">    4 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 kworker/0:0H                                                                           </span><br><span class="line">    6 root      20   0       0      0      0 S   0.0  0.0   0:00.12 ksoftirqd/0             </span><br></pre></td></tr></table></figure></li>
+<li><p>pstree 以树状的模式输出进程列表，该模式显示了进程间的父/子关系</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">[hz@aliyun erlang-project]$ pstree</span><br><span class="line">systemd─┬─AliYunDun───9*[&#123;AliYunDun&#125;]</span><br><span class="line">        ├─AliYunDunMonito───25*[&#123;AliYunDunMonito&#125;]</span><br><span class="line">        ├─AliYunDunUpdate───6*[&#123;AliYunDunUpdate&#125;]</span><br><span class="line">        ├─2*[agetty]</span><br><span class="line">        ├─aliyun-service───7*[&#123;aliyun-service&#125;]</span><br><span class="line">        ├─assist_daemon───7*[&#123;assist_daemon&#125;]</span><br><span class="line">        ├─atd</span><br><span class="line">        ├─auditd───&#123;auditd&#125;</span><br><span class="line">        ├─chronyd</span><br><span class="line">        ├─crond</span><br><span class="line">        ├─dbus-daemon</span><br><span class="line">        ├─dhclient</span><br><span class="line">        ├─epmd</span><br><span class="line">        ├─gssproxy───5*[&#123;gssproxy&#125;]</span><br><span class="line">        ├─master─┬─pickup</span><br><span class="line">        │        └─qmgr</span><br><span class="line">        ├─polkitd───6*[&#123;polkitd&#125;]</span><br><span class="line">        ├─rpcbind</span><br><span class="line">        ├─rsyslogd───2*[&#123;rsyslogd&#125;]</span><br><span class="line">        ├─sshd───sshd───sshd───bash─┬─sh───node─┬─node─┬─bash─┬─pstree</span><br><span class="line">        │                           │           │      │      └─python3</span><br><span class="line">        │                           │           │      ├─bash</span><br><span class="line">        │                           │           │      └─12*[&#123;node&#125;]</span><br><span class="line">        │                           │           ├─node─┬─node───6*[&#123;node&#125;]</span><br><span class="line">        │                           │           │      └─11*[&#123;node&#125;]</span><br><span class="line">        │                           │           ├─node───12*[&#123;node&#125;]</span><br><span class="line">        │                           │           └─10*[&#123;node&#125;]</span><br><span class="line">        │                           └─sleep</span><br><span class="line">        ├─systemd-journal</span><br><span class="line">        ├─systemd-logind</span><br><span class="line">        ├─systemd-udevd</span><br><span class="line">        └─tuned───4*[&#123;tuned&#125;]</span><br></pre></td></tr></table></figure></li>
+<li><p>vmstat<br>虚拟内存统计，报告有关进程、内存、分页、块 IO、中断和 CPU 活动等信息。<br>如果想要持续查看输出，可以在命令后面加上一个间隔时间（以秒为单位），命令将按照间隔时间来动态更新显示的内容（比如，vmstat 5）。按下Ctrl-C键可以终止输出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[hz@aliyun erlang-project]$ vmstat 5</span><br><span class="line">procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----</span><br><span class="line"> r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st</span><br><span class="line"> 1  0      0 158636  49584 1228320    0    0    38    52  936 1747  2  1 98  0  0</span><br></pre></td></tr></table></figure></li>
+<li><p>jobs：列出所有活动作业的状态信息。</p>
+</li>
+</ul>
+<h3 id="控制进程"><a href="#控制进程" class="headerlink" title="控制进程"></a>控制进程</h3><h4 id="暂停和中断进程"><a href="#暂停和中断进程" class="headerlink" title="暂停和中断进程"></a>暂停和中断进程</h4><p>按下<strong>Ctrl-Z</strong>键，程序将会暂停，此时可以用fg和bg让其继续工作。</p>
+<p>在终端里按下<strong>Ctrl-C</strong>键将会中断（interrupt）一个程序，它意味着我们委婉地<strong>请求程序结束</strong>。许多（但不是所有）命令行程序都可以使用这种方法来实现中断。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[hz@aliyun erlang-project]$ jobs</span><br><span class="line">[hz@aliyun erlang-project]$ python3</span><br><span class="line">Python 3.6.8 (default, Nov 16 2020, 16:55:22) </span><br><span class="line">[GCC 4.8.5 20150623 (Red Hat 4.8.5-44)] on linux</span><br><span class="line">Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.</span><br><span class="line">&gt;&gt;&gt; </span><br><span class="line">[1]+  Stopped                 python3</span><br><span class="line">[hz@aliyun erlang-project]$ jobs</span><br><span class="line">[1]+  Stopped                 python3</span><br></pre></td></tr></table></figure>
+
+<h4 id="使进程后台运行"><a href="#使进程后台运行" class="headerlink" title="使进程后台运行"></a>使进程后台运行</h4><p>在命令后面加上和号字符（&amp;）</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gedit &amp;</span><br></pre></td></tr></table></figure>
+
+<h4 id="使进程回到前台运行"><a href="#使进程回到前台运行" class="headerlink" title="使进程回到前台运行"></a>使进程回到前台运行</h4><p>使用fg设置在前台中运行作业，要用到作业编号（jobspec选项），一般先用jobs命令查看挂起的进程的作业号，再用fg命令使其运行</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">fg</span> %1</span><br></pre></td></tr></table></figure>
+
+<h4 id="在后台运行"><a href="#在后台运行" class="headerlink" title="在后台运行"></a>在后台运行</h4><p>此时可以用fg命令设置在前台中运行作业，也可以用bg命令设置在后台中运行作业。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">bg</span> %1</span><br></pre></td></tr></table></figure>
+
+<h2 id="IO相关"><a href="#IO相关" class="headerlink" title="IO相关"></a>IO相关</h2><ul>
+<li><p>iostat CPU 的使用情况，以及设备、分区和网络文件系统（NFS）的 IO 统计信息。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[hz@aliyun erlang-project]$ iostat </span><br><span class="line">Linux 3.10.0-1160.90.1.el7.x86_64 (aliyun.ecs)  06/24/2023      _x86_64_        (2 CPU)</span><br><span class="line"></span><br><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">           1.58    0.00    0.60    0.06    0.00   97.76</span><br><span class="line"></span><br><span class="line">Device:            tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn</span><br><span class="line">vda               5.12        68.74        95.46     593791     824644</span><br></pre></td></tr></table></figure></li>
+<li><p>iotop 命令利用 Linux 内核监控 I/O 使用情况，它按进程或线程的顺序显示 I/O 使用情况</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> sudo iotop</span><br><span class="line"> </span><br><span class="line"> TID  PRIO  USER     DISK READ  DISK WRITE  SWAPIN     IO&gt;    COMMAND                                                                                     </span><br><span class="line">13312 be/4 hz          0.00 B/s    0.00 B/s  0.00 %  0.00 % node /home/hz/.vscode-server/bin/97dec172d3256f~onServerMain --node-ipc --clientProcessId=13267</span><br><span class="line">    1 be/4 root        0.00 B/s    0.00 B/s  0.00 %  0.00 % systemd --switched-root --system --deserialize 22</span><br><span class="line">    2 be/4 root        0.00 B/s    0.00 B/s  0.00 %  0.00 % [kthreadd]</span><br><span class="line">13315 be/4 hz          0.00 B/s    0.00 B/s  0.00 %  0.00 % node /home/hz/.vscode-server/bin/97dec172d3256f~onServerMain --node-ipc --clientProcessId=13267</span><br><span class="line">    4 be/0 root        0.00 B/s    0.00 B/s  0.00 %  0.00 % [kworker/0:0H]</span><br><span class="line"> 1029 be/4 root        0.00 B/s    0.00 B/s  0.00 %  0.00 % python2 -Es /usr/sbin/tuned -l -P</span><br><span class="line">    6 be/4 root        0.00 B/s    0.00 B/s  0.00 %  0.00 % [ksoftirqd/0]</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="网络相关"><a href="#网络相关" class="headerlink" title="网络相关"></a>网络相关</h2><ul>
+<li><p>ping：向网络主机发送ICMP ECHO_REQUEST数据包。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[hz@aliyun erlang-project]$ ping youkia.com</span><br><span class="line">PING youkia.com (117.78.38.96) 56(84) bytes of data.</span><br><span class="line">64 bytes from ecs-117-78-38-96.compute.hwclouds-dns.com (117.78.38.96): icmp_seq=1 ttl=46 time=55.3 ms</span><br><span class="line">64 bytes from ecs-117-78-38-96.compute.hwclouds-dns.com (117.78.38.96): icmp_seq=2 ttl=46 time=55.3 ms</span><br><span class="line">64 bytes from ecs-117-78-38-96.compute.hwclouds-dns.com (117.78.38.96): icmp_seq=3 ttl=46 time=55.3 ms</span><br><span class="line">...</span><br></pre></td></tr></table></figure></li>
+<li><p>traceroute：显示数据包到网络主机的路由路径。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[hz@aliyun erlang-project]$ traceroute youkia.com</span><br><span class="line">traceroute to youkia.com (117.78.38.96), 30 hops max, 60 byte packets</span><br><span class="line"> 1  11.63.116.46 (11.63.116.46)  1.122 ms  1.124 ms  1.137 ms</span><br><span class="line"> 2  11.63.116.113 (11.63.116.113)  1.233 ms 10.124.228.125 (10.124.228.125)  1.290 ms 10.124.228.81 (10.124.228.81)  1.281 ms</span><br><span class="line"> 3  11.88.168.49 (11.88.168.49)  1.557 ms 11.48.239.121 (11.48.239.121)  1.137 ms 11.48.239.197 (11.48.239.197)  0.825 ms</span><br><span class="line"> 4  45.112.220.65 (45.112.220.65)  1.807 ms 45.112.220.89 (45.112.220.89)  1.356 ms 45.112.220.13 (45.112.220.13)  1.865 ms</span><br><span class="line"> 5  117.49.54.102 (117.49.54.102)  9.292 ms  9.277 ms 117.49.54.50 (117.49.54.50)  5.757 ms</span><br><span class="line"> 6  11.94.166.53 (11.94.166.53)  45.763 ms * 11.94.136.185 (11.94.136.185)  60.216 ms</span><br><span class="line"> 7  45.112.223.250 (45.112.223.250)  50.328 ms 10.102.154.246 (10.102.154.246)  41.797 ms 45.112.216.34 (45.112.216.34)  44.119 ms</span><br><span class="line"> 8  103.216.40.49 (103.216.40.49)  43.525 ms  43.945 ms  43.536 ms</span><br></pre></td></tr></table></figure></li>
+<li><p>netstat：显示网络连接、路由表、网络接口数据、伪连接以及多点传送成员等信息。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[hz@aliyun erlang-project]$ netstat -ie</span><br><span class="line">Kernel Interface table</span><br><span class="line">eth0: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500</span><br><span class="line">        inet 172.17.173.142  netmask 255.255.240.0  broadcast 172.17.175.255</span><br><span class="line">        inet6 fe80::216:3eff:fe0d:5a2f  prefixlen 64  scopeid 0x20&lt;link&gt;</span><br><span class="line">        ether 00:16:3e:0d:5a:2f  txqueuelen 1000  (Ethernet)</span><br><span class="line">        RX packets 24134  bytes 7211877 (6.8 MiB)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 24984  bytes 14476371 (13.8 MiB)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br><span class="line"></span><br><span class="line">lo: flags=73&lt;UP,LOOPBACK,RUNNING&gt;  mtu 65536</span><br><span class="line">        inet 127.0.0.1  netmask 255.0.0.0</span><br><span class="line">        inet6 ::1  prefixlen 128  scopeid 0x10&lt;host&gt;</span><br><span class="line">        loop  txqueuelen 1000  (Local Loopback)</span><br><span class="line">        RX packets 28338  bytes 5183587 (4.9 MiB)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 28338  bytes 5183587 (4.9 MiB)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br></pre></td></tr></table></figure></li>
+</ul>
+<ul>
+<li><p>ss 获取套接字统计信息，可以显示类似于 netstat 的信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 显示所有 TCP 或 UDP 套接字</span><br><span class="line">[hz@aliyun erlang-project]$ ss -t -a</span><br><span class="line">State       Recv-Q Send-Q                              Local Address:Port                                               Peer Address:Port                </span><br><span class="line">LISTEN      0      128                                             *:sunrpc                                                        *:*                    </span><br><span class="line">LISTEN      0      128                                             *:epmd                                                          *:*                   </span><br></pre></td></tr></table></figure></li>
+<li><p>tcpdump</p>
+<ul>
+<li><p><strong>-i</strong> : 选择要捕获的接口，通常是以太网卡或无线网卡，也可以是 <code>vlan</code> 或其他特殊接口。如果该系统上只有一个网络接口，则无需指定。<br>注意：当是本机内部通信时, 走的是lo，此时是抓不到包的，必须指定网卡。</p>
+</li>
+<li><p><strong>-nn</strong> : 单个 n 表示不解析域名，直接显示 IP；两个 n 表示不解析域名和端口。这样不仅方便查看 IP 和端口号，而且在抓取大量数据时非常高效，因为域名解析会降低抓取速度。</p>
+</li>
+<li><p><strong>-s0</strong> : tcpdump 默认只会截取前 <code>96</code> 字节的内容，要想截取所有的报文内容，可以使用 <code>-s number</code>， <code>number</code> 就是你要截取的报文字节数，如果是 0 的话，表示截取报文全部内容。</p>
+</li>
+<li><p><strong>-v</strong> : 使用 <code>-v</code>，<code>-vv</code> 和 <code>-vvv</code> 来显示更多的详细信息，通常会显示更多与特定协议相关的信息。</p>
+</li>
+<li><p><code>port 80</code> : 这是一个常见的端口过滤器，表示仅抓取 <code>80</code> 端口上的流量，通常是 HTTP。</p>
+</li>
+<li><p>-A 以 ASCII 格式打印每个数据包</p>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth0 -nn -s0 -v port 80</span><br><span class="line">tcpdump -A -s0 port 80 <span class="comment"># 以ASCII字符串 打印数据包</span></span><br><span class="line">tcpdump -i eth0 udp <span class="comment"># 指定协议</span></span><br><span class="line">tcpdump -i eth0 proto 17 <span class="comment"># 同上一条命令</span></span><br><span class="line">tcpdump -i eth0 -s0 -w test.pcap <span class="comment"># 写入文件</span></span><br><span class="line">tcpdump -i eth0 -s0 -l port 80 | grep <span class="string">&#x27;Server:&#x27;</span> <span class="comment"># 要实时将抓取到的数据通过管道传递给其他工具来处理 需要使用行缓冲模式</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>过滤器</p>
+<ul>
+<li><p>过滤host</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tcpdump host 1.2.3.4 # 指定主机 </span><br><span class="line">tcpdump -i eth0 dst 10.10.1.20 # src和dst是可选项=</span><br></pre></td></tr></table></figure></li>
+<li><p>过滤网段</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tcpdump net 192.168.1 # 三元组 192.168.1.x 发出或发往</span><br><span class="line">tcpdump src net 10 # 一元组 表示子网掩码255.0.0.0</span><br><span class="line"># 二元组 255.255.0.0</span><br><span class="line"># 四元组 某主机</span><br><span class="line">tcpdump src net 172.16.0.0/12 # CIDR</span><br></pre></td></tr></table></figure></li>
+<li><p>过滤协议</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -n proto \\icmp	# 保留字用双斜杠</span><br></pre></td></tr></table></figure></li>
+<li><p>过滤端口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump port 389</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h2 id="综合工具"><a href="#综合工具" class="headerlink" title="综合工具"></a>综合工具</h2><ul>
+<li><p>dstat 显示 CPU 使用率、内存使用率、磁盘 I/O、网络流量等系统资源的情况</p>
+<ul>
+<li>-l ：显示负载统计量</li>
+<li>-m ：显示内存使用率（包括used，buffer，cache，free值）</li>
+<li>-r ：显示I/O统计</li>
+<li>-s ：显示交换分区使用情况</li>
+<li>-t ：将当前时间显示在第一行</li>
+<li>–fs ：显示文件系统统计数据（包括文件总数量和inodes值）</li>
+<li>–nocolor ：不显示颜色（有时候有用）</li>
+<li>–socket ：显示网络统计数据</li>
+<li>–tcp ：显示常用的TCP统计</li>
+<li>–udp ：显示监听的UDP接口及其当前用量的一些动态数据</li>
+<li>附带插件<ul>
+<li>-–disk-util ：显示某一时间磁盘的忙碌状况</li>
+<li>-–freespace ：显示当前磁盘空间使用率</li>
+<li>-–proc-count ：显示正在运行的程序数量</li>
+<li>-–top-bio ：指出块I/O最大的进程</li>
+<li>-–top-cpu ：图形化显示CPU占用最大的进程</li>
+<li>-–top-io ：显示正常I/O最大的进程</li>
+<li>-–top-mem ：显示占用最多内存的进程</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[hz@aliyun erlang-project]$ dstat</span><br><span class="line">You did not select any stats, using -cdngy by default.</span><br><span class="line">----total-cpu-usage---- -dsk/total- -net/total- ---paging-- ---system--</span><br><span class="line">usr sys idl wai hiq siq| read  writ| recv  send|  in   out | int   csw </span><br><span class="line">  2   1  98   0   0   0|  71k   98k|   0     0 |   0     0 |1851  3457 </span><br><span class="line">  1   1  98   0   0   0|   0     0 | 840B 3842B|   0     0 |2021  3567 </span><br><span class="line">  1   1  98   0   0   0|   0     0 | 120B  260B|   0     0 |1854  3420 </span><br><span class="line">  2   1  97   0   0   0|   0     0 | 460B  500B|   0     0 |1955  3532 </span><br><span class="line">  1   1  99   0   0   0|   0     0 | 120B  122B|   0     0 |1798  3296 </span><br><span class="line"> </span><br><span class="line"># 监控swap，process，sockets，filesystem并显示监控的时间</span><br><span class="line">[hz@aliyun erlang-project]$ dstat -tsp --socket --fs</span><br><span class="line">----system---- ----swap--- ---procs--- ------sockets------ --filesystem-</span><br><span class="line">     time     | used  free|run blk new|tot tcp udp raw frg|files  inodes</span><br><span class="line">24-06 23:39:21|   0     0 |0.0   0 5.5|223  11   4   0   0| 1280  49802 </span><br><span class="line">24-06 23:39:22|   0     0 |  0   0 8.0|229  11   4   0   0| 1344  49823 </span><br><span class="line">24-06 23:39:23|   0     0 |  0   0 7.0|223  11   4   0   0| 1344  49804 </span><br><span class="line">24-06 23:39:24|   0     0 |  0   0   0|223  11   4   0   0| 1344  49804 ^C</span><br></pre></td></tr></table></figure></li>
+</ul>
+
       
     </div>
 
@@ -758,7 +1361,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/12/otp/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/12/gen_server/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -772,7 +1375,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2023/04/12/otp/" class="post-title-link" itemprop="url">otp</a>
+            <a href="/2023/04/12/gen_server/" class="post-title-link" itemprop="url">gen_server</a>
         </h2>
 
         <div class="post-meta">
@@ -791,7 +1394,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-21 21:57:32" itemprop="dateModified" datetime="2023-05-21T21:57:32+08:00">2023-05-21</time>
+                <time title="修改时间：2023-06-24 23:58:18" itemprop="dateModified" datetime="2023-06-24T23:58:18+08:00">2023-06-24</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -799,7 +1402,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                   <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                    <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                    <a href="/categories/%E7%BC%96%E7%A8%8B/erlang/" itemprop="url" rel="index"><span itemprop="name">erlang</span></a>
                   </span>
             </span>
 
@@ -812,8 +1415,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2023/04/12/otp/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/04/12/otp/" itemprop="commentCount"></span>
+    <a title="valine" href="/2023/04/12/gen_server/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/04/12/gen_server/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -823,14 +1426,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>7.2k</span>
+              <span>2.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>7 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -842,36 +1445,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/applications.html">Erlang/OTP Applications</a></p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/system_principles/system_principles.html">Erlang – System Principles</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/design_principles/users_guide.html">Erlang – OTP Design Principles</a></li>
-</ul>
-<p>借助分布式系统，你可以达到可伸缩性。事实上，可用性（ availability ）、一致性(consistency ）和可伸缩性（ scalability ） 三者环环相扣，相互影响。从单节点上的井发模型与消息传递概念为起点，我们又将其扩展，跨越网络，用于集群。E rlang 的虚拟<br>机利用了今天多核系统的优势，允许进程以真正并发的方式运行在不同的核心上。由于Erlang 虚拟机拥有“对称多处理器”（ SM P ）方面的能力， Erlang 已做好准备帮助应用程序｜随着每片CPU 核心数的增加而垂直伸展。并且由于在集群上添加节点是如此轻松一一新加入的节点只需出问一个已有的节点便能加入整个网络一一水平伸缩问题也就迎刃而解了。终于，你可以聚焦于解决分布式系统中那些真正的挑战了，即，如何将你的数据和状态分布在不可靠的主机和网络上。</p>
-<h1 id="OTP设计原则"><a href="#OTP设计原则" class="headerlink" title="OTP设计原则"></a>OTP设计原则</h1><p> 监督树</p>
-<p> 监督树是otp的基本概念，将进程分为工作者和 监督者：</p>
-<ul>
-<li>工作者是实际进行计算的进程。</li>
-<li>监督者观察工作者的行为，当发生错误时可以重启工作者</li>
-<li>监督树是把代码组织成监督者和工作者，使设计容错性成为可能。</li>
-</ul>
-<p>行为模式（behavior）</p>
-<p>在监控树中，许多进程的结构相似，有着共同的模式，这些模式称为行为。otp将行为抽象为一个模块，称为<strong>行为模块</strong>，只负责进程通用的部分，如发出请求，接收响应等，具体的处理过程在<strong>回调模块</strong>编写，这种组织方式可以减小代码的耦合度。以下是一个简单的例子：</p>
-<p>行为模块</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-module</span><span class="params">(server)</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([start/<span class="number">1</span>])</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([call/<span class="number">2</span>, cast/<span class="number">2</span>])</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([init/<span class="number">1</span>])</span>.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">start</span><span class="params">(Mod)</span> -&gt;</span></span><br><span class="line">    spawn(server, init, [Mod]).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">call</span><span class="params">(Name, Req)</span> -&gt;</span></span><br><span class="line">    Name ! &#123;call, self(), Req&#125;,</span><br><span class="line">    <span class="keyword">receive</span></span><br><span class="line">        &#123;Name, Res&#125; -&gt;</span><br><span class="line">            Res</span><br><span class="line">    <span class="keyword">end</span>.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">cast</span><span class="params">(Name, Req)</span> -&gt;</span></span><br><span class="line">    Name ! &#123;cast, Req&#125;,</span><br><span class="line">    ok.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">init</span><span class="params">(Mod)</span> -&gt;</span></span><br><span class="line">    register(Mod, self()),</span><br><span class="line">    State = Mod:init(),</span><br><span class="line">    loop(Mod, State).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">loop</span><span class="params">(Mod, State)</span> -&gt;</span></span><br><span class="line">    <span class="keyword">receive</span></span><br><span class="line">        &#123;call, From, Req&#125; -&gt;</span><br><span class="line">            &#123;Res, State2&#125; = Mod:handle_call(Req, State),</span><br><span class="line">            From ! &#123;Mod, Res&#125;,</span><br><span class="line">            loop(Mod, State2);</span><br><span class="line">        &#123;cast, Req&#125; -&gt;</span><br><span class="line">            State2 = Mod:handle_cast(Req, State),</span><br><span class="line">            loop(Mod, State2)</span><br><span class="line">    <span class="keyword">end</span>.</span><br></pre></td></tr></table></figure>
-
-<p>回调模块</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-module</span><span class="params">(ch2)</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([start/<span class="number">0</span>])</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([alloc/<span class="number">0</span>, free/<span class="number">1</span>])</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([init/<span class="number">0</span>, handle_call/<span class="number">2</span>, handle_cast/<span class="number">2</span>])</span>.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">start</span><span class="params">()</span> -&gt;</span></span><br><span class="line">    server:start(ch2).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">alloc</span><span class="params">()</span> -&gt;</span></span><br><span class="line">    server:call(ch2, alloc).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">free</span><span class="params">(Ch)</span> -&gt;</span></span><br><span class="line">    server:cast(ch2, &#123;free, Ch&#125;).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">init</span><span class="params">()</span> -&gt;</span></span><br><span class="line">    channels().</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">handle_call</span><span class="params">(alloc, Chs)</span> -&gt;</span></span><br><span class="line">    alloc(Chs). <span class="comment">% =&gt; &#123;Ch,Chs2&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">handle_cast</span><span class="params">(&#123;free, Ch&#125;, Chs)</span> -&gt;</span></span><br><span class="line">    free(Ch, Chs). <span class="comment">% =&gt; Chs2</span></span><br></pre></td></tr></table></figure>
-
-<p>标准的内置otp行为模块有以下四类：</p>
-<ul>
-<li>gen_server，用于建立client-server行为模型</li>
-<li>gen_statem，用于有限状态机编程</li>
-<li>gen_event，用于编写事件处理器</li>
-<li>supervisor，用于构建具备容错能力的监督树</li>
-</ul>
-<p>除了标准化行为模块，otp还为回调模块中的函数实现提供了许多有用的编程库和工具，统称为应用（Applications），例如Mnesia（数据库）、eunit（测试库）等。</p>
-<h1 id="behaviour"><a href="#behaviour" class="headerlink" title="behaviour"></a>behaviour</h1><h2 id="gen-server-behaviour"><a href="#gen-server-behaviour" class="headerlink" title="gen_server behaviour"></a>gen_server behaviour</h2><p>gen_server用于实现客户端/服务器模型，代码包括三部分：api，回调函数，实现函数（Internal functions）</p>
+          <p>gen_server用于实现客户端/服务器模型，代码包括三部分：api，回调函数，实现函数（Internal functions）</p>
 <p>回调模块的编写步骤：</p>
 <ol>
 <li><p>确定回调模块名。</p>
@@ -901,7 +1475,7 @@
 <figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">%%% API</span></span><br><span class="line"><span class="function"><span class="title">area</span><span class="params">(Thing)</span> -&gt;</span></span><br><span class="line">  gen_server:call(?MODULE, &#123;area, Thing&#125;).</span><br><span class="line"><span class="comment">%%% Spawning and gen_server implementation</span></span><br><span class="line"><span class="function"><span class="title">handle_call</span><span class="params">(&#123;area, Thing&#125;, _From, N)</span> -&gt;</span></span><br><span class="line">  &#123;reply, compute_area(Thing), N + <span class="number">1</span>&#125;.</span><br><span class="line"><span class="comment">%%% Internal functions</span></span><br><span class="line"><span class="function"><span class="title">compute_area</span><span class="params">(&#123;square, X&#125;)</span> -&gt;</span> X * X;</span><br><span class="line"><span class="function"><span class="title">compute_area</span><span class="params">(&#123;rectangle, X, Y&#125;)</span> -&gt;</span> X * Y.</span><br></pre></td></tr></table></figure>
 
 <h3 id="启动gen-server"><a href="#启动gen-server" class="headerlink" title="启动gen_server"></a>启动gen_server</h3><ul>
-<li><p><strong>start</strong><br>启动独立的gen_server，standalone ，不包括在监督树的一部分。</p>
+<li><p><strong>start</strong><br>启动独立（standalone ）的gen_server，不包括在监督树的一部分。</p>
 <ul>
 <li>start(Module :: module(),<pre><code>Args :: term(),
 Options :: [start_opt()]) -&gt;
@@ -990,217 +1564,6 @@ Options :: [start_opt()]) -&gt;
 <li>如果服务器确实崩溃了，我们希望知道它崩溃的原因，这样就能在未来修复这个问题。<br>为了记录所有错误，可以使用OTP的错误记录器。我们会展示<strong>如何配置错误记录器</strong>，以及如何根据错误日志生成错误报告。</li>
 <li>计算质数（特别是大质数）时，CPU可能会过热，这就需要开启一个强力风扇来避免这种情况。要做到这一点，需要考虑警报。我们会用OTP<strong>事件处理框架</strong>来生成和处理警报</li>
 </ul>
-<h2 id="gen-statem-behaviour"><a href="#gen-statem-behaviour" class="headerlink" title="gen_statem behaviour"></a>gen_statem behaviour</h2><ul>
-<li>init/1 </li>
-<li>format_status/2 </li>
-<li>state_name/3 </li>
-<li>handle_event/4 </li>
-<li>terminate/3</li>
-<li>code_change/4 </li>
-<li>callback_mode/0</li>
-</ul>
-<h2 id="gen-fsm"><a href="#gen-fsm" class="headerlink" title="gen_fsm"></a>gen_fsm</h2><p>在OTP19已弃用</p>
-<h2 id="gen-event-behaviour"><a href="#gen-event-behaviour" class="headerlink" title="gen_event behaviour"></a>gen_event behaviour</h2><p>事件就是已发生的事情：它是值得注意的，程序员认为有人应该对它做些什么。<br>如果在编程的时候发生了一件值得注意的事，就会发送一个event消息给某个注册进程（<strong>事件的形式就是一个消息</strong>），就像这样：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RegProcName ! &#123;event, E&#125;</span><br></pre></td></tr></table></figure>
-
-<p>发送消息后我们不知道（也不关心）它的命运。只是完成自己的任务，告诉其他人有什么事发生。</p>
-<ul>
-<li>初始的处理函数是什么都不做</li>
-<li>发送事件就是发送消息</li>
-<li>添加事件处理器可以把处理函数从什么都不做变成传入的函数</li>
-</ul>
-<p>事件管理器（<strong>event manager</strong>）是一个接收事件的命名对象，事件是error、alarm或其他需要被记录的日志信息。</p>
-<h3 id="api"><a href="#api" class="headerlink" title="api"></a>api</h3><ol>
-<li><p>启动事件管理器</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-spec</span><span class="params">(start_link() -&gt; &#123;ok, pid()&#125; | &#123;error, &#123;already_started, pid()&#125;&#125;)</span>.</span><br><span class="line"><span class="function"><span class="title">start_link</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  gen_event:start_link(&#123;local, error_man&#125;).</span><br></pre></td></tr></table></figure></li>
-<li><p>添加事件管理器</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-spec</span><span class="params">(add_handler() -&gt; ok | &#123;&#x27;EXIT&#x27;, Reason :: term()&#125; | term())</span>.</span><br><span class="line"><span class="function"><span class="title">add_handler</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  gen_event:add_handler(error_man, terminal_logger, []).</span><br></pre></td></tr></table></figure></li>
-<li><p>删除事件管理器</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gen_event:delete_handler(error_man, terminal_logger, []).</span><br></pre></td></tr></table></figure></li>
-<li><p>替换事件管理器</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">swap_handler(EventMgrRef, &#123;Handler1,Args1&#125;, &#123;Handler2,Args2&#125;) -&gt; Result</span><br></pre></td></tr></table></figure></li>
-<li><p>发送事件</p>
-<ul>
-<li>直接调用函数（过时）</li>
-<li>显示调用</li>
-</ul>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gen_event:notify(error_man, no_reply).</span><br></pre></td></tr></table></figure></li>
-<li><p>停止事件管理器</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gen_event:stop(error_man).</span><br></pre></td></tr></table></figure></li>
-<li><p>处理事件</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Module:handle_event(Event, State) -&gt; Result</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Event是一个{EventType,Event-Arg}形式的<strong>二元组</strong>，其中EventType是<strong>set_event</strong>或<strong>clear_event</strong>（event是自定义的事件名），而EventArg是一个用户提供的参数。</li>
-<li>返回 {ok, NewState}。</li>
-</ul>
-</li>
-</ol>
-<p>实质上，事件表示系统状态的改变，事件管理器就是维护<code>&#123;Module, State&#125;</code>二元组列表。</p>
-<p>注：Module is an event handler, and State is the internal state of that event handler.</p>
-<h3 id="回调函数"><a href="#回调函数" class="headerlink" title="回调函数"></a>回调函数</h3><ul>
-<li>init/1 添加新事件管理器时调用</li>
-<li>handle_event/2 接收到事件时调用</li>
-<li>handle_call/2 接收到请求时调用</li>
-<li>handle_info/2 接收到非事件和同步请求时调用</li>
-<li>terminate/2 删除事件管理器时调用 </li>
-<li>code_change/3 热更新时调用</li>
-</ul>
-<p>swap_handler(EventMgrRef, {Handler1,Args1}, {Handler2,Args2}) -&gt; Result</p>
-<h3 id="错误记录器"><a href="#错误记录器" class="headerlink" title="错误记录器"></a>错误记录器</h3><p><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/error_logger.html">Erlang – error_logger</a></p>
-<ul>
-<li><p>记录错误：在代码里中做的函数调用</p>
-<ul>
-<li>error_logger:error_msg(String)</li>
-<li>error_logger:error_msg(Format, Data)</li>
-<li>error_logger:error_report(Report)</li>
-</ul>
-</li>
-<li><p>配置：错误记录器在何处以及如何保存数据；</p>
-<ul>
-<li><p>显示在erlang shell （默认）</p>
-</li>
-<li><p>文本文件</p>
-</li>
-<li><p>滚动日志：新消息进来后会被附加到日志的末尾，如果日志满了，最早的条目就会被删除。</p>
-<p>极其有用。你决定日志应当占据多少个文件，以及每个日志文件能有多大，然后系统负责在一个大型循环缓冲区里删除旧日志文件和创建新文件。可以调整日志的大小来保存最近几天的操作记录</p>
-</li>
-</ul>
-</li>
-<li><p>分析日志：使用rb模块</p>
-</li>
-</ul>
-<h3 id="警报记录器"><a href="#警报记录器" class="headerlink" title="警报记录器"></a>警报记录器</h3><p><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/alarm_handler.html">Erlang – alarm_handler</a></p>
-<h2 id="supervisor-behaviour"><a href="#supervisor-behaviour" class="headerlink" title="supervisor behaviour"></a>supervisor behaviour</h2><h3 id="模板"><a href="#模板" class="headerlink" title="模板"></a>模板</h3><figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-module</span><span class="params">(ch_sup)</span>.</span><br><span class="line"><span class="keyword">-behaviour</span><span class="params">(supervisor)</span>.</span><br><span class="line"></span><br><span class="line"><span class="keyword">-export</span><span class="params">([start_link/<span class="number">0</span>])</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([init/<span class="number">1</span>])</span>.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">start_link</span><span class="params">()</span> -&gt;</span></span><br><span class="line">    supervisor:start_link(ch_sup, []).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">init</span><span class="params">(_Args)</span> -&gt;</span></span><br><span class="line">    SupFlags = #&#123;strategy =&gt; one_for_one, intensity =&gt; <span class="number">1</span>, period =&gt; <span class="number">5</span>&#125;,</span><br><span class="line">    ChildSpecs = [#&#123;id =&gt; ch3,</span><br><span class="line">                    start =&gt; &#123;ch3, start_link, []&#125;,</span><br><span class="line">                    restart =&gt; permanent,</span><br><span class="line">                    shutdown =&gt; brutal_kill,</span><br><span class="line">                    type =&gt; worker,</span><br><span class="line">                    modules =&gt; [ch3]&#125;],</span><br><span class="line">    &#123;ok, &#123;SupFlags, ChildSpecs&#125;&#125;.</span><br></pre></td></tr></table></figure>
-
-<p>必须实现init回调函数，会在启动时被调用</p>
-<ul>
-<li>返回值：<code>&#123;ok, &#123;SupFlags, ChildSpecs&#125;&#125;</code></li>
-<li>SupFlags表示监督者配置</li>
-<li>ChildSpecs是子进程标识符列表</li>
-</ul>
-<h3 id="SupFlags"><a href="#SupFlags" class="headerlink" title="SupFlags"></a>SupFlags</h3><ul>
-<li>strategy 重启策略<ul>
-<li>one_for_all 若一个子进程终止，终止所有子进程并重启所有子进程</li>
-<li>one_for_one <strong>默认</strong>策略，若一个子进程终止，只有该进程会重启</li>
-<li>rest_for_one 若一个子进程终止，终止该进程以后启动的所有子进程（ChildSpecs中指定的顺序）并重启所有终止的子进程</li>
-<li>simple_one_for_one 简化的one_for_one 策略，监督者不启动子进程，而是在运行中使用<code>supervisor:start_child(Sup, List)</code>函数添加</li>
-</ul>
-</li>
-<li>intensity（默认1）和period（默认5） 重启强度<br>监督者在period内重启了intensity次子进程，监督者和子进程都会被终止</li>
-<li>auto_shutdown 当重要的子进程（significant children）关闭时关闭自身<ul>
-<li>never 默认</li>
-<li>any_significant</li>
-<li>all_significant</li>
-</ul>
-</li>
-</ul>
-<h3 id="ChildSpecs"><a href="#ChildSpecs" class="headerlink" title="ChildSpecs"></a>ChildSpecs</h3><ul>
-<li>id 必须配置，用于监督者<strong>内部</strong>标识子进程</li>
-<li>start 必须配置，子进程的启动方法，例：<code>start =&gt; &#123;&#39;AModule&#39;, start_link, []&#125;</code></li>
-<li>restart 何时重启<ul>
-<li>permanent 总是重启（包括正常关闭）</li>
-<li>transient 非正常终止时重启</li>
-<li>temporary 永不重启</li>
-</ul>
-</li>
-<li>significant 布尔类型，标识重要进程</li>
-<li>shutdown <ul>
-<li>brutal_kill 无条件使用<code>exit(Child, kill)</code>终止</li>
-<li>timeout 通知子进程让其自己关闭，等待接收退出信号，超时没收到信号无条件使用<code>exit(Child, kill)</code>终止</li>
-<li>若子进程是另一个监督者，必须设置为<strong>infinity</strong>来提供足够的关闭时间</li>
-</ul>
-</li>
-<li>type <ul>
-<li>worker</li>
-<li>supervisor</li>
-</ul>
-</li>
-<li>modules</li>
-</ul>
-<p>多个子进程的配置</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">init</span><span class="params">([])</span> -&gt;</span></span><br><span class="line">  gen_event:swap_handler(alarm_handler, &#123;alarm_handler, swap&#125;, &#123;my_alarm_handler, xyz&#125;),</span><br><span class="line">  &#123;ok, &#123;&#123;one_for_one, <span class="number">3</span>, <span class="number">10</span>&#125;, <span class="comment">% RestartStrategy MaxRestarts Time</span></span><br><span class="line">    [</span><br><span class="line">      &#123;tag1, <span class="comment">%% worker1</span></span><br><span class="line">        &#123;area_server, start_link, []&#125;,</span><br><span class="line">        permanent,</span><br><span class="line">        <span class="number">10000</span>,</span><br><span class="line">        worker,</span><br><span class="line">        [area_server]&#125;,</span><br><span class="line">      &#123;tag2, <span class="comment">%% worker2</span></span><br><span class="line">        &#123;prime_server, start_link, []&#125;,</span><br><span class="line">        permanent,</span><br><span class="line">        <span class="number">10000</span>,</span><br><span class="line">        worker,</span><br><span class="line">        [prime_server]</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;&#125;.</span><br></pre></td></tr></table></figure>
-
-<p>worker启动格式</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;Tag, &#123;Mod, Func, ArgList&#125;,</span><br><span class="line">	  Restart,</span><br><span class="line">	  Shutdown,</span><br><span class="line">	  Type,</span><br><span class="line">	  [Mod1]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="深入控制behaviour"><a href="#深入控制behaviour" class="headerlink" title="深入控制behaviour"></a>深入控制behaviour</h2><h2 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h2><h2 id="application"><a href="#application" class="headerlink" title="application"></a>application</h2><p>application把监督树、模块和其他资源（C语言代码等）打包成一个半独立的单位，为大型erlang系统提供构件</p>
-<h3 id="application目录结构"><a href="#application目录结构" class="headerlink" title="application目录结构"></a>application目录结构</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">─ $&#123;application&#125;</span><br><span class="line">  ├── doc</span><br><span class="line">  │   ├── internal</span><br><span class="line">  │   ├── examples</span><br><span class="line">  │   └── src</span><br><span class="line">  ├── include</span><br><span class="line">  ├── priv</span><br><span class="line">  ├── src</span><br><span class="line">  │   └── $&#123;application&#125;.app.src</span><br><span class="line">  └── test</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>ebin 包括beam文件和application配置文件（.app文件）</li>
-<li>src  源文件和不希望其他application使用的头文件</li>
-<li>priv application所需的非erlang文件，包括图像、脚本等</li>
-<li>include 导出的可由其他application使用的头文件</li>
-<li>doc - Recommended. Any source documentation should be placed in sub-directories here.</li>
-<li>doc/internal - Recommended. Any documentation that describes implementation details about this application, not intended for publication, should be placed here.</li>
-<li>doc/examples - Recommended. Source code for examples on how to use this application should be placed here. It is encouraged that examples are sourced to the public documentation from this directory.</li>
-<li>doc/src - Recommended. All source files for documentation, such as Markdown, AsciiDoc or XML-files, should be placed here.</li>
-<li>test - Recommended. All files regarding tests, such as test suites and test specifications, should be placed here.</li>
-</ul>
-<h3 id="回调函数-1"><a href="#回调函数-1" class="headerlink" title="回调函数"></a>回调函数</h3><p>一般情况下，只需要start和stop回调函数，除非需要实现分布式下的接管和故障转移或复制的启动策略。</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-module</span><span class="params">(&#x27;my_application&#x27;)</span>.</span><br><span class="line"><span class="keyword">-behaviour</span><span class="params">(application)</span>.</span><br><span class="line"></span><br><span class="line"><span class="keyword">-export</span><span class="params">([start/<span class="number">2</span>, stop/<span class="number">1</span>])</span>.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">start</span><span class="params">(_StartType, _StartArgs)</span> -&gt;</span></span><br><span class="line">  &#x27;MyApp&#x27;_sup:start_link().</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">stop</span><span class="params">(_State)</span> -&gt;</span></span><br><span class="line">  ok.</span><br></pre></td></tr></table></figure>
-
-<h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><p>Erlang的.app文件和.config文件是Erlang应用程序的配置文件。</p>
-<ul>
-<li>.app文件是一个应用程序描述文件，它描述了应用程序的名称、版本、模块、依赖项等信息。</li>
-<li>.config文件是一个配置文件，它包含应用程序的配置信息，例如端口号、日志级别等。12</li>
-</ul>
-<p><strong>注意</strong>：目录必须用<code>/</code>，不能用<code>\</code></p>
-<p>application需要使用后缀名为<code>.app</code>的配置文件来启动，详细配置见<a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/app.html">Erlang – app</a></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;application, ch_app,</span><br><span class="line"> [&#123;description, &quot;Channel allocator&quot;&#125;,</span><br><span class="line">  &#123;vsn, &quot;1&quot;&#125;,</span><br><span class="line">  &#123;modules, [ch_app, ch_sup, ch3]&#125;,</span><br><span class="line">  &#123;registered, [ch3]&#125;,</span><br><span class="line">  &#123;applications, [kernel, stdlib, sasl]&#125;,</span><br><span class="line">  &#123;mod, &#123;ch_app,[]&#125;&#125;,</span><br><span class="line">  &#123;env, [&#123;file, &quot;/usr/local/log&quot;&#125;]&#125;</span><br><span class="line"> ]&#125;.</span><br></pre></td></tr></table></figure>
-
-<p>使用systools必须配置以下选项</p>
-<ul>
-<li>description 自由设定，调用<code>application:which_applications()</code>获取</li>
-<li>vsn 表示application 版本的字符串。它应该反映目录的名称，并且应该由自动<br>构建系统中的脚本设置， 而不是手动设置。如果省赂，默认值为空字柯：串。</li>
-<li>modules 用于指明创建发行版和加载application时使用的模块列表，在此导出的模块与ebin目录中包含的beam 文件一一对应</li>
-<li>registered 包含了此application 中运行的全部注册进程名称</li>
-<li>applications 依赖的其他application的列表</li>
-</ul>
-<p>其他选项</p>
-<ul>
-<li>mod 指明了application 的回调模块以及传递给启动函数的参数</li>
-<li>env 用于为application 设置环境变量，环境变量的值可以使用<code>application:get_ env(Key)</code>或<code>application:get_all_env()</code> 函数获取</li>
-</ul>
-<h3 id="加载和卸载"><a href="#加载和卸载" class="headerlink" title="加载和卸载"></a>加载和卸载</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">application:load(ch_app).</span><br><span class="line">application:unload(ch_app).</span><br><span class="line">application:unload(ch_app).</span><br></pre></td></tr></table></figure>
-
-<h3 id="启动和关闭"><a href="#启动和关闭" class="headerlink" title="启动和关闭"></a>启动和关闭</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">application:start(ch_app).</span><br><span class="line">application:start(ch_app).</span><br><span class="line">application:start(ch_app).</span><br></pre></td></tr></table></figure>
-
-<h2 id="内含型application"><a href="#内含型application" class="headerlink" title="内含型application"></a>内含型application</h2><p>一个application可以包含另一个application，被包含的application称为<strong>内含型application（included application）</strong>，不被其他application包含的application称为**主application（primary application)**。</p>
-<p>内含型application有自己的目录和.app文件，但监督树作为主application的监督树的一部分启动，因此可以实现同步启动。</p>
-<h2 id="分布式application"><a href="#分布式application" class="headerlink" title="分布式application"></a>分布式application</h2><h2 id="自定义behaviour"><a href="#自定义behaviour" class="headerlink" title="自定义behaviour"></a>自定义behaviour</h2><p>除了四个标准的典型的行为，还可以自定义行为。</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-behaviour</span><span class="params">(cowboy_middleware)</span>.</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<h1 id="常用Applications"><a href="#常用Applications" class="headerlink" title="常用Applications"></a>常用Applications</h1><h2 id="mnesia"><a href="#mnesia" class="headerlink" title="mnesia"></a>mnesia</h2><h2 id="obdc"><a href="#obdc" class="headerlink" title="obdc"></a>obdc</h2><h2 id="observer"><a href="#observer" class="headerlink" title="observer"></a>observer</h2><h2 id="eunit"><a href="#eunit" class="headerlink" title="eunit"></a>eunit</h2><h1 id="发布"><a href="#发布" class="headerlink" title="发布"></a>发布</h1><p>将多个application组合成完整的系统，称为发布（release）</p>
-<p>发布资源文件</p>
-<p>详细配置见<a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/rel.html">Erlang – rel</a></p>
-<p><code>release.rel</code></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;release, &#123;Name,Vsn&#125;, &#123;erts, EVsn&#125;,</span><br><span class="line"> [&#123;Application1, AppVsn1&#125;,</span><br><span class="line">   ...</span><br><span class="line">  &#123;ApplicationN, AppVsnN&#125;]&#125;.</span><br></pre></td></tr></table></figure>
-
-<p>创建启动脚本<code>ch_rel-1.boot</code></p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systools:make_script(<span class="string">&quot;ch_rel-1&quot;</span>, [local]).</span><br></pre></td></tr></table></figure>
-
-<p>使用启动脚本启动</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">erl -boot ch_rel-<span class="number">1</span></span><br></pre></td></tr></table></figure>
-
-<p>创建发布包</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systools:make_script(&quot;ch_rel-1&quot;).</span><br><span class="line">systools:make_tar(&quot;ch_rel-1&quot;).</span><br></pre></td></tr></table></figure>
-
-<h2 id="发布管理"><a href="#发布管理" class="headerlink" title="发布管理"></a>发布管理</h2><p>系统升降级的能力</p>
-<h1 id="sasl"><a href="#sasl" class="headerlink" title="sasl"></a>sasl</h1><p>sasl是erlang内置的系统功能库，提供以下功能：</p>
-<ul>
-<li>错误日志</li>
-<li>警报处理</li>
-<li>发布处理</li>
-<li>报告浏览</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/apps/sasl/sasl_intro.html">Erlang – Introduction</a></p>
-<h1 id="虚拟机启动参数"><a href="#虚拟机启动参数" class="headerlink" title="虚拟机启动参数"></a>虚拟机启动参数</h1><p><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/erl.html">Erlang – erl</a></p>
 
       
     </div>
@@ -1255,7 +1618,7 @@ Options :: [start_opt()]) -&gt;
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-21 21:57:00" itemprop="dateModified" datetime="2023-05-21T21:57:00+08:00">2023-05-21</time>
+                <time title="修改时间：2023-06-24 23:54:18" itemprop="dateModified" datetime="2023-06-24T23:54:18+08:00">2023-06-24</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1263,7 +1626,7 @@ Options :: [start_opt()]) -&gt;
               </span>
               <span class="post-meta-item-text">分类于</span>
                   <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                    <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                    <a href="/categories/%E7%BC%96%E7%A8%8B/erlang/" itemprop="url" rel="index"><span itemprop="name">erlang</span></a>
                   </span>
             </span>
 
@@ -2304,7 +2667,7 @@ Options :: [start_opt()]) -&gt;
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/03/16/Linux/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/22/%E4%BD%BF%E7%94%A8Hexo%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -2318,351 +2681,7 @@ Options :: [start_opt()]) -&gt;
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2023/03/16/Linux/" class="post-title-link" itemprop="url">Linux命令行基础使用</a>
-        </h2>
-
-        <div class="post-meta">
-
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-03-16 14:58:33" itemprop="dateCreated datePublished" datetime="2023-03-16T14:58:33+08:00">2023-03-16</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-21 22:01:31" itemprop="dateModified" datetime="2023-05-21T22:01:31+08:00">2023-05-21</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                  <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                    <a href="/categories/%E5%B7%A5%E5%85%B7/" itemprop="url" rel="index"><span itemprop="name">工具</span></a>
-                  </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/03/16/Linux/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/03/16/Linux/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>18k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>16 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>关于Linux命令行的基本使用。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/03/16/Linux/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/10/02/%E8%AE%BA%E6%96%87%E5%86%99%E4%BD%9C%E7%AF%87/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Honghangzhi">
-      <meta itemprop="description" content="不积跬步，无以千里">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="HZ'Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/10/02/%E8%AE%BA%E6%96%87%E5%86%99%E4%BD%9C%E7%AF%87/" class="post-title-link" itemprop="url">论文写作篇</a>
-        </h2>
-
-        <div class="post-meta">
-
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-10-02 11:20:46" itemprop="dateCreated datePublished" datetime="2021-10-02T11:20:46+08:00">2021-10-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-05-03 17:20:59" itemprop="dateModified" datetime="2022-05-03T17:20:59+08:00">2022-05-03</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                  <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                    <a href="/categories/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                  </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2021/10/02/%E8%AE%BA%E6%96%87%E5%86%99%E4%BD%9C%E7%AF%87/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/10/02/%E8%AE%BA%E6%96%87%E5%86%99%E4%BD%9C%E7%AF%87/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h1><ul>
-<li>在线环境：<a target="_blank" rel="noopener" href="https://www.overleaf.com/">https://www.overleaf.com/</a></li>
-<li>Texlive：<a target="_blank" rel="noopener" href="https://www.tug.org/texlive/">https://www.tug.org/texlive/</a></li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/10/02/%E8%AE%BA%E6%96%87%E5%86%99%E4%BD%9C%E7%AF%87/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/23/%E5%8D%9A%E5%AE%A2%E5%86%99%E4%BD%9C%E7%AF%87/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Honghangzhi">
-      <meta itemprop="description" content="不积跬步，无以千里">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="HZ'Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/07/23/%E5%8D%9A%E5%AE%A2%E5%86%99%E4%BD%9C%E7%AF%87/" class="post-title-link" itemprop="url">博客写作篇</a>
-        </h2>
-
-        <div class="post-meta">
-
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-07-23 00:53:11" itemprop="dateCreated datePublished" datetime="2021-07-23T00:53:11+08:00">2021-07-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-06-23 00:02:26" itemprop="dateModified" datetime="2023-06-23T00:02:26+08:00">2023-06-23</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                  <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                    <a href="/categories/%E5%86%99%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">写作</span></a>
-                  </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2021/07/23/%E5%8D%9A%E5%AE%A2%E5%86%99%E4%BD%9C%E7%AF%87/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/07/23/%E5%8D%9A%E5%AE%A2%E5%86%99%E4%BD%9C%E7%AF%87/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>770</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Hexo博客写作篇"><a href="#Hexo博客写作篇" class="headerlink" title="Hexo博客写作篇"></a>Hexo博客写作篇</h2><h3 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">hexo new draft title</span><br><span class="line">hexo publish title <span class="comment"># 发布，将草稿从 _drafts 移动到 _posts 中</span></span><br><span class="line">hexo clean &amp;&amp; hexo deploy <span class="comment"># 发布</span></span><br><span class="line"><span class="comment"># post 归档 source/_posts</span></span><br><span class="line"><span class="comment"># page source</span></span><br><span class="line"><span class="comment"># draft 草稿 source/_drafts</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="模板"><a href="#模板" class="headerlink" title="模板"></a>模板</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">title: 博客写作篇</span><br><span class="line">date: 2021-07-23 00:53:11</span><br><span class="line">tags: hexo</span><br><span class="line">categories:</span><br><span class="line">  - 写作</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/07/23/%E5%8D%9A%E5%AE%A2%E5%86%99%E4%BD%9C%E7%AF%87/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/22/Hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E7%AF%87/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Honghangzhi">
-      <meta itemprop="description" content="不积跬步，无以千里">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="HZ'Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/07/22/Hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E7%AF%87/" class="post-title-link" itemprop="url">使用 Hexo 和 Github Pages 搭建博客</a>
+            <a href="/2021/07/22/%E4%BD%BF%E7%94%A8Hexo%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/" class="post-title-link" itemprop="url">使用 Hexo 和 Github Pages 搭建博客</a>
         </h2>
 
         <div class="post-meta">
@@ -2681,7 +2700,7 @@ Options :: [start_opt()]) -&gt;
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-06-23 14:56:57" itemprop="dateModified" datetime="2023-06-23T14:56:57+08:00">2023-06-23</time>
+                <time title="修改时间：2023-06-23 17:15:30" itemprop="dateModified" datetime="2023-06-23T17:15:30+08:00">2023-06-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2702,8 +2721,8 @@ Options :: [start_opt()]) -&gt;
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2021/07/22/Hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E7%AF%87/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/07/22/Hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E7%AF%87/" itemprop="commentCount"></span>
+    <a title="valine" href="/2021/07/22/%E4%BD%BF%E7%94%A8Hexo%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/07/22/%E4%BD%BF%E7%94%A8Hexo%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -2740,7 +2759,7 @@ Options :: [start_opt()]) -&gt;
 <p>正式开始开始搭建博客
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/07/22/Hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E7%AF%87/#more" rel="contents">
+              <a class="btn" href="/2021/07/22/%E4%BD%BF%E7%94%A8Hexo%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -2830,20 +2849,20 @@ Options :: [start_opt()]) -&gt;
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-count">7</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
