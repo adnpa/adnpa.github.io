@@ -29,7 +29,7 @@
 <meta property="og:description" content="erlang的编译运行过程">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-06-22T08:30:11.000Z">
-<meta property="article:modified_time" content="2023-06-24T21:09:10.192Z">
+<meta property="article:modified_time" content="2023-06-28T18:07:58.581Z">
 <meta property="article:author" content="Honghangzhi">
 <meta property="article:tag" content="erlang">
 <meta name="twitter:card" content="summary">
@@ -227,7 +227,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-06-25 05:09:10" itemprop="dateModified" datetime="2023-06-25T05:09:10+08:00">2023-06-25</time>
+                <time title="修改时间：2023-06-29 02:07:58" itemprop="dateModified" datetime="2023-06-29T02:07:58+08:00">2023-06-29</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -259,14 +259,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>755</span>
+              <span>1.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -281,10 +281,62 @@
         <p>erlang的编译运行过程</p>
 <span id="more"></span>
 
-
-
 <p><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/apps/kernel/users_guide.html">https://www.erlang.org/doc/apps/kernel/users_guide.html</a><br><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/apps/erts/users_guide.html">https://www.erlang.org/doc/apps/erts/users_guide.html</a><br><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/code.html">https://www.erlang.org/doc/man/code.html</a></p>
-<h1 id="Code-Server"><a href="#Code-Server" class="headerlink" title="Code Server"></a>Code Server</h1><p>Code Server负责将已编译的代码加载到运行时系统（ERTS）中。</p>
+<h1 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h1><p><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/apps/compiler/internal_docs.html">https://www.erlang.org/doc/apps/compiler/internal_docs.html</a></p>
+<h1 id="模块"><a href="#模块" class="headerlink" title="模块"></a>模块</h1><p><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/reference_manual/modules.html">https://www.erlang.org/doc/reference_manual/modules.html</a></p>
+<p>模块是编译的最小单位</p>
+<ul>
+<li>预定义模块属性，需要放在函数定义前<ul>
+<li>-compile(Options).</li>
+<li>-vsn(Vsn)</li>
+<li>-on_load(Function)</li>
+<li>-nifs(Functions)</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-export</span><span class="params">([start_link/<span class="number">0</span>, stop/<span class="number">0</span>])</span>.</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>行为属性，指定本模块是一个行为的回调模块</li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-behaviour</span><span class="params">(gen_server)</span>.</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>定义记录</li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-record</span><span class="params">(Record,Fields)</span>.</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>预处理器</li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-include</span><span class="params">(<span class="string">&quot;SomeFile.hrl&quot;</span>)</span>.</span><br><span class="line"><span class="keyword">-define</span><span class="params">(Macro,Replacement)</span>.</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>设置预定义宏<code>?FILE</code>和<code>LINE</code></li>
+</ul>
+<p>用于获取当前代码所在源文件路径和行数</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-module</span><span class="params">(example)</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([test/<span class="number">0</span>])</span>.</span><br><span class="line"><span class="function"><span class="title">test</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  io:format(<span class="string">&quot;This code is in file ~p\n&quot;</span>, [?FILE]),</span><br><span class="line">  io:format(<span class="string">&quot;This code is on line ~p\n&quot;</span>, [?LINE]).</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">4</span>&gt; test:t().</span><br><span class="line">This code is in file <span class="string">&quot;test.erl&quot;</span></span><br><span class="line">This code is on line <span class="number">18</span></span><br><span class="line">ok</span><br></pre></td></tr></table></figure>
+
+<p>获取模块信息</p>
+<ul>
+<li>Module:module_info/0<br>获取全部</li>
+<li>Module:module_info/1<br>获取指定</li>
+</ul>
+<p>既可以在内部调用，也可以在外部调用</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">test</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  io:format(<span class="string">&quot;module_info(): ~w~n&quot;</span>, [module_info()]),</span><br><span class="line">  io:format(<span class="string">&quot;module_info(exports): ~w~n&quot;</span>, [module_info(exports)]).</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">10</span>&gt; test:test().</span><br><span class="line"><span class="function"><span class="title">module_info</span><span class="params">()</span>: [&#123;<span class="title">module</span>,<span class="title">test</span>&#125;,&#123;<span class="title">exports</span>,[&#123;<span class="title">t</span>,0&#125;,&#123;<span class="title">module_info</span>,0&#125;,&#123;<span class="title">module_info</span>,1&#125;]&#125;,&#123;<span class="title">attributes</span>,[&#123;<span class="title">vsn</span>,[143092041070811311060369436838556452033]&#125;,&#123;<span class="title">author</span>,[104,122]&#125;]&#125;,&#123;<span class="title">compile</span>,[&#123;<span class="title">options</span>,[]&#125;</span></span><br><span class="line"><span class="function">,&#123;<span class="title">version</span>,[55,46,48,46,52]&#125;,&#123;<span class="title">source</span>,[99,58,47,85,115,101,114,115,47,104,122,47,68,101,115,107,116,111,112,47,69,114,108,97,110,103,80,114,111,106,101,99,116,47,108,101,97,114,110,45,10</span></span><br><span class="line"><span class="function">1,114,108,97,110,103,47,116,101,115,116,46,101,114,108]&#125;]&#125;,&#123;<span class="title">md5</span>,&lt;&lt;107,166,134,80,200,224,177,195,62,104,95,214,83,233,196,193&gt;&gt;&#125;]</span></span><br><span class="line"><span class="function"><span class="title">module_info</span><span class="params">(exports)</span>: [&#123;<span class="title">t</span>,0&#125;,&#123;<span class="title">module_info</span>,0&#125;,&#123;<span class="title">module_info</span>,1&#125;]</span></span><br><span class="line"><span class="function">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span></span><br><span class="line"><span class="function">14&gt; <span class="title">test</span>:<span class="title">module_info</span><span class="params">()</span>.</span></span><br><span class="line"><span class="function">[&#123;<span class="title">module</span>,<span class="title">test</span>&#125;,</span></span><br><span class="line"><span class="function"> &#123;<span class="title">exports</span>,[&#123;<span class="title">t</span>,0&#125;,&#123;<span class="title">module_info</span>,0&#125;,&#123;<span class="title">module_info</span>,1&#125;]&#125;,</span></span><br><span class="line"><span class="function"> &#123;<span class="title">attributes</span>,[&#123;<span class="title">vsn</span>,[143092041070811311060369436838556452033]&#125;,</span></span><br><span class="line"><span class="function">              &#123;<span class="title">author</span>,&quot;<span class="title">hz</span>&quot;&#125;]&#125;,</span></span><br><span class="line"><span class="function"> &#123;<span class="title">compile</span>,[&#123;<span class="title">options</span>,[]&#125;,</span></span><br><span class="line"><span class="function">           &#123;<span class="title">version</span>,&quot;7.0.4&quot;&#125;,</span></span><br><span class="line"><span class="function">           &#123;<span class="title">source</span>,&quot;<span class="title">c</span>:/U<span class="title">sers</span>/<span class="title">hz</span>/D<span class="title">esktop</span>/E<span class="title">rlangProject</span>/<span class="title">learn</span>-<span class="title">erlang</span>/<span class="title">test</span>.<span class="title">erl</span>&quot;&#125;]&#125;,</span></span><br><span class="line"><span class="function"> &#123;<span class="title">md5</span>,&lt;&lt;107,166,134,80,200,224,177,195,62,104,95,214,83,</span></span><br><span class="line"><span class="function">        233,196,193&gt;&gt;&#125;]</span></span><br></pre></td></tr></table></figure>
+
+<p>其他接口</p>
+<ul>
+<li>code: get_object_code(Module) -&gt; {Module, Binary, Filename} | error<br>获取指定模块的BEAM字节码</li>
+<li>which(Module) -&gt; Which<br>获取指定模块的文件路径</li>
+</ul>
+<h2 id="Compile-Server"><a href="#Compile-Server" class="headerlink" title="Compile Server"></a>Compile Server</h2><p>编译服务器可以避免为每个要编译的文件启动 Erlang 系统，从而潜在地加速多文件项目的构建。是否会加快构建速度取决于项目的性质和构建机器。</p>
+<p>默认情况下编译服务器是关闭的，需要用指定 -server选项或者把环境变量ERLC_USE_SERVER 设置为yes or true</p>
+<h1 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h1><h2 id="Code-Server"><a href="#Code-Server" class="headerlink" title="Code Server"></a>Code Server</h2><p>Code Server负责将已编译的代码加载到运行时系统（ERTS）中。</p>
 <h2 id="ERTS启动模式"><a href="#ERTS启动模式" class="headerlink" title="ERTS启动模式"></a>ERTS启动模式</h2><p>有interactive和embedded两种启动方式</p>
 <ul>
 <li>interactive，启动时加载ERTS需要的模块，其他代码使用时在搜索路径尝试搜索和加载</li>
@@ -292,17 +344,73 @@
 </ul>
 <p>可以看到embedded模式下搜索路径只有kernel和stdlib。</p>
 <figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">erl -mode embedded </span><br><span class="line"><span class="number">1</span>&gt; code:get_path().</span><br><span class="line">[<span class="string">&quot;c:/Program Files/erl8.3/lib/kernel-5.2/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/stdlib-3.3/ebin&quot;</span>]</span><br><span class="line"></span><br><span class="line">erl -mode interactive </span><br><span class="line"><span class="number">1</span>&gt; code:get_path().</span><br><span class="line">[<span class="string">&quot;.&quot;</span>,<span class="string">&quot;c:/Program Files/erl8.3/lib/kernel-5.2/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/stdlib-3.3/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/xmerl-1.3.13/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/wx-1.8/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/typer-0.9.12/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/tools-2.9.1/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/syntax_tools-2.1.1/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/ssl-8.1.1/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/ssh-4.4.1/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/snmp-5.2.5/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/sasl-3.0.3/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/runtime_tools-1.11.1/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/reltool-0.7.3/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/public_key-1.4/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/percept-0.9/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/parsetools-2.1.4/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/otp_mibs-1.1.1/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/os_mon-2.4.2/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/orber-3.8.2/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/odbc-2.12/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/mnesia-4.14.3/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/megaco-3.18.1/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/jinterface-1.7.1/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/inets-6.3.6/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/ic-4.4.2/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/hipe-3.15.4/ebin&quot;</span>,</span><br><span class="line"> [...]|...]</span><br></pre></td></tr></table></figure>
+
 <h2 id="搜索路径"><a href="#搜索路径" class="headerlink" title="搜索路径"></a>搜索路径</h2><p>interactive模式下Code Server维护一个搜索路径，称为<strong>code path，</strong>用于实现代码的按需加载。<br>添加路径的方式</p>
 <ul>
 <li>add_patha(Dir) -&gt; add_path_ret()<br>向载入路径的开头添加一个新目录Dir</li>
-<li>add_pathz(Dir) -&gt; add_path_ret()<br>向载入路径的末端添加一个新目录Dir<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>&gt; code:get_path().</span><br><span class="line">[<span class="string">&quot;c:/Program Files/erl8.3/lib/kernel-5.2/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/stdlib-3.3/ebin&quot;</span>]</span><br><span class="line"><span class="number">2</span>&gt; code:add_patha(<span class="string">&quot;.&quot;</span>).</span><br><span class="line"><span class="literal">true</span></span><br><span class="line"><span class="number">3</span>&gt; code:get_path().     </span><br><span class="line">[<span class="string">&quot;.&quot;</span>,<span class="string">&quot;c:/Program Files/erl8.3/lib/kernel-5.2/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/stdlib-3.3/ebin&quot;</span>]</span><br></pre></td></tr></table></figure>
-<h2 id="热更新（动态代码载入）"><a href="#热更新（动态代码载入）" class="headerlink" title="热更新（动态代码载入）"></a>热更新（动态代码载入）</h2><h3 id="热更新简介"><a href="#热更新简介" class="headerlink" title="热更新简介"></a>热更新简介</h3>a是主模块，b是被调用的回调模块<br><code>a.erl</code><figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">start</span><span class="params">(Tag)</span> -&gt;</span></span><br><span class="line">	spawn(<span class="keyword">fun</span>()-&gt;loop(Tag)<span class="keyword">end</span>).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">loop</span><span class="params">(Tag)</span> -&gt;</span></span><br><span class="line">	sleep(),</span><br><span class="line">	Val = b:get_value(),</span><br><span class="line">	io:format(<span class="string">&quot;Vsn1 (~p) Val is ~p~n&quot;</span>,[Tag, Val]),</span><br><span class="line">	loop(Tag).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">sleep</span><span class="params">()</span> -&gt;</span> <span class="keyword">receive</span></span><br><span class="line">					 <span class="keyword">after</span></span><br><span class="line">						 <span class="number">3000</span> -&gt;</span><br><span class="line">							 ok</span><br><span class="line">					 <span class="keyword">end</span>.</span><br></pre></td></tr></table></figure>
-<code>b.erl</code><figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">get_value</span><span class="params">()</span> -&gt;</span></span><br><span class="line">	<span class="number">1</span>.</span><br></pre></td></tr></table></figure>
-实验1<br>把b模块get_value返回值改为9，<strong>回调模块重新编译，旧程序会调用新的函数</strong><figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">3</span>&gt; a:start(one).</span><br><span class="line">&lt;<span class="number">0.67</span>.<span class="number">0</span>&gt;</span><br><span class="line"><span class="number">4</span>&gt; Vsn1 (one) Val is <span class="number">1</span></span><br><span class="line"><span class="number">4</span>&gt; Vsn1 (one) Val is <span class="number">1</span></span><br><span class="line"><span class="number">5</span>&gt; Vsn1 (one) Val is <span class="number">9</span></span><br></pre></td></tr></table></figure>
-实验2<br>把a模块中loop中的Vsn1改为Vsn2，<strong>主模块重新编译启动，两个程序同时存在</strong><figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">5</span>&gt; c(a).</span><br><span class="line"><span class="number">6</span>&gt; a:start(two).</span><br><span class="line">&lt;<span class="number">0.79</span>.<span class="number">0</span>&gt;</span><br><span class="line"><span class="number">7</span>&gt; Vsn1 (one) Val is <span class="number">9</span></span><br><span class="line"><span class="number">7</span>&gt; Vsn2 (two) Val is <span class="number">9</span></span><br></pre></td></tr></table></figure>
-实验3<br>把a模块中loop中的Vsn2改为Vsn3，<strong>主模块再次重新编译启动，Vsn1已经消失，即只会存在两个版本的程序，添加第三个以后的版本会终止第一个版本的程序</strong><figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">8</span>&gt; c(a).</span><br><span class="line"><span class="number">9</span>&gt; a:start(two).</span><br><span class="line">&lt;<span class="number">0.86</span>.<span class="number">0</span>&gt;</span><br><span class="line"><span class="number">9</span>&gt; Vsn2 (two) Val is <span class="number">9</span></span><br><span class="line"><span class="number">9</span>&gt; Vsn3 (three) Val is <span class="number">9</span></span><br></pre></td></tr></table></figure>
-<h3 id="热更新原理"><a href="#热更新原理" class="headerlink" title="热更新原理"></a>热更新原理</h3>TODO<h1 id="Erts"><a href="#Erts" class="headerlink" title="Erts"></a>Erts</h1>TODO</li>
+<li>add_pathz(Dir) -&gt; add_path_ret()<br>向载入路径的末端添加一个新目录Dir</li>
 </ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>&gt; code:get_path().</span><br><span class="line">[<span class="string">&quot;c:/Program Files/erl8.3/lib/kernel-5.2/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/stdlib-3.3/ebin&quot;</span>]</span><br><span class="line"><span class="number">2</span>&gt; code:add_patha(<span class="string">&quot;.&quot;</span>).</span><br><span class="line"><span class="literal">true</span></span><br><span class="line"><span class="number">3</span>&gt; code:get_path().     </span><br><span class="line">[<span class="string">&quot;.&quot;</span>,<span class="string">&quot;c:/Program Files/erl8.3/lib/kernel-5.2/ebin&quot;</span>,</span><br><span class="line"> <span class="string">&quot;c:/Program Files/erl8.3/lib/stdlib-3.3/ebin&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<h2 id="热更新（动态代码载入）"><a href="#热更新（动态代码载入）" class="headerlink" title="热更新（动态代码载入）"></a>热更新（动态代码载入）</h2><h3 id="热更新简介"><a href="#热更新简介" class="headerlink" title="热更新简介"></a>热更新简介</h3><p>a是主模块，b是被调用的回调模块<br><code>a.erl</code></p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">start</span><span class="params">(Tag)</span> -&gt;</span></span><br><span class="line">	spawn(<span class="keyword">fun</span>()-&gt;loop(Tag)<span class="keyword">end</span>).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">loop</span><span class="params">(Tag)</span> -&gt;</span></span><br><span class="line">	sleep(),</span><br><span class="line">	Val = b:get_value(),</span><br><span class="line">	io:format(<span class="string">&quot;Vsn1 (~p) Val is ~p~n&quot;</span>,[Tag, Val]),</span><br><span class="line">	loop(Tag).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">sleep</span><span class="params">()</span> -&gt;</span> <span class="keyword">receive</span></span><br><span class="line">					 <span class="keyword">after</span></span><br><span class="line">						 <span class="number">3000</span> -&gt;</span><br><span class="line">							 ok</span><br><span class="line">					 <span class="keyword">end</span>.</span><br></pre></td></tr></table></figure>
+
+<p><code>b.erl</code></p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">get_value</span><span class="params">()</span> -&gt;</span></span><br><span class="line">	<span class="number">1</span>.</span><br></pre></td></tr></table></figure>
+
+<p>实验1<br>把b模块get_value返回值改为9，<strong>回调模块重新编译，旧程序会调用新的函数</strong></p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">3</span>&gt; a:start(one).</span><br><span class="line">&lt;<span class="number">0.67</span>.<span class="number">0</span>&gt;</span><br><span class="line"><span class="number">4</span>&gt; Vsn1 (one) Val is <span class="number">1</span></span><br><span class="line"><span class="number">4</span>&gt; Vsn1 (one) Val is <span class="number">1</span></span><br><span class="line"><span class="number">5</span>&gt; Vsn1 (one) Val is <span class="number">9</span></span><br></pre></td></tr></table></figure>
+
+<p>实验2<br>把a模块中loop中的Vsn1改为Vsn2，<strong>主模块重新编译启动，两个程序同时存在</strong></p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">5</span>&gt; c(a).</span><br><span class="line"><span class="number">6</span>&gt; a:start(two).</span><br><span class="line">&lt;<span class="number">0.79</span>.<span class="number">0</span>&gt;</span><br><span class="line"><span class="number">7</span>&gt; Vsn1 (one) Val is <span class="number">9</span></span><br><span class="line"><span class="number">7</span>&gt; Vsn2 (two) Val is <span class="number">9</span></span><br></pre></td></tr></table></figure>
+
+<p>实验3<br>把a模块中loop中的Vsn2改为Vsn3，<strong>主模块再次重新编译启动，Vsn1已经消失，即只会存在两个版本的程序，添加第三个以后的版本会终止第一个版本的程序</strong></p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">8</span>&gt; c(a).</span><br><span class="line"><span class="number">9</span>&gt; a:start(two).</span><br><span class="line">&lt;<span class="number">0.86</span>.<span class="number">0</span>&gt;</span><br><span class="line"><span class="number">9</span>&gt; Vsn2 (two) Val is <span class="number">9</span></span><br><span class="line"><span class="number">9</span>&gt; Vsn3 (three) Val is <span class="number">9</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="热更新原理"><a href="#热更新原理" class="headerlink" title="热更新原理"></a>热更新原理</h3><p>TODO</p>
+<h1 id="编译和运行程序"><a href="#编译和运行程序" class="headerlink" title="编译和运行程序"></a>编译和运行程序</h1><ol>
+<li> Erlang shell中编译运行 </li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">c(hello).</span><br><span class="line">hello:hello().</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>命令行中编译运行 </li>
+</ol>
+<ul>
+<li><ul>
+<li>-noshell 以不带交互式shell的方式启动Erlang（因此不会看到Erlang的“徽标”，也就是通常系统启动时首先显示的那些信息）。</li>
+</ul>
+</li>
+<li><ul>
+<li>-s hello start 运行hello:start()函数。注意：使用-s Mod …选项时，Mod必须是已编译的。</li>
+</ul>
+</li>
+<li><ul>
+<li>-s init stop 在之前的命令完成后执行init:stop()函数，从而停止系统。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">erlc hello.erl</span><br><span class="line">erl -noshell -s hello start -s init stop</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>作为Escript运行 </li>
+</ol>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env escript</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">main</span><span class="params">(Args)</span>-&gt;</span></span><br><span class="line">    io:format(<span class="string">&quot;hello world ~n&quot;</span>).</span><br></pre></td></tr></table></figure>
+
+<h1 id="erl和erlc使用"><a href="#erl和erlc使用" class="headerlink" title="erl和erlc使用"></a>erl和erlc使用</h1><h2 id="erl"><a href="#erl" class="headerlink" title="erl"></a>erl</h2><p><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/erl.html">Erlang – erl</a></p>
+<p><strong>emulator flags</strong></p>
+<p>+开头，模拟器选项，指定一些，如异步线程池中线程的建议堆栈大小、ETS表数量上限等。</p>
+<p><strong>flags</strong></p>
+<p>传入ERTS中的init系统进程</p>
+<p><strong>plain arguments</strong>:</p>
+<p>也传入到init进程中，不会以任何方式解析，可以用<code>init:get_plain_arguments/0 </code>获取，个人理解是作为类似常量的方式使用。</p>
+<ul>
+<li>-noshell </li>
+<li>-pa<br>将指定目录加入到搜索路径</li>
+<li>-s Mod [Func [Arg1, Arg2, …]] (init flag)<br>初始化要处理MFA，例如 <code>-s z_compile compile_change ../boot/Emakefile</code> 表示让init进程调用z_compile模块的compile_change/1 方法，参数为一个Emakefile文件位置</li>
+</ul>
+<h2 id="erlc"><a href="#erlc" class="headerlink" title="erlc"></a>erlc</h2><p>TODO</p>
+<h1 id="Erts"><a href="#Erts" class="headerlink" title="Erts"></a>Erts</h1><p>TODO</p>
 
     </div>
 
@@ -397,7 +505,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Code-Server"><span class="nav-number">1.</span> <span class="nav-text">Code Server</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ERTS%E5%90%AF%E5%8A%A8%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">ERTS启动模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2%E8%B7%AF%E5%BE%84"><span class="nav-number">1.2.</span> <span class="nav-text">搜索路径</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%83%AD%E6%9B%B4%E6%96%B0%EF%BC%88%E5%8A%A8%E6%80%81%E4%BB%A3%E7%A0%81%E8%BD%BD%E5%85%A5%EF%BC%89"><span class="nav-number">1.3.</span> <span class="nav-text">热更新（动态代码载入）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%83%AD%E6%9B%B4%E6%96%B0%E7%AE%80%E4%BB%8B"><span class="nav-number">1.3.1.</span> <span class="nav-text">热更新简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%83%AD%E6%9B%B4%E6%96%B0%E5%8E%9F%E7%90%86"><span class="nav-number">1.3.2.</span> <span class="nav-text">热更新原理</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Erts"><span class="nav-number">2.</span> <span class="nav-text">Erts</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BC%96%E8%AF%91"><span class="nav-number">1.</span> <span class="nav-text">编译</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A8%A1%E5%9D%97"><span class="nav-number">2.</span> <span class="nav-text">模块</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Compile-Server"><span class="nav-number">2.1.</span> <span class="nav-text">Compile Server</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8A%A0%E8%BD%BD"><span class="nav-number">3.</span> <span class="nav-text">加载</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Code-Server"><span class="nav-number">3.1.</span> <span class="nav-text">Code Server</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ERTS%E5%90%AF%E5%8A%A8%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.2.</span> <span class="nav-text">ERTS启动模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2%E8%B7%AF%E5%BE%84"><span class="nav-number">3.3.</span> <span class="nav-text">搜索路径</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%83%AD%E6%9B%B4%E6%96%B0%EF%BC%88%E5%8A%A8%E6%80%81%E4%BB%A3%E7%A0%81%E8%BD%BD%E5%85%A5%EF%BC%89"><span class="nav-number">3.4.</span> <span class="nav-text">热更新（动态代码载入）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%83%AD%E6%9B%B4%E6%96%B0%E7%AE%80%E4%BB%8B"><span class="nav-number">3.4.1.</span> <span class="nav-text">热更新简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%83%AD%E6%9B%B4%E6%96%B0%E5%8E%9F%E7%90%86"><span class="nav-number">3.4.2.</span> <span class="nav-text">热更新原理</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%92%8C%E8%BF%90%E8%A1%8C%E7%A8%8B%E5%BA%8F"><span class="nav-number">4.</span> <span class="nav-text">编译和运行程序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#erl%E5%92%8Cerlc%E4%BD%BF%E7%94%A8"><span class="nav-number">5.</span> <span class="nav-text">erl和erlc使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#erl"><span class="nav-number">5.1.</span> <span class="nav-text">erl</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#erlc"><span class="nav-number">5.2.</span> <span class="nav-text">erlc</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Erts"><span class="nav-number">6.</span> <span class="nav-text">Erts</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
