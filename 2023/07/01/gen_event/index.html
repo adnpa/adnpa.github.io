@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10000,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="介绍四大行为模式之一的gen_event">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gen_event">
+<meta property="og:url" content="http://example.com/2023/07/01/gen_event/index.html">
+<meta property="og:site_name" content="HZ&#39;Blog">
+<meta property="og:description" content="介绍四大行为模式之一的gen_event">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-07-01T07:31:59.000Z">
+<meta property="article:modified_time" content="2023-07-02T17:25:57.362Z">
+<meta property="article:author" content="Honghangzhi">
+<meta property="article:tag" content="erlang">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2023/07/01/gen_event/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>gen_event | HZ'Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">HZ'Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/07/01/gen_event/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Honghangzhi">
+      <meta itemprop="description" content="不积跬步，无以千里">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HZ'Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          gen_event
+        </h1>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-07-01 15:31:59" itemprop="dateCreated datePublished" datetime="2023-07-01T15:31:59+08:00">2023-07-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-07-03 01:25:57" itemprop="dateModified" datetime="2023-07-03T01:25:57+08:00">2023-07-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                  <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                    <a href="/categories/%E7%BC%96%E7%A8%8B/erlang/" itemprop="url" rel="index"><span itemprop="name">erlang</span></a>
+                  </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/07/01/gen_event/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/07/01/gen_event/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>介绍四大行为模式之一的gen_event</p>
+<span id="more"></span>
+
+<h1 id="事件"><a href="#事件" class="headerlink" title="事件"></a>事件</h1><h2 id="事件概念"><a href="#事件概念" class="headerlink" title="事件概念"></a>事件概念</h2><p>“事件”指的是程序执行过程中发生的某些特定情况或操作，例如用户点击了某个按钮、程序执行了某个操作、系统状态发生了变化等等。</p>
+<p>在服务器端中，事件指的是服务器程序运行过程中发生的特定情况或操作，例如客户端连接到服务器、收到客户端请求、完成数据库操作、定时任务执行等等。</p>
+<p>服务器端的事件通常是预定义的，通过注册事件监听器或回调函数来响应这些事件。当事件被触发时，服务器程序会自动调用相应的监听器或回调函数进行处理。</p>
+<p>服务器端的事件通常用于实现异步处理、任务调度、定时任务等功能。例如，在Web服务器中，当客户端发起请求时，服务器会触发”收到请求”事件，程序员可以通过注册”请求处理器”监听器来处理这个事件，将请求转发给后端处理或返回相应的结果。</p>
+<h2 id="erlang实现事件处理"><a href="#erlang实现事件处理" class="headerlink" title="erlang实现事件处理"></a>erlang实现事件处理</h2><p>实际上是一个特殊的进程，当接收到特定的事件消息时进行相应的处理。</p>
+<p>事件处理器</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-module</span><span class="params">(event_handler)</span>.</span><br><span class="line"></span><br><span class="line"><span class="comment">%% API</span></span><br><span class="line"><span class="keyword">-export</span><span class="params">([make/<span class="number">1</span>, add_handler/<span class="number">2</span>, event/<span class="number">2</span>])</span>.</span><br><span class="line"></span><br><span class="line"><span class="comment">%% 创建事件处理器Name 初始时不执行任何操作（返回void）</span></span><br><span class="line"><span class="function"><span class="title">make</span><span class="params">(Name)</span> -&gt;</span></span><br><span class="line">  register(Name, spawn(<span class="keyword">fun</span>() -&gt; my_handler(fun no_op/1) <span class="keyword">end</span>)).</span><br><span class="line"></span><br><span class="line"><span class="comment">%% 为事件处理器添加一个处理函数Fun。这样当事件X发生时，事件处理器就会执行Fun(X)。</span></span><br><span class="line"><span class="function"><span class="title">add_handler</span><span class="params">(Name, Fun)</span> -&gt;</span></span><br><span class="line">  Name ! &#123;add, Fun&#125;.</span><br><span class="line"></span><br><span class="line"><span class="comment">%% 发送事件X到 名为Name的事件处理器</span></span><br><span class="line"><span class="function"><span class="title">event</span><span class="params">(Name, X)</span> -&gt;</span></span><br><span class="line">  Name ! &#123;event, X&#125;.</span><br><span class="line"></span><br><span class="line"><span class="comment">%% 服务逻辑</span></span><br><span class="line"><span class="function"><span class="title">my_handler</span><span class="params">(Fun)</span> -&gt;</span></span><br><span class="line">  <span class="keyword">receive</span></span><br><span class="line">    &#123;add, Fun1&#125; -&gt;</span><br><span class="line">      my_handler(Fun1);</span><br><span class="line">    &#123;event, Any&#125; -&gt;</span><br><span class="line">      (<span class="keyword">catch</span> Fun(Any)),</span><br><span class="line">      my_handler(Fun)</span><br><span class="line">  <span class="keyword">end</span>.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">no_op</span><span class="params">(_)</span> -&gt;</span> void.</span><br></pre></td></tr></table></figure>
+
+<p>惯例，把处理函数Fun写在一个回调模块里，可以隐藏处理函数</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-module</span><span class="params">(motor_controller)</span>.</span><br><span class="line"><span class="comment">%% 回调模块</span></span><br><span class="line"><span class="comment">%% API</span></span><br><span class="line"><span class="keyword">-export</span><span class="params">([add_event_handler/<span class="number">0</span>])</span>.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">add_event_handler</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  event_handler:add_handler(errors, fun controller/1).</span><br><span class="line"></span><br><span class="line"><span class="comment">%%</span></span><br><span class="line"><span class="function"><span class="title">controller</span><span class="params">(too_hot)</span> -&gt;</span></span><br><span class="line">  io:format(<span class="string">&quot;Turn off the motor~n&quot;</span>);</span><br><span class="line"><span class="function"><span class="title">controller</span><span class="params">(X)</span> -&gt;</span></span><br><span class="line">  io:format(<span class="string">&quot;~w ignored event: ~p~n&quot;</span>, [?MODULE, X]).</span><br></pre></td></tr></table></figure>
+
+<p>运行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">% 添加fun</span><br><span class="line">2&gt; event_handler:make(errors).</span><br><span class="line">true</span><br><span class="line">3&gt; event_handler:add_handler(errors, fun(Arg)-&gt;io:format(&quot;Arg is ~w~n&quot;,[Arg]) end).  </span><br><span class="line">add_handler&#123;add,#Fun&lt;erl_eval.44.65746770&gt;&#125;</span><br><span class="line">4&gt; event_handler:event(errors, 1).</span><br><span class="line">Arg is 1</span><br><span class="line">&#123;event,1&#125;</span><br><span class="line"></span><br><span class="line">% 添加回调模块</span><br><span class="line">6&gt; motor_controller:add_event_handler().</span><br><span class="line">add_handler&#123;add,#Fun&lt;motor_controller.0.12439643&gt;&#125;</span><br><span class="line">7&gt; event_handler:event(errors, cold).    </span><br><span class="line">motor_controller ignored event: cold</span><br><span class="line">&#123;event,cold&#125;</span><br><span class="line">8&gt; event_handler:event(errors, too_hot). </span><br><span class="line">Turn off the motor</span><br><span class="line">&#123;event,too_hot&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="gen-event-behaviour"><a href="#gen-event-behaviour" class="headerlink" title="gen_event behaviour"></a>gen_event behaviour</h1><h2 id="和gen-statem里的事件区别"><a href="#和gen-statem里的事件区别" class="headerlink" title="和gen_statem里的事件区别"></a>和gen_statem里的事件区别</h2><p>在Erlang中，事件（Event）是一个通用的概念，它可以用来描述发生在系统中的任何类型的动作或状态变化。在Erlang中，gen_event和gen_fsm都是基于事件驱动的框架，但它们处理事件的方式有所不同。</p>
+<ol>
+<li>gen_event：gen_event是Erlang中的一个事件处理器，用于处理异步事件。gen_event会在一组已注册的回调函数中寻找匹配的函数来处理事件。gen_event可以处理多个事件流，每个事件流都由一个或多个事件源产生。当事件源产生事件时，gen_event会将事件分派给已注册的回调函数进行处理。</li>
+<li>gen_fsm：gen_fsm是Erlang中的一个有限状态机框架，它基于状态转换来处理事件。gen_fsm定义了一组状态和状态转换函数，每个状态都有一组可接受的事件。当事件发生时，gen_fsm会根据当前状态和事件类型来确定下一个状态，并执行相应的状态转换函数。</li>
+</ol>
+<p>总的来说，gen_event和gen_fsm都是基于事件的框架，但它们处理事件的方式有所不同。gen_event是一个通用的事件处理器，用于处理异步事件，而gen_fsm是一个有限状态机框架，用于处理基于状态转换的事件。</p>
+<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><ul>
+<li>start() -&gt; Result</li>
+<li>start(EventMgrName | Options) -&gt; Result</li>
+<li>start(EventMgrName, Options) -&gt; Result</li>
+<li>start_link() -&gt; Result</li>
+<li>start_link(EventMgrName | Options) -&gt; Result</li>
+<li>start_link(EventMgrName, Options) -&gt; Result</li>
+<li>start_monitor() -&gt; Result</li>
+<li>start_monitor(EventMgrName | Options) -&gt; Result</li>
+<li>start_monitor(EventMgrName, Options) -&gt; Result</li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-spec</span><span class="params">(start_link() -&gt; &#123;ok, pid()&#125; | &#123;error, &#123;already_started, pid()&#125;&#125;)</span>.</span><br><span class="line"><span class="function"><span class="title">start_link</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  gen_event:start_link(&#123;local, error_man&#125;).</span><br></pre></td></tr></table></figure>
+
+<h2 id="添加、删除和替换事件管理器"><a href="#添加、删除和替换事件管理器" class="headerlink" title="添加、删除和替换事件管理器"></a>添加、删除和替换事件管理器</h2><ul>
+<li><p>添加</p>
+<ul>
+<li><p>add_handler(EventMgrRef, Handler, Args) -&gt; Result</p>
+</li>
+<li><p>add_sup_handler(EventMgrRef, Handler, Args) -&gt; Result</p>
+</li>
+<li><p>delete_handler(EventMgrRef, Handler, Args) -&gt; Result</p>
+</li>
+</ul>
+</li>
+<li><p>删除</p>
+<ul>
+<li>delete_handler(EventMgrRef, Handler, Args) -&gt; Result</li>
+</ul>
+</li>
+<li><p>替换</p>
+<ul>
+<li>swap_handler(EventMgrRef, {Handler1,Args1}, {Handler2,Args2}) -&gt; Result<br>* </li>
+</ul>
+</li>
+</ul>
+<h2 id="同步请求"><a href="#同步请求" class="headerlink" title="同步请求"></a>同步请求</h2><ul>
+<li>call(EventMgrRef, Handler, Request) -&gt; Result</li>
+<li>call(EventMgrRef, Handler, Request, Timeout) -&gt; Result</li>
+<li>Module:handle_call(Request, State) -&gt; Result</li>
+</ul>
+<ul>
+<li>sync_notify(EventMgrRef, Event) -&gt; ok</li>
+<li>Module:handle_event(Event, State) -&gt; Result</li>
+</ul>
+<p>自定义alarm handler</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-module</span><span class="params">(my_alarm_handler)</span>.</span><br><span class="line"></span><br><span class="line"><span class="keyword">-behaviour</span><span class="params">(gen_event)</span>.</span><br><span class="line"></span><br><span class="line"><span class="comment">%% API</span></span><br><span class="line"><span class="keyword">-export</span><span class="params">([start_link/<span class="number">0</span>, add_handler/<span class="number">0</span>])</span>.</span><br><span class="line"></span><br><span class="line"><span class="comment">%% gen_event callbacks</span></span><br><span class="line"><span class="keyword">-export</span><span class="params">([init/<span class="number">1</span>, handle_event/<span class="number">2</span>, handle_call/<span class="number">2</span>, handle_info/<span class="number">2</span>, terminate/<span class="number">2</span>,</span></span><br><span class="line"><span class="params">  code_change/<span class="number">3</span>])</span>.</span><br><span class="line"></span><br><span class="line"><span class="keyword">-define</span><span class="params">(SERVER, ?MODULE)</span>.</span><br><span class="line"></span><br><span class="line"><span class="keyword">-record</span><span class="params">(my_alarm_handler_state, &#123;&#125;)</span>.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">%% @doc Creates an event manager</span></span><br><span class="line"><span class="keyword">-spec</span><span class="params">(start_link() -&gt; &#123;ok, pid()&#125; | &#123;error, &#123;already_started, pid()&#125;&#125;)</span>.</span><br><span class="line"><span class="function"><span class="title">start_link</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  gen_event:start_link(&#123;local, ?SERVER&#125;).</span><br><span class="line"></span><br><span class="line"><span class="comment">%% @doc Adds an event handler</span></span><br><span class="line"><span class="keyword">-spec</span><span class="params">(add_handler() -&gt; ok | &#123;&#x27;EXIT&#x27;, Reason :: term()&#125; | term())</span>.</span><br><span class="line"><span class="function"><span class="title">add_handler</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  gen_event:add_handler(?SERVER, ?MODULE, []).</span><br><span class="line"></span><br><span class="line"><span class="comment">%%%===================================================================</span></span><br><span class="line"><span class="comment">%%% gen_event callbacks</span></span><br><span class="line"><span class="comment">%%%===================================================================</span></span><br><span class="line"><span class="function"><span class="title">init</span><span class="params">(Args)</span> -&gt;</span></span><br><span class="line">  io:format(<span class="string">&quot;*** my_alarm_handler init:~p~n&quot;</span>, [Args]),</span><br><span class="line">  &#123;ok, <span class="number">0</span>&#125;.</span><br><span class="line"><span class="function"><span class="title">handle_event</span><span class="params">(&#123;set_alarm, tooHot&#125;, N)</span> -&gt;</span></span><br><span class="line">  error_logger:error_msg(<span class="string">&quot;***Tell the Engineer to turn on the fan~n&quot;</span>),</span><br><span class="line">  &#123;ok, N + <span class="number">1</span>&#125;;</span><br><span class="line"><span class="function"><span class="title">handle_event</span><span class="params">(&#123;clear_alarm, tooHot&#125;, N)</span> -&gt;</span></span><br><span class="line">  error_logger:error_msg(<span class="string">&quot;*** Danger over. turn off the fan~n&quot;</span>),</span><br><span class="line">  &#123;ok, N&#125;;</span><br><span class="line"><span class="function"><span class="title">handle_event</span><span class="params">(Event, N)</span> -&gt;</span></span><br><span class="line">  io:format(<span class="string">&quot;*** unmatched event:~p~n&quot;</span>, [Event]),</span><br><span class="line">  &#123;ok, N&#125;.</span><br><span class="line"><span class="function"><span class="title">handle_call</span><span class="params">(_Request, N)</span> -&gt;</span></span><br><span class="line">  Reply = N,</span><br><span class="line">  &#123;ok, Reply, N&#125;.</span><br><span class="line"><span class="function"><span class="title">handle_info</span><span class="params">(_Info, N)</span> -&gt;</span></span><br><span class="line">  &#123;ok, N&#125;.</span><br><span class="line"><span class="function"><span class="title">terminate</span><span class="params">(_Reason, _N)</span> -&gt;</span> ok.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">code_change</span><span class="params">(_OldVsn, State, _Extra)</span> -&gt;</span></span><br><span class="line">  &#123;ok, State&#125;.</span><br></pre></td></tr></table></figure>
+
+<p>添加到alarm_handler</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">PS C:\Users\hz\Desktop\ErlangProject\learn-erlang\otp_example&gt; erl -boot start_sasl -config elog3</span><br><span class="line">=PROGRESS REPORT==== 3-Jul-2023::12:08:13.337000 ===</span><br><span class="line">    supervisor: &#123;local,logger_sup&#125;</span><br><span class="line">    started: [&#123;pid,&lt;0.81.0&gt;&#125;,</span><br><span class="line">              &#123;id,error_logger&#125;,</span><br><span class="line">              &#123;mfargs,&#123;error_logger,start_link,[]&#125;&#125;,</span><br><span class="line">              &#123;restart_type,transient&#125;,</span><br><span class="line">              &#123;significant,false&#125;,</span><br><span class="line">              &#123;shutdown,2000&#125;,</span><br><span class="line">              &#123;child_type,worker&#125;]</span><br><span class="line"></span><br><span class="line">=PROGRESS REPORT==== 3-Jul-2023::12:08:13.368000 ===</span><br><span class="line">    supervisor: &#123;local,sasl_safe_sup&#125;</span><br><span class="line">    started: [&#123;pid,&lt;0.84.0&gt;&#125;,</span><br><span class="line">              &#123;id,alarm_handler&#125;,</span><br><span class="line">              &#123;mfargs,&#123;alarm_handler,start_link,[]&#125;&#125;,</span><br><span class="line">              &#123;restart_type,permanent&#125;,</span><br><span class="line">              &#123;significant,false&#125;,</span><br><span class="line">              &#123;restart_type,permanent&#125;,</span><br><span class="line">              &#123;significant,false&#125;,</span><br><span class="line">              &#123;shutdown,2000&#125;,</span><br><span class="line">              &#123;child_type,worker&#125;]</span><br><span class="line"></span><br><span class="line">=PROGRESS REPORT==== 3-Jul-2023::12:08:13.368000 ===</span><br><span class="line">    application: sasl</span><br><span class="line">    started_at: nonode@nohost</span><br><span class="line"></span><br><span class="line">Eshell V12.3.2.2  (abort with ^G)</span><br><span class="line">1&gt; alarm_handler:set_alarm(tooHot).</span><br><span class="line">ok</span><br><span class="line">2&gt; =INFO REPORT==== 3-Jul-2023::12:22:13.423000 ===</span><br><span class="line">    alarm_handler: &#123;set,tooHot&#125;</span><br><span class="line">2&gt; gen_event:swap_handler(alarm_handler, &#123;alarm_handler, swap&#125;, &#123;my_alarm_handler, xyz&#125;).</span><br><span class="line">*** my_alarm_handler init:&#123;xyz,&#123;alarm_handler,[tooHot]&#125;&#125;</span><br><span class="line">ok</span><br><span class="line">3&gt; alarm_handler:set_alarm(tooHot).</span><br><span class="line">=ERROR REPORT==== 3-Jul-2023::12:22:39.079000 ===</span><br><span class="line">***Tell the Engineer to turn on the fan</span><br><span class="line"></span><br><span class="line">ok</span><br><span class="line">4&gt; alarm_handler:clear_alarm(tooHot). </span><br><span class="line">=ERROR REPORT==== 3-Jul-2023::12:22:44.065000 ===</span><br><span class="line">*** Danger over. turn off the fan</span><br><span class="line"></span><br><span class="line">ok</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="异步请求"><a href="#异步请求" class="headerlink" title="异步请求"></a>异步请求</h2><p>发送事件 </p>
+<ul>
+<li>notify(EventMgrRef, Event) -&gt; ok</li>
+<li>sync_notify(EventMgrRef, Event) -&gt; ok</li>
+<li>send_request(EventMgrRef :: emgr_ref(),<pre><code>Handler :: handler(),
+Request :: term()) -&gt;
+   ReqId :: request_id()
+</code></pre>
+</li>
+<li>send_request(EventMgrRef :: emgr_ref(),<pre><code>Handler :: handler(),
+Request :: term(),
+Label :: term(),
+ReqIdCollection :: request_id_collection()) -&gt;
+   NewReqIdCollection :: request_id_collection()
+</code></pre>
+</li>
+<li>wait_response(ReqId, WaitTime) -&gt; Result</li>
+<li>wait_response(ReqIdCollection, WaitTime, Delete) -&gt; Result</li>
+</ul>
+<ul>
+<li>直接调用函数（过时）</li>
+<li>显示调用</li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gen_event:notify(error_man, no_reply).</span><br></pre></td></tr></table></figure>
+
+<p>处理事件 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Module:handle_event(Event, State) -&gt; Result</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>Event是一个{EventType,Event-Arg}形式的<strong>二元组</strong>，其中EventType是<strong>set_event</strong>或<strong>clear_event</strong>（event是自定义的事件名），而EventArg是一个用户提供的参数。</li>
+<li>返回 {ok, NewState}。</li>
+</ul>
+<p>实质上，事件表示系统状态的改变，事件管理器就是维护<code>&#123;Module, State&#125;</code>二元组列表。</p>
+<p>注：Module is an event handler, and State is the internal state of that event handler.</p>
+<h2 id="处理其他消息"><a href="#处理其他消息" class="headerlink" title="处理其他消息"></a>处理其他消息</h2><ul>
+<li>Module:handle_info(Info, State) -&gt; Result</li>
+</ul>
+<h2 id="停止"><a href="#停止" class="headerlink" title="停止"></a>停止</h2><ul>
+<li>stop(EventMgrRef) -&gt; ok</li>
+<li>stop(EventMgrRef, Reason, Timeout) -&gt; ok</li>
+<li>Module:terminate(Arg, State) -&gt; term()</li>
+</ul>
+<p>停止事件管理器 </p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gen_event:stop(error_man).</span><br></pre></td></tr></table></figure>
+
+<h1 id="日志和警报"><a href="#日志和警报" class="headerlink" title="日志和警报"></a>日志和警报</h1><p><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/sasl_app.html">Erlang – sasl</a></p>
+<p>日志和警报是sasl中实现的两个事件处理器。</p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>sasl的配置</p>
+<ul>
+<li>start_prg = string()</li>
+<li>masters = [atom()]</li>
+<li>client_directory = string()</li>
+<li>static_emulator = true | false</li>
+<li>releases_dir = string()</li>
+</ul>
+<p><code>elog1.config</code></p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[&#123;sasl,[</span><br><span class="line">        &#123;sasl_error_logger, false&#125;</span><br><span class="line">        ]</span><br><span class="line">&#125;].</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：Erlang/OTP 21.0中，日志采用新api：<a target="_blank" rel="noopener" href="https://www.erlang.org/doc/apps/kernel/logger_chapter.html">Erlang – Logging</a>。erlang程序设计中提到的sasl_error_logger、errlog_type等配置已经过时。</p>
+<p><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/alarm_handler.html">https://www.erlang.org/doc/man/alarm_handler.html</a>)</p>
+<h2 id="旧日志"><a href="#旧日志" class="headerlink" title="旧日志"></a>旧日志</h2><p><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/error_logger.html">Erlang – error_logger</a></p>
+<p><strong>已弃用</strong>，由<a target="_blank" rel="noopener" href="https://www.erlang.org/doc/apps/kernel/logger_chapter.html">Erlang – Logging</a>代替</p>
+<ul>
+<li>添加，不再默认启动，需要通过以下两个函数添加<ul>
+<li>add_report_handler(Handler) -&gt; any()<br> add_report_handler(Handler, Args) -&gt; Result</li>
+</ul>
+</li>
+<li>删除<ul>
+<li> delete_report_handler(Handler) -&gt; Result</li>
+</ul>
+</li>
+<li>记录错误<ul>
+<li> error_logger:error_msg(String)</li>
+<li> error_logger:error_msg(Format, Data)</li>
+<li> error_logger:error_report(Report)</li>
+<li> 此外还有info和warning两种日志</li>
+</ul>
+</li>
+<li>配置：错误记录器在何处以及如何保存数据； <ul>
+<li> 显示在erlang shell （默认） </li>
+<li> 文本文件 </li>
+<li>滚动日志：新消息进来后会被附加到日志的末尾，如果日志满了，最早的条目就会被删除。<br> 极其有用。你决定日志应当占据多少个文件，以及每个日志文件能有多大，然后系统负责在一个大型循环缓冲区里删除旧日志文件和创建新文件。可以调整日志的大小来保存最近几天的操作记录 </li>
+</ul>
+</li>
+</ul>
+<p>分析日志：使用rb模块 </p>
+<h2 id="新日志"><a href="#新日志" class="headerlink" title="新日志"></a>新日志</h2><p><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/apps/kernel/logger_chapter.html">Erlang – Logging</a></p>
+<h2 id="alarm-handler"><a href="#alarm-handler" class="headerlink" title="alarm_handler"></a>alarm_handler</h2><ul>
+<li>clear_alarm(AlarmId) -&gt; void()</li>
+<li>get_alarms() -&gt; [alarm()]<br>返回已添加的警报处理器</li>
+<li>set_alarm(alarm())<br>发送事件set_alarm到所有事件处理器<br>alarm() = {AlarmId, AlarmDescription}<br>AlarmId = term()<br>AlarmDescription = term()</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    
+      <div>
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:24px;">（完）</div>
+    
+</div>
+      </div>
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/erlang/" rel="tag"># erlang</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/06/27/%E6%B5%8B%E8%AF%95/" rel="prev" title="EUnit">
+      <i class="fa fa-chevron-left"></i> EUnit
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/07/02/supervisor/" rel="next" title="supervisor">
+      supervisor <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">事件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%E6%A6%82%E5%BF%B5"><span class="nav-number">1.1.</span> <span class="nav-text">事件概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#erlang%E5%AE%9E%E7%8E%B0%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86"><span class="nav-number">1.2.</span> <span class="nav-text">erlang实现事件处理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#gen-event-behaviour"><span class="nav-number">2.</span> <span class="nav-text">gen_event behaviour</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%92%8Cgen-statem%E9%87%8C%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%8C%BA%E5%88%AB"><span class="nav-number">2.1.</span> <span class="nav-text">和gen_statem里的事件区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8"><span class="nav-number">2.2.</span> <span class="nav-text">启动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E3%80%81%E5%88%A0%E9%99%A4%E5%92%8C%E6%9B%BF%E6%8D%A2%E4%BA%8B%E4%BB%B6%E7%AE%A1%E7%90%86%E5%99%A8"><span class="nav-number">2.3.</span> <span class="nav-text">添加、删除和替换事件管理器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E8%AF%B7%E6%B1%82"><span class="nav-number">2.4.</span> <span class="nav-text">同步请求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E8%AF%B7%E6%B1%82"><span class="nav-number">2.5.</span> <span class="nav-text">异步请求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E5%85%B6%E4%BB%96%E6%B6%88%E6%81%AF"><span class="nav-number">2.6.</span> <span class="nav-text">处理其他消息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%81%9C%E6%AD%A2"><span class="nav-number">2.7.</span> <span class="nav-text">停止</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E5%92%8C%E8%AD%A6%E6%8A%A5"><span class="nav-number">3.</span> <span class="nav-text">日志和警报</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">3.1.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%A7%E6%97%A5%E5%BF%97"><span class="nav-number">3.2.</span> <span class="nav-text">旧日志</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B0%E6%97%A5%E5%BF%97"><span class="nav-number">3.3.</span> <span class="nav-text">新日志</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#alarm-handler"><span class="nav-number">3.4.</span> <span class="nav-text">alarm_handler</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Honghangzhi"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Honghangzhi</p>
+  <div class="site-description" itemprop="description">不积跬步，无以千里</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Honghangzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'Wk2wsEFrasa9yOsstHf3YRlp-gzGzoHsz',
+      appKey     : 'zKA4ww3CAjsjGZ52EFJPkpRn',
+      placeholder: "欢迎交流讨论...",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
