@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10000,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Erlang – Efficiency Guide Erlang性能的7个传说 尾递归比递归快得多 ++总是很差 String很慢 修复Dets 文件很慢 BEAM是基于堆栈的字节码虚拟机，因此很慢 不用的变量用_标记 NIF 总是比自己写快  另外，还有以下几个已经过时的传说  Funs很慢 列表推导很慢 --很慢  尾递归优点与普通递归相比，由于尾递归的调用处于方法的最后，因此方法之前所积累下">
+<meta property="og:type" content="article">
+<meta property="og:title" content="提高程序运行效率">
+<meta property="og:url" content="http://example.com/2023/07/03/Efficiency/index.html">
+<meta property="og:site_name" content="HZ&#39;Blog">
+<meta property="og:description" content="Erlang – Efficiency Guide Erlang性能的7个传说 尾递归比递归快得多 ++总是很差 String很慢 修复Dets 文件很慢 BEAM是基于堆栈的字节码虚拟机，因此很慢 不用的变量用_标记 NIF 总是比自己写快  另外，还有以下几个已经过时的传说  Funs很慢 列表推导很慢 --很慢  尾递归优点与普通递归相比，由于尾递归的调用处于方法的最后，因此方法之前所积累下">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-07-03T15:08:11.000Z">
+<meta property="article:modified_time" content="2023-07-03T15:34:15.344Z">
+<meta property="article:author" content="Honghangzhi">
+<meta property="article:tag" content="erlang">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2023/07/03/Efficiency/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>提高程序运行效率 | HZ'Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">HZ'Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/07/03/Efficiency/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Honghangzhi">
+      <meta itemprop="description" content="不积跬步，无以千里">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HZ'Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          提高程序运行效率
+        </h1>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-07-03 23:08:11 / 修改时间：23:34:15" itemprop="dateCreated datePublished" datetime="2023-07-03T23:08:11+08:00">2023-07-03</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                  <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                    <a href="/categories/%E7%BC%96%E7%A8%8B/erlang/" itemprop="url" rel="index"><span itemprop="name">erlang</span></a>
+                  </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/07/03/Efficiency/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/07/03/Efficiency/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/efficiency_guide/users_guide.html">Erlang – Efficiency Guide</a></p>
+<h1 id="Erlang性能的7个传说"><a href="#Erlang性能的7个传说" class="headerlink" title="Erlang性能的7个传说"></a>Erlang性能的7个传说</h1><ol>
+<li>尾递归比递归快得多</li>
+<li><code>++</code>总是很差</li>
+<li>String很慢</li>
+<li>修复<strong>Dets</strong> 文件很慢</li>
+<li>BEAM是基于堆栈的字节码虚拟机，因此很慢</li>
+<li>不用的变量用<code>_</code>标记</li>
+<li><strong>NIF</strong> 总是比自己写快</li>
+</ol>
+<p>另外，还有以下几个已经过时的传说</p>
+<ol>
+<li>Funs很慢</li>
+<li>列表推导很慢</li>
+<li><code>--</code>很慢</li>
+</ol>
+<h2 id="尾递归"><a href="#尾递归" class="headerlink" title="尾递归"></a>尾递归</h2><h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><p>与普通递归相比，由于尾递归的调用处于方法的最后，因此方法之前所积累下的各种状态对于递归调用结果已经没有任何意义，因此完全可以把本次方法中留在堆栈中的数据完全清除，把空间让给最后的递归调用。这样的优化便使得递归不会在调用堆栈上产生堆积，意味着即时是“无限”递归也不会让堆栈溢出。这便是尾递归的优势。</p>
+<p>尾递归的本质，其实是将递归方法中的需要的“所有状态”通过方法的参数传入下一次调用中，通过参数传递结果，达到不压栈的目的。</p>
+<h3 id="递归改写为尾递归的方法"><a href="#递归改写为尾递归的方法" class="headerlink" title="递归改写为尾递归的方法"></a>递归改写为尾递归的方法</h3><p>将普通递归函数改写为尾递归函数，需要引入一个额外的累积参数（accumulator），用于保存中间结果并在递归调用中传递。这样，在每次递归调用时，不再产生新的堆栈帧，而是更新累积参数的值，直到达到终止条件。以下是将普通递归函数改写为尾递归函数的一般步骤：</p>
+<ol>
+<li>引入一个额外的累积参数，用于保存中间结果。</li>
+<li>将递归函数的终止条件作为尾递归函数的终止条件，并将累积参数作为返回值返回。</li>
+<li>在递归调用中，更新累积参数的值，并继续递归调用。</li>
+</ol>
+<p>以下是一个示例，将普通递归的阶乘函数改写为尾递归函数：</p>
+<p>普通递归示例（阶乘函数）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fact(0) -&gt; 1;</span><br><span class="line">fact(N) -&gt; N * fact(N - 1).</span><br></pre></td></tr></table></figure>
+
+<p>尾递归示例（阶乘函数）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fact(N) -&gt; fact(N, 1).</span><br><span class="line"></span><br><span class="line">fact(0, Acc) -&gt; Acc;</span><br><span class="line">fact(N, Acc) -&gt; fact(N - 1, N * Acc).</span><br></pre></td></tr></table></figure>
+
+<p>在尾递归的示例中，<code>fact/2</code> 函数接受两个参数：<code>N</code> 表示要计算阶乘的数，<code>Acc</code> 表示累积的结果。递归调用发生在每次迭代时，通过更新参数 <code>N</code> 和 <code>Acc</code> 来进行下一次迭代，直到达到终止条件 <code>N = 0</code>。最终结果直接返回给调用者，没有进行任何后续计算。</p>
+<p>通过将普通递归改写为尾递归，可以避免堆栈溢出的风险，并允许尾递归函数以迭代的方式执行，从而提高性能和资源利用率。</p>
+<h2 id="String的处理方法"><a href="#String的处理方法" class="headerlink" title="String的处理方法"></a>String的处理方法</h2><p>在 Erlang 中，处理字符串的性能可以通过以下几个方法来改善：</p>
+<ol>
+<li>避免频繁的字符串拼接：Erlang 中的字符串是不可变的，每次字符串拼接都会创建一个新的字符串，这会导致性能下降。相反，可以使用列表来构建字符串，然后使用 <code>lists:flatten/1</code> 函数将列表转换为字符串。这样可以减少字符串拼接的开销。<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 不推荐的方法：频繁字符串拼接</span></span><br><span class="line">Str1 = <span class="string">&quot;Hello&quot;</span>,</span><br><span class="line">Str2 = <span class="string">&quot;World&quot;</span>,</span><br><span class="line">Result = Str1 ++ Str2.</span><br><span class="line"></span><br><span class="line"><span class="comment">% 推荐的方法：使用列表构建字符串，然后使用 lists:flatten/1 转换为字符串</span></span><br><span class="line">StrList = [<span class="string">&quot;Hello&quot;</span>, <span class="string">&quot;World&quot;</span>],</span><br><span class="line">Result = lists:flatten(StrList).</span><br></pre></td></tr></table></figure></li>
+</ol>
+<ol start="2">
+<li>使用二进制而不是字符串：在处理大量数据时，使用 Erlang 的二进制（<code>&lt;&lt;&gt;&gt;</code>）来表示字符串会更高效，因为二进制操作是原子的，可以更快地进行匹配和处理。可以使用 <code>&lt;&lt;Str/binary&gt;&gt;</code> 语法将字符串转换为二进制，使用 <code>binary_to_list/1</code> 将二进制转换为字符串。<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 使用二进制表示字符串</span></span><br><span class="line">StrBinary = &lt;&lt;<span class="string">&quot;Hello&quot;</span>&gt;&gt;.</span><br><span class="line"></span><br><span class="line"><span class="comment">% 将二进制转换为字符串</span></span><br><span class="line">Str = binary_to_list(StrBinary).</span><br></pre></td></tr></table></figure></li>
+</ol>
+<ol start="3">
+<li>避免频繁的字符查找和替换：如果需要在字符串中查找或替换字符，最好使用二进制模式匹配和替换，而不是使用字符串函数。字符串函数通常需要遍历整个字符串，而二进制模式匹配可以更快地找到目标字符。<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 不推荐的方法：使用字符串函数进行字符替换</span></span><br><span class="line">Str = <span class="string">&quot;Hello World&quot;</span>,</span><br><span class="line">NewStr = string:replace(Str, <span class="string">&quot;World&quot;</span>, <span class="string">&quot;Universe&quot;</span>).</span><br><span class="line"></span><br><span class="line"><span class="comment">% 推荐的方法：使用二进制模式匹配进行字符替换</span></span><br><span class="line">StrBinary = &lt;&lt;<span class="string">&quot;Hello World&quot;</span>&gt;&gt;,</span><br><span class="line">NewStrBinary = &lt;&lt;(&lt;&lt;<span class="string">&quot;Universe&quot;</span>&gt;&gt;/binary):<span class="number">8</span>/binary&gt;&gt;.</span><br></pre></td></tr></table></figure></li>
+</ol>
+<ol start="4">
+<li>使用 <code>string</code> 模块进行字符串处理：Erlang 的 <code>string</code> 模块提供了一些针对字符串的优化函数，例如 <code>string:to_upper/1</code> 和 <code>string:to_lower/1</code> 可以高效地转换字符串的大小写。在需要频繁操作字符串的场景中，使用这些优化函数可以提高性能。<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 使用 string:to_upper/1 转换字符串为大写</span></span><br><span class="line">Str = <span class="string">&quot;hello&quot;</span>,</span><br><span class="line">UpperStr = string:to_upper(Str).</span><br><span class="line"></span><br><span class="line"><span class="comment">% 使用 string:substr/3 获取字符串的子串</span></span><br><span class="line">Str = <span class="string">&quot;Hello World&quot;</span>,</span><br><span class="line">SubStr = string:substr(Str, <span class="number">7</span>, <span class="number">5</span>).</span><br></pre></td></tr></table></figure></li>
+</ol>
+<ol start="5">
+<li>避免不必要的字符串复制：在处理字符串时，尽量避免不必要的字符串复制。例如，可以使用 <code>string:substr/3</code> 函数来获取字符串的子串，而不是创建一个新的字符串。<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 不推荐的方法：创建一个新的字符串副本</span></span><br><span class="line">Str = <span class="string">&quot;Hello World&quot;</span>,</span><br><span class="line">SubStr = string:substr(Str, <span class="number">7</span>, <span class="number">5</span>).</span><br><span class="line"></span><br><span class="line"><span class="comment">% 推荐的方法：使用二进制模式匹配获取子串</span></span><br><span class="line">StrBinary = &lt;&lt;<span class="string">&quot;Hello World&quot;</span>&gt;&gt;,</span><br><span class="line">SubStrBinary = &lt;&lt;StrBinary/binary, <span class="number">7</span>:<span class="number">5</span>&gt;&gt;.</span><br></pre></td></tr></table></figure></li>
+</ol>
+<ol start="6">
+<li>使用 NIF 或 Port：如果有对性能要求非常高的字符串处理任务，可以考虑使用 NIF（Native Implemented Function）或 Port（进程间通信）来实现。NIF 允许通过 C 代码编写高效的原生函数，而 Port 允许与其他编程语言进行交互。</li>
+</ol>
+<p><code>string_utils.c</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;erl_nif.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> ERL_NIF_TERM <span class="title">to_upper_nif</span><span class="params">(ErlNifEnv* env, <span class="keyword">int</span> argc, <span class="keyword">const</span> ERL_NIF_TERM argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ErlNifBinary input_binary;</span><br><span class="line">    enif_inspect_binary(env, argv[<span class="number">0</span>], &amp;input_binary);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">char</span>* input_str = (<span class="keyword">char</span>*) input_binary.data;</span><br><span class="line">    <span class="keyword">size_t</span> input_len = input_binary.size;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">char</span>* output_str = (<span class="keyword">char</span>*) enif_alloc(input_len + <span class="number">1</span>);</span><br><span class="line">    <span class="built_in">strncpy</span>(output_str, input_str, input_len);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; input_len; i++) &#123;</span><br><span class="line">        output_str[i] = <span class="built_in">toupper</span>(output_str[i]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ERL_NIF_TERM output_binary;</span><br><span class="line">    enif_alloc_binary(input_len, &amp;output_binary);</span><br><span class="line">    <span class="built_in">memcpy</span>(output_binary.data, output_str, input_len);</span><br><span class="line"></span><br><span class="line">    enif_free(output_str);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> output_binary;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> ErlNifFunc nif_funcs[] = &#123;</span><br><span class="line">    &#123;<span class="string">&quot;to_upper&quot;</span>, <span class="number">1</span>, to_upper_nif&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">ERL_NIF_INIT(Elixir.StringUtils.Nif, nif_funcs, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>总的来说，避免频繁的字符串拼接、使用二进制、避免不必要的字符查找和替换以及使用合适的优化函数可以提高 Erlang 中字符串处理的性能。</p>
+<h1 id="常见注意事项"><a href="#常见注意事项" class="headerlink" title="常见注意事项"></a>常见注意事项</h1><h1 id="Binaries的构造和匹配"><a href="#Binaries的构造和匹配" class="headerlink" title="Binaries的构造和匹配"></a>Binaries的构造和匹配</h1><h1 id="Maps"><a href="#Maps" class="headerlink" title="Maps"></a>Maps</h1><h1 id="List-Handling"><a href="#List-Handling" class="headerlink" title="List Handling"></a>List Handling</h1><h1 id="Function"><a href="#Function" class="headerlink" title="Function"></a>Function</h1>
+    </div>
+
+    
+    
+    
+
+    
+      <div>
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:24px;">（完）</div>
+    
+</div>
+      </div>
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/erlang/" rel="tag"># erlang</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/07/02/supervisor/" rel="prev" title="supervisor">
+      <i class="fa fa-chevron-left"></i> supervisor
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Erlang%E6%80%A7%E8%83%BD%E7%9A%847%E4%B8%AA%E4%BC%A0%E8%AF%B4"><span class="nav-number">1.</span> <span class="nav-text">Erlang性能的7个传说</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%BE%E9%80%92%E5%BD%92"><span class="nav-number">1.1.</span> <span class="nav-text">尾递归</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-number">1.1.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%92%E5%BD%92%E6%94%B9%E5%86%99%E4%B8%BA%E5%B0%BE%E9%80%92%E5%BD%92%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.2.</span> <span class="nav-text">递归改写为尾递归的方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#String%E7%9A%84%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95"><span class="nav-number">1.2.</span> <span class="nav-text">String的处理方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">2.</span> <span class="nav-text">常见注意事项</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Binaries%E7%9A%84%E6%9E%84%E9%80%A0%E5%92%8C%E5%8C%B9%E9%85%8D"><span class="nav-number">3.</span> <span class="nav-text">Binaries的构造和匹配</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Maps"><span class="nav-number">4.</span> <span class="nav-text">Maps</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#List-Handling"><span class="nav-number">5.</span> <span class="nav-text">List Handling</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Function"><span class="nav-number">6.</span> <span class="nav-text">Function</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Honghangzhi"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Honghangzhi</p>
+  <div class="site-description" itemprop="description">不积跬步，无以千里</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Honghangzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'Wk2wsEFrasa9yOsstHf3YRlp-gzGzoHsz',
+      appKey     : 'zKA4ww3CAjsjGZ52EFJPkpRn',
+      placeholder: "欢迎交流讨论...",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
