@@ -29,7 +29,7 @@
 <meta property="og:description" content="提高效率的技巧">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-07-03T15:08:11.000Z">
-<meta property="article:modified_time" content="2023-07-03T15:37:02.982Z">
+<meta property="article:modified_time" content="2023-07-03T18:41:26.674Z">
 <meta property="article:author" content="Honghangzhi">
 <meta property="article:tag" content="erlang">
 <meta name="twitter:card" content="summary">
@@ -219,10 +219,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2023-07-03 23:08:11 / 修改时间：23:37:02" itemprop="dateCreated datePublished" datetime="2023-07-03T23:08:11+08:00">2023-07-03</time>
+              <time title="创建时间：2023-07-03 23:08:11" itemprop="dateCreated datePublished" datetime="2023-07-03T23:08:11+08:00">2023-07-03</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-07-04 02:41:26" itemprop="dateModified" datetime="2023-07-04T02:41:26+08:00">2023-07-04</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -253,7 +259,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.7k</span>
+              <span>2.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -276,7 +282,7 @@
 <span id="more"></span>
 
 <p><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/efficiency_guide/users_guide.html">Erlang – Efficiency Guide</a></p>
-<h1 id="Erlang性能的7个传说"><a href="#Erlang性能的7个传说" class="headerlink" title="Erlang性能的7个传说"></a>Erlang性能的7个传说</h1><ol>
+<h1 id="Erlang性能传说"><a href="#Erlang性能传说" class="headerlink" title="Erlang性能传说"></a>Erlang性能传说</h1><ol>
 <li>尾递归比递归快得多</li>
 <li><code>++</code>总是很差</li>
 <li>String很慢</li>
@@ -285,7 +291,7 @@
 <li>不用的变量用<code>_</code>标记</li>
 <li><strong>NIF</strong> 总是比自己写快</li>
 </ol>
-<p>另外，还有以下几个已经过时的传说</p>
+<p>过时的传说</p>
 <ol>
 <li>Funs很慢</li>
 <li>列表推导很慢</li>
@@ -308,32 +314,95 @@
 
 <p>在尾递归的示例中，<code>fact/2</code> 函数接受两个参数：<code>N</code> 表示要计算阶乘的数，<code>Acc</code> 表示累积的结果。递归调用发生在每次迭代时，通过更新参数 <code>N</code> 和 <code>Acc</code> 来进行下一次迭代，直到达到终止条件 <code>N = 0</code>。最终结果直接返回给调用者，没有进行任何后续计算。</p>
 <p>通过将普通递归改写为尾递归，可以避免堆栈溢出的风险，并允许尾递归函数以迭代的方式执行，从而提高性能和资源利用率。</p>
-<h2 id="String的处理方法"><a href="#String的处理方法" class="headerlink" title="String的处理方法"></a>String的处理方法</h2><p>在 Erlang 中，处理字符串的性能可以通过以下几个方法来改善：</p>
-<ol>
-<li>避免频繁的字符串拼接：Erlang 中的字符串是不可变的，每次字符串拼接都会创建一个新的字符串，这会导致性能下降。相反，可以使用列表来构建字符串，然后使用 <code>lists:flatten/1</code> 函数将列表转换为字符串。这样可以减少字符串拼接的开销。<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 不推荐的方法：频繁字符串拼接</span></span><br><span class="line">Str1 = <span class="string">&quot;Hello&quot;</span>,</span><br><span class="line">Str2 = <span class="string">&quot;World&quot;</span>,</span><br><span class="line">Result = Str1 ++ Str2.</span><br><span class="line"></span><br><span class="line"><span class="comment">% 推荐的方法：使用列表构建字符串，然后使用 lists:flatten/1 转换为字符串</span></span><br><span class="line">StrList = [<span class="string">&quot;Hello&quot;</span>, <span class="string">&quot;World&quot;</span>],</span><br><span class="line">Result = lists:flatten(StrList).</span><br></pre></td></tr></table></figure></li>
-</ol>
-<ol start="2">
-<li>使用二进制而不是字符串：在处理大量数据时，使用 Erlang 的二进制（<code>&lt;&lt;&gt;&gt;</code>）来表示字符串会更高效，因为二进制操作是原子的，可以更快地进行匹配和处理。可以使用 <code>&lt;&lt;Str/binary&gt;&gt;</code> 语法将字符串转换为二进制，使用 <code>binary_to_list/1</code> 将二进制转换为字符串。<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 使用二进制表示字符串</span></span><br><span class="line">StrBinary = &lt;&lt;<span class="string">&quot;Hello&quot;</span>&gt;&gt;.</span><br><span class="line"></span><br><span class="line"><span class="comment">% 将二进制转换为字符串</span></span><br><span class="line">Str = binary_to_list(StrBinary).</span><br></pre></td></tr></table></figure></li>
-</ol>
-<ol start="3">
-<li>避免频繁的字符查找和替换：如果需要在字符串中查找或替换字符，最好使用二进制模式匹配和替换，而不是使用字符串函数。字符串函数通常需要遍历整个字符串，而二进制模式匹配可以更快地找到目标字符。<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 不推荐的方法：使用字符串函数进行字符替换</span></span><br><span class="line">Str = <span class="string">&quot;Hello World&quot;</span>,</span><br><span class="line">NewStr = string:replace(Str, <span class="string">&quot;World&quot;</span>, <span class="string">&quot;Universe&quot;</span>).</span><br><span class="line"></span><br><span class="line"><span class="comment">% 推荐的方法：使用二进制模式匹配进行字符替换</span></span><br><span class="line">StrBinary = &lt;&lt;<span class="string">&quot;Hello World&quot;</span>&gt;&gt;,</span><br><span class="line">NewStrBinary = &lt;&lt;(&lt;&lt;<span class="string">&quot;Universe&quot;</span>&gt;&gt;/binary):<span class="number">8</span>/binary&gt;&gt;.</span><br></pre></td></tr></table></figure></li>
-</ol>
-<ol start="4">
-<li>使用 <code>string</code> 模块进行字符串处理：Erlang 的 <code>string</code> 模块提供了一些针对字符串的优化函数，例如 <code>string:to_upper/1</code> 和 <code>string:to_lower/1</code> 可以高效地转换字符串的大小写。在需要频繁操作字符串的场景中，使用这些优化函数可以提高性能。<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 使用 string:to_upper/1 转换字符串为大写</span></span><br><span class="line">Str = <span class="string">&quot;hello&quot;</span>,</span><br><span class="line">UpperStr = string:to_upper(Str).</span><br><span class="line"></span><br><span class="line"><span class="comment">% 使用 string:substr/3 获取字符串的子串</span></span><br><span class="line">Str = <span class="string">&quot;Hello World&quot;</span>,</span><br><span class="line">SubStr = string:substr(Str, <span class="number">7</span>, <span class="number">5</span>).</span><br></pre></td></tr></table></figure></li>
-</ol>
-<ol start="5">
-<li>避免不必要的字符串复制：在处理字符串时，尽量避免不必要的字符串复制。例如，可以使用 <code>string:substr/3</code> 函数来获取字符串的子串，而不是创建一个新的字符串。<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 不推荐的方法：创建一个新的字符串副本</span></span><br><span class="line">Str = <span class="string">&quot;Hello World&quot;</span>,</span><br><span class="line">SubStr = string:substr(Str, <span class="number">7</span>, <span class="number">5</span>).</span><br><span class="line"></span><br><span class="line"><span class="comment">% 推荐的方法：使用二进制模式匹配获取子串</span></span><br><span class="line">StrBinary = &lt;&lt;<span class="string">&quot;Hello World&quot;</span>&gt;&gt;,</span><br><span class="line">SubStrBinary = &lt;&lt;StrBinary/binary, <span class="number">7</span>:<span class="number">5</span>&gt;&gt;.</span><br></pre></td></tr></table></figure></li>
-</ol>
-<ol start="6">
-<li>使用 NIF 或 Port：如果有对性能要求非常高的字符串处理任务，可以考虑使用 NIF（Native Implemented Function）或 Port（进程间通信）来实现。NIF 允许通过 C 代码编写高效的原生函数，而 Port 允许与其他编程语言进行交互。</li>
-</ol>
-<p><code>string_utils.c</code></p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;erl_nif.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> ERL_NIF_TERM <span class="title">to_upper_nif</span><span class="params">(ErlNifEnv* env, <span class="keyword">int</span> argc, <span class="keyword">const</span> ERL_NIF_TERM argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ErlNifBinary input_binary;</span><br><span class="line">    enif_inspect_binary(env, argv[<span class="number">0</span>], &amp;input_binary);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">char</span>* input_str = (<span class="keyword">char</span>*) input_binary.data;</span><br><span class="line">    <span class="keyword">size_t</span> input_len = input_binary.size;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">char</span>* output_str = (<span class="keyword">char</span>*) enif_alloc(input_len + <span class="number">1</span>);</span><br><span class="line">    <span class="built_in">strncpy</span>(output_str, input_str, input_len);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; input_len; i++) &#123;</span><br><span class="line">        output_str[i] = <span class="built_in">toupper</span>(output_str[i]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ERL_NIF_TERM output_binary;</span><br><span class="line">    enif_alloc_binary(input_len, &amp;output_binary);</span><br><span class="line">    <span class="built_in">memcpy</span>(output_binary.data, output_str, input_len);</span><br><span class="line"></span><br><span class="line">    enif_free(output_str);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> output_binary;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> ErlNifFunc nif_funcs[] = &#123;</span><br><span class="line">    &#123;<span class="string">&quot;to_upper&quot;</span>, <span class="number">1</span>, to_upper_nif&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">ERL_NIF_INIT(Elixir.StringUtils.Nif, nif_funcs, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="字符串处理"><a href="#字符串处理" class="headerlink" title="字符串处理"></a>字符串处理</h2><p>TODO</p>
+<h1 id="常见注意事项"><a href="#常见注意事项" class="headerlink" title="常见注意事项"></a>常见注意事项</h1><h2 id="定时器"><a href="#定时器" class="headerlink" title="定时器"></a>定时器</h2><p>指定时间后向指定进程发送Msg</p>
+<ul>
+<li>erlang:send_after(Time, Dest, Msg) -&gt; TimerRef</li>
+<li>erlang:start_timer(Time, Dest, Msg) -&gt; TimerRef</li>
+</ul>
+<p>用**<a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/erlang.html#send_after-3">erlang:send_after/3</a>** and **<a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/erlang.html#start_timer-3">erlang:start_timer/3</a>**比timer模块更高效</p>
+<h2 id="意外复制"><a href="#意外复制" class="headerlink" title="意外复制"></a>意外复制</h2><p>分裂新进程时，尽量只传入要使用的数据，传入记录会导致复制整改记录</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">accidental1</span><span class="params">(State)</span> -&gt;</span></span><br><span class="line">    spawn(<span class="keyword">fun</span>() -&gt;</span><br><span class="line">                  io:format(<span class="string">&quot;~p\n&quot;</span>, [State#state.info])</span><br><span class="line">          <span class="keyword">end</span>).</span><br></pre></td></tr></table></figure>
 
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">fixed_accidental1</span><span class="params">(State)</span> -&gt;</span></span><br><span class="line">    Info = State#state.info,</span><br><span class="line">    spawn(<span class="keyword">fun</span>() -&gt;</span><br><span class="line">                  io:format(<span class="string">&quot;~p\n&quot;</span>, [Info])</span><br><span class="line">          <span class="keyword">end</span>).</span><br></pre></td></tr></table></figure>
 
+<h2 id="list-to-atom-1"><a href="#list-to-atom-1" class="headerlink" title="list_to_atom/1"></a>list_to_atom/1</h2><p>原子不会被垃圾回收器回收，当到达一定数量，erlang系统会被终止，所有不能随意创建原子。</p>
+<p>如果只使用预先定义的原子，就用<code>list_to_existing_atom(String) -&gt; atom()</code>防止ddos攻击。</p>
+<h3 id="length-1"><a href="#length-1" class="headerlink" title="length/1"></a>length/1</h3><p>length要遍历，对大列表尽量少用。</p>
+<p>可以用模式识别避免。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">foo(L) when length(L) &gt;= 3 -&gt;</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
 
-<p>总的来说，避免频繁的字符串拼接、使用二进制、避免不必要的字符查找和替换以及使用合适的优化函数可以提高 Erlang 中字符串处理的性能。</p>
-<h1 id="常见注意事项"><a href="#常见注意事项" class="headerlink" title="常见注意事项"></a>常见注意事项</h1><h1 id="Binaries的构造和匹配"><a href="#Binaries的构造和匹配" class="headerlink" title="Binaries的构造和匹配"></a>Binaries的构造和匹配</h1><h1 id="Maps"><a href="#Maps" class="headerlink" title="Maps"></a>Maps</h1><h1 id="List-Handling"><a href="#List-Handling" class="headerlink" title="List Handling"></a>List Handling</h1><h1 id="Function"><a href="#Function" class="headerlink" title="Function"></a>Function</h1>
+<p>can be rewritten to:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">foo([_,_,_|_]=L) -&gt;</span><br><span class="line">   ...</span><br></pre></td></tr></table></figure>
+
+<h3 id="setelement-3"><a href="#setelement-3" class="headerlink" title="setelement/3"></a>setelement/3</h3><p>会复制操作的元组，但编译器会对连续的调用进行优化。</p>
+<ul>
+<li>索引是整数字面量</li>
+<li>索引降序调用</li>
+<li>连续调用</li>
+<li>上一个调用的结果是下一个的参数</li>
+</ul>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">multiple_setelement</span><span class="params">(T0)</span> -&gt;</span></span><br><span class="line">    T1 = setelement(<span class="number">9</span>, T0, bar),</span><br><span class="line">    T2 = setelement(<span class="number">7</span>, T1, foobar),</span><br><span class="line">    setelement(<span class="number">5</span>, T2, new_value).</span><br></pre></td></tr></table></figure>
+
+<h2 id="size-1"><a href="#size-1" class="headerlink" title="size/1"></a>size/1</h2><p>用tuple_size/1 and byte_size/1 ，而不是通用的size/1</p>
+<h3 id="split-binary-2"><a href="#split-binary-2" class="headerlink" title="split_binary/2"></a>split_binary/2</h3><p>模式匹配往往比split_binary/2更高效</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;&lt;Bin1:Num/binary,Bin2/binary&gt;&gt; = Bin,</span><br><span class="line"></span><br><span class="line">&#123;Bin1,Bin2&#125; = split_binary(Bin, Num)</span><br></pre></td></tr></table></figure>
+
+<h1 id="Binaries的构造和匹配"><a href="#Binaries的构造和匹配" class="headerlink" title="Binaries的构造和匹配"></a>Binaries的构造和匹配</h1><p>TODO</p>
+<h1 id="Maps"><a href="#Maps" class="headerlink" title="Maps"></a>Maps</h1><h2 id="共享键"><a href="#共享键" class="headerlink" title="共享键"></a>共享键</h2><p>两个maps具有<strong>相同</strong>（键的数量和具体值都相同）的键，则它们将共享该键。类似于原子，就和避免创建过多原子一样，避免创建过多的key</p>
+<p>包装一个构造函数可以最大程度共享键并减少内存使用</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">new</span><span class="params">()</span> -&gt;</span></span><br><span class="line">    #&#123;a =&gt; default, b =&gt; default, c =&gt; default&#125;.</span><br></pre></td></tr></table></figure>
+
+<h2 id="垃圾回收：TODO"><a href="#垃圾回收：TODO" class="headerlink" title="垃圾回收：TODO"></a>垃圾回收：TODO</h2><p>以下是AI的回答</p>
+<p>在Erlang中，为了提高内存利用率和垃圾回收的效率，采用了一种称为“小内存对象”的策略。小内存对象是指大小小于等于64字节的数据结构，例如元组、二进制、列表等等。</p>
+<p>这些小内存对象被存储在连续的内存块中，使得它们可以被高效地分配和回收。此外，Erlang还使用了一种称为“分代垃圾回收”的技术，将内存划分为不同的代，以便更有效地回收内存。</p>
+<p>对于小内存对象，Erlang使用了一种称为“复制式垃圾回收”的算法。这种算法将内存划分为两个部分，分别称为“from”和“to”空间。当内存中的小内存对象被回收时，它们被复制到“to”空间中，而“from”空间则被清空。这种算法的优点是简单高效，但它不能处理大内存对象（即大小大于64字节的对象）。</p>
+<p>因此，对于大内存对象，Erlang使用了一种称为“标记-清除”算法的垃圾回收技术。这种算法的缺点是它可能会导致内存碎片，从而降低内存使用效率。</p>
+<p>需要注意的是，尽管Erlang的小内存对象策略可以提高内存利用率和垃圾回收效率，但它也有一些限制。例如，元组和记录的大小不能超过32个元素，否则它们将不再被视为小内存对象，而是被存储在堆中，这将导致额外的内存开销和性能损失。</p>
+<h2 id="一般原则"><a href="#一般原则" class="headerlink" title="一般原则"></a>一般原则</h2><ul>
+<li>映射组语法往往比maps模块的方法更高效</li>
+<li>避免使用超过32个元素的大映射组</li>
+<li>利用共享键</li>
+<li>一次匹配多个元素</li>
+<li>一次更新多个元素</li>
+<li>避免使用默认值和maps:get(Key, Map, Default)函数</li>
+<li>使用maps:merge/2 合并，避免缺失key</li>
+</ul>
+<h2 id="用于实现字典"><a href="#用于实现字典" class="headerlink" title="用于实现字典"></a>用于实现字典</h2><p>字典的特点</p>
+<ul>
+<li>key在编译器是未知的</li>
+<li>映射组中可能有任意数量元素</li>
+<li>一次查找或更新的元素不超过一个</li>
+</ul>
+<p>通常map是字典最好的底层结构，以下场景是例外</p>
+<ul>
+<li>需要频繁的排序或者从排序列表构造，使用gb_trees</li>
+<li>key都是非零整数，用array实现</li>
+</ul>
+<h2 id="用于实现集合"><a href="#用于实现集合" class="headerlink" title="用于实现集合"></a>用于实现集合</h2><p>sets模块以映射组作为底层结构实现集合</p>
+<p>通常map是集合最好的底层结构，以下场景是例外</p>
+<ul>
+<li>频繁使用交集运算，但不需要单元素操作，使用ordsets模块，底层是红黑树</li>
+<li>频繁使用交集运算，并且需要高效的单元素操作，使用gb_sets模块，底层是AVL树</li>
+<li>表示为整数</li>
+</ul>
+<h1 id="List-Handling"><a href="#List-Handling" class="headerlink" title="List Handling"></a>List Handling</h1><h2 id="创建列表"><a href="#创建列表" class="headerlink" title="创建列表"></a>创建列表</h2><p>列表的创建方式只有 列表头+列表尾 的方式，++和append都会把前面的列表的元素作为列表头，第二个列表作为列表尾来构建，所以尽量<strong>把短列表放前面</strong>。</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">append</span><span class="params">([H|T], Tail)</span> -&gt;</span></span><br><span class="line">    [H|append(T, Tail)];</span><br><span class="line"><span class="function"><span class="title">append</span><span class="params">([], Tail)</span> -&gt;</span></span><br><span class="line">    Tail.</span><br></pre></td></tr></table></figure>
+
+<h2 id="列表推导"><a href="#列表推导" class="headerlink" title="列表推导"></a>列表推导</h2><p>若列表推导的结果不被使用，就不会构建列表，可以理解为遍历了传进去的列表。</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[io:put_chars(E) || E &lt;- List],</span><br></pre></td></tr></table></figure>
+
+<p>=</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#x27;lc^<span class="number">0</span>&#x27;([E|Tail], Expr) -&gt;</span><br><span class="line">    Expr(E),</span><br><span class="line">    &#x27;lc^<span class="number">0</span>&#x27;(Tail, Expr);</span><br><span class="line">&#x27;lc^<span class="number">0</span>&#x27;([], _Expr) -&gt; [].</span><br></pre></td></tr></table></figure>
+
+<h2 id="嵌套列表"><a href="#嵌套列表" class="headerlink" title="嵌套列表"></a>嵌套列表</h2><p><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/lists.html#flatten-1">lists:flatten/1</a>会复制所有嵌套的列表，可以避免的情况：</p>
+<ul>
+<li>发送数据到port</li>
+<li>可以接收嵌套列表作为参数的BIF，例如iolist可以是嵌套列表<br>list_to_binary/1 or iolist_to_binary/1等</li>
+<li>只有一层用 <strong><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/lists.html#append-1">lists:append/1</a></strong>.</li>
+</ul>
+<h2 id="尾递归-1"><a href="#尾递归-1" class="headerlink" title="尾递归"></a>尾递归</h2><p>要用尾递归</p>
+
     </div>
 
     
@@ -424,7 +493,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Erlang%E6%80%A7%E8%83%BD%E7%9A%847%E4%B8%AA%E4%BC%A0%E8%AF%B4"><span class="nav-number">1.</span> <span class="nav-text">Erlang性能的7个传说</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%BE%E9%80%92%E5%BD%92"><span class="nav-number">1.1.</span> <span class="nav-text">尾递归</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-number">1.1.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%92%E5%BD%92%E6%94%B9%E5%86%99%E4%B8%BA%E5%B0%BE%E9%80%92%E5%BD%92%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.2.</span> <span class="nav-text">递归改写为尾递归的方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#String%E7%9A%84%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95"><span class="nav-number">1.2.</span> <span class="nav-text">String的处理方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">2.</span> <span class="nav-text">常见注意事项</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Binaries%E7%9A%84%E6%9E%84%E9%80%A0%E5%92%8C%E5%8C%B9%E9%85%8D"><span class="nav-number">3.</span> <span class="nav-text">Binaries的构造和匹配</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Maps"><span class="nav-number">4.</span> <span class="nav-text">Maps</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#List-Handling"><span class="nav-number">5.</span> <span class="nav-text">List Handling</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Function"><span class="nav-number">6.</span> <span class="nav-text">Function</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Erlang%E6%80%A7%E8%83%BD%E4%BC%A0%E8%AF%B4"><span class="nav-number">1.</span> <span class="nav-text">Erlang性能传说</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%BE%E9%80%92%E5%BD%92"><span class="nav-number">1.1.</span> <span class="nav-text">尾递归</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-number">1.1.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%92%E5%BD%92%E6%94%B9%E5%86%99%E4%B8%BA%E5%B0%BE%E9%80%92%E5%BD%92%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.2.</span> <span class="nav-text">递归改写为尾递归的方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%A4%84%E7%90%86"><span class="nav-number">1.2.</span> <span class="nav-text">字符串处理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">2.</span> <span class="nav-text">常见注意事项</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">2.1.</span> <span class="nav-text">定时器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%84%8F%E5%A4%96%E5%A4%8D%E5%88%B6"><span class="nav-number">2.2.</span> <span class="nav-text">意外复制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#list-to-atom-1"><span class="nav-number">2.3.</span> <span class="nav-text">list_to_atom&#x2F;1</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#length-1"><span class="nav-number">2.3.1.</span> <span class="nav-text">length&#x2F;1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#setelement-3"><span class="nav-number">2.3.2.</span> <span class="nav-text">setelement&#x2F;3</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#size-1"><span class="nav-number">2.4.</span> <span class="nav-text">size&#x2F;1</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#split-binary-2"><span class="nav-number">2.4.1.</span> <span class="nav-text">split_binary&#x2F;2</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Binaries%E7%9A%84%E6%9E%84%E9%80%A0%E5%92%8C%E5%8C%B9%E9%85%8D"><span class="nav-number">3.</span> <span class="nav-text">Binaries的构造和匹配</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Maps"><span class="nav-number">4.</span> <span class="nav-text">Maps</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E9%94%AE"><span class="nav-number">4.1.</span> <span class="nav-text">共享键</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%EF%BC%9ATODO"><span class="nav-number">4.2.</span> <span class="nav-text">垃圾回收：TODO</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E8%88%AC%E5%8E%9F%E5%88%99"><span class="nav-number">4.3.</span> <span class="nav-text">一般原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E4%BA%8E%E5%AE%9E%E7%8E%B0%E5%AD%97%E5%85%B8"><span class="nav-number">4.4.</span> <span class="nav-text">用于实现字典</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E4%BA%8E%E5%AE%9E%E7%8E%B0%E9%9B%86%E5%90%88"><span class="nav-number">4.5.</span> <span class="nav-text">用于实现集合</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#List-Handling"><span class="nav-number">5.</span> <span class="nav-text">List Handling</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%88%97%E8%A1%A8"><span class="nav-number">5.1.</span> <span class="nav-text">创建列表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%97%E8%A1%A8%E6%8E%A8%E5%AF%BC"><span class="nav-number">5.2.</span> <span class="nav-text">列表推导</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B5%8C%E5%A5%97%E5%88%97%E8%A1%A8"><span class="nav-number">5.3.</span> <span class="nav-text">嵌套列表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%BE%E9%80%92%E5%BD%92-1"><span class="nav-number">5.4.</span> <span class="nav-text">尾递归</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
