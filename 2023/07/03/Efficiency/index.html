@@ -21,15 +21,15 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10000,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="Erlang – Efficiency Guide Erlang性能的7个传说 尾递归比递归快得多 ++总是很差 String很慢 修复Dets 文件很慢 BEAM是基于堆栈的字节码虚拟机，因此很慢 不用的变量用_标记 NIF 总是比自己写快  另外，还有以下几个已经过时的传说  Funs很慢 列表推导很慢 --很慢  尾递归优点与普通递归相比，由于尾递归的调用处于方法的最后，因此方法之前所积累下">
+  <meta name="description" content="提高效率的技巧">
 <meta property="og:type" content="article">
 <meta property="og:title" content="提高程序运行效率">
 <meta property="og:url" content="http://example.com/2023/07/03/Efficiency/index.html">
 <meta property="og:site_name" content="HZ&#39;Blog">
-<meta property="og:description" content="Erlang – Efficiency Guide Erlang性能的7个传说 尾递归比递归快得多 ++总是很差 String很慢 修复Dets 文件很慢 BEAM是基于堆栈的字节码虚拟机，因此很慢 不用的变量用_标记 NIF 总是比自己写快  另外，还有以下几个已经过时的传说  Funs很慢 列表推导很慢 --很慢  尾递归优点与普通递归相比，由于尾递归的调用处于方法的最后，因此方法之前所积累下">
+<meta property="og:description" content="提高效率的技巧">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-07-03T15:08:11.000Z">
-<meta property="article:modified_time" content="2023-07-03T15:34:15.344Z">
+<meta property="article:modified_time" content="2023-07-03T15:37:02.982Z">
 <meta property="article:author" content="Honghangzhi">
 <meta property="article:tag" content="erlang">
 <meta name="twitter:card" content="summary">
@@ -221,7 +221,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2023-07-03 23:08:11 / 修改时间：23:34:15" itemprop="dateCreated datePublished" datetime="2023-07-03T23:08:11+08:00">2023-07-03</time>
+              <time title="创建时间：2023-07-03 23:08:11 / 修改时间：23:37:02" itemprop="dateCreated datePublished" datetime="2023-07-03T23:08:11+08:00">2023-07-03</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -272,7 +272,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/efficiency_guide/users_guide.html">Erlang – Efficiency Guide</a></p>
+        <p>提高效率的技巧</p>
+<span id="more"></span>
+
+<p><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/efficiency_guide/users_guide.html">Erlang – Efficiency Guide</a></p>
 <h1 id="Erlang性能的7个传说"><a href="#Erlang性能的7个传说" class="headerlink" title="Erlang性能的7个传说"></a>Erlang性能的7个传说</h1><ol>
 <li>尾递归比递归快得多</li>
 <li><code>++</code>总是很差</li>
