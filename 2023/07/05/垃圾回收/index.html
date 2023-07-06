@@ -29,7 +29,7 @@
 <meta property="og:description" content="介绍垃圾回收算法和实现">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-07-05T15:03:11.000Z">
-<meta property="article:modified_time" content="2023-07-05T15:32:05.944Z">
+<meta property="article:modified_time" content="2023-07-06T00:29:47.781Z">
 <meta property="article:author" content="Honghangzhi">
 <meta name="twitter:card" content="summary">
 
@@ -218,10 +218,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2023-07-05 23:03:11 / 修改时间：23:32:05" itemprop="dateCreated datePublished" datetime="2023-07-05T23:03:11+08:00">2023-07-05</time>
+              <time title="创建时间：2023-07-05 23:03:11" itemprop="dateCreated datePublished" datetime="2023-07-05T23:03:11+08:00">2023-07-05</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-07-06 08:29:47" itemprop="dateModified" datetime="2023-07-06T08:29:47+08:00">2023-07-06</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -252,14 +258,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.6k</span>
+              <span>2.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -383,9 +389,19 @@
 <li>实现烦琐复杂</li>
 <li>循环引用无法回收<br>当两个对象互相引用，无论析构哪个对象，都会因为被引用无法回收。<br>C++的shared_ptr也有循环引用的问题，通过弱引用weak_ptr 解决</li>
 </ul>
-<h2 id="延迟引用计数法"><a href="#延迟引用计数法" class="headerlink" title="延迟引用计数法"></a>延迟引用计数法</h2><ul>
-<li>ZCT表，</li>
-</ul>
+<h2 id="延迟引用计数法"><a href="#延迟引用计数法" class="headerlink" title="延迟引用计数法"></a>延迟引用计数法</h2><p>每当一个对象被引用时，该对象在延迟引用表中被标记。当对象不再被引用时，该对象在延迟引用表中的标记会被移除。但是，对象的引用计数并没有立即减少，而是在下一次垃圾回收时才会被减少。这种延迟策略可以减少引用计数的修改次数，从而提高程序的性能。</p>
+<p>使用ZCT表，记录下计数器值在dec_ref_cnt() 函数的作用下变为0 的对象（不一定是垃圾）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">dec_ref_cnt(obj)&#123;</span><br><span class="line">    obj.ref_cnt--</span><br><span class="line">    if(obj.ref_cnt == 0)</span><br><span class="line">        if(is_full($zct) == TRUE)</span><br><span class="line">        	scan_zct()</span><br><span class="line">    push($zct, obj)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>把根引用反映到了计数器的值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">scan_zct()&#123;</span><br><span class="line">    for(r : $roots)</span><br><span class="line">    	(*r).ref_cnt++</span><br><span class="line">    for(obj : $zct)</span><br><span class="line">    	if(obj.ref_cnt == 0)</span><br><span class="line">            remove($zct, obj)</span><br><span class="line">            delete(obj)</span><br><span class="line">    for(r : $roots)</span><br><span class="line">    	(*r).ref_cnt--	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>对子对象的计数器进行减量操作</li>
+<li>回收</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">delete(obj)&#123;</span><br><span class="line">    for(child : children(obj)</span><br><span class="line">        (*child).ref_cnt--</span><br><span class="line">        if((*child).ref_cnt == 0)</span><br><span class="line">        	delete(*child)</span><br><span class="line">    reclaim(obj)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="Sticky-引用计数法"><a href="#Sticky-引用计数法" class="headerlink" title="Sticky 引用计数法"></a>Sticky 引用计数法</h2><p>当一个对象的引用计数器值变为0时，它的sticky标记会被设置为1，并将该对象的地址添加到一个待处理列表中。在进行垃圾回收时，垃圾回收器只需要扫描待处理列表中的对象，不需要对所有对象的引用计数器值进行精确计算。这样就可以减少计数器位数，从而降低内存占用和垃圾回收的复杂度。</p>
 <p>Sticky 引用计数法可能出现计数器溢出的情况，针对计数器溢出现象有以下两种处理方法：</p>
 <ul>
