@@ -29,7 +29,7 @@
 <meta property="og:description" content="介绍erlang中使用套接字的方法">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-07-09T14:20:59.000Z">
-<meta property="article:modified_time" content="2023-07-09T16:30:25.623Z">
+<meta property="article:modified_time" content="2023-07-10T00:35:23.130Z">
 <meta property="article:author" content="Honghangzhi">
 <meta property="article:tag" content="erlang">
 <meta name="twitter:card" content="summary">
@@ -227,7 +227,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-07-10 00:30:25" itemprop="dateModified" datetime="2023-07-10T00:30:25+08:00">2023-07-10</time>
+                <time title="修改时间：2023-07-10 08:35:23" itemprop="dateModified" datetime="2023-07-10T08:35:23+08:00">2023-07-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -259,14 +259,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.5k</span>
+              <span>2.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -299,14 +299,49 @@
 <li>接受客户端连接</li>
 <li>发送和接收TCP数据</li>
 </ol>
-<p>下面是一个简单的例子，演示了如何在Erlang中使用TCP编程：</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-module</span><span class="params">(tcp_server)</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([start/<span class="number">1</span>])</span>.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">start</span><span class="params">(Port)</span> -&gt;</span></span><br><span class="line">    &#123;ok, ListenSocket&#125; = gen_tcp:listen(Port, [&#123;active, false&#125;, &#123;reuseaddr, true&#125;]),</span><br><span class="line">    io:format(<span class="string">&quot;TCP server started on port ~w~n&quot;</span>, [Port]),</span><br><span class="line">    accept(ListenSocket).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">accept</span><span class="params">(ListenSocket)</span> -&gt;</span></span><br><span class="line">    &#123;ok, Socket&#125; = gen_tcp:accept(ListenSocket),</span><br><span class="line">    io:format(<span class="string">&quot;Accepted connection from ~w~n&quot;</span>, [inet_ntoa(Socket:getpeername())]),</span><br><span class="line">    spawn(<span class="keyword">fun</span>() -&gt; loop(Socket) <span class="keyword">end</span>),</span><br><span class="line">    accept(ListenSocket).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">loop</span><span class="params">(Socket)</span> -&gt;</span></span><br><span class="line">    <span class="keyword">case</span> gen_tcp:recv(Socket, <span class="number">0</span>) <span class="keyword">of</span></span><br><span class="line">        &#123;ok, Data&#125; -&gt;</span><br><span class="line">            io:format(<span class="string">&quot;Received ~w bytes of data: ~w~n&quot;</span>, [size(Data), Data]),</span><br><span class="line">            gen_tcp:send(Socket, Data),</span><br><span class="line">            loop(Socket);</span><br><span class="line">        &#123;error, Reason&#125; -&gt;</span><br><span class="line">            io:format(<span class="string">&quot;Error receiving data: ~w~n&quot;</span>, [Reason]),</span><br><span class="line">            gen_tcp:close(Socket)</span><br><span class="line">    <span class="keyword">end</span>.</span><br></pre></td></tr></table></figure>
+<h2 id="服务器"><a href="#服务器" class="headerlink" title="服务器"></a>服务器</h2><p>监听套接字</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1&gt; &#123;ok, ListenSocket&#125; = gen_tcp:listen(8088, [binary,&#123;active,true&#125;,&#123;packet,0&#125;]).</span><br><span class="line">&#123;ok,#Port&lt;0.508&gt;&#125;</span><br><span class="line">2&gt; &#123;ok,Sokcet&#125; = gen_tcp:accept(ListenSocket).</span><br></pre></td></tr></table></figure>
 
-<p>在上面的例子中，<code>gen_tcp:listen/2</code>函数用于创建并绑定TCP套接字，并指定了<code>active</code>和<code>reuseaddr</code>选项。然后，我们使用一个递归函数来不断接受客户端连接。当有新的客户端连接时，我们使用<code>spawn/1</code>函数创建一个新的进程来处理该连接。进程的<code>loop/1</code>函数接收并处理客户端发送的数据。当收到数据时，我们使用<code>gen_tcp:send/2</code>函数将数据回送给客户端。如果发生错误，则打印错误消息并关闭套接字。</p>
-<p>下面是一个简单的TCP客户端示例，它可以连接到TCP服务器并发送数据：</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-module</span><span class="params">(tcp_client)</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([connect/<span class="number">3</span>])</span>.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">connect</span><span class="params">(Host, Port, Data)</span> -&gt;</span></span><br><span class="line">    &#123;ok, Socket&#125; = gen_tcp:connect(Host, Port, [&#123;active, false&#125;]),</span><br><span class="line">    gen_tcp:send(Socket, Data),</span><br><span class="line">    <span class="keyword">receive</span></span><br><span class="line">        &#123;tcp, _, Response&#125; -&gt;</span><br><span class="line">            io:format(<span class="string">&quot;Received ~w bytes of response: ~w~n&quot;</span>, [size(Response), Response])</span><br><span class="line">    <span class="keyword">end</span>,</span><br><span class="line">    gen_tcp:close(Socket).</span><br></pre></td></tr></table></figure>
+<ul>
+<li>8088是监听端口</li>
+<li>binary接收的是二进制串，</li>
+<li>{active,true}是主动模式,socket收到消息以{tcp, Socket, Data} | {tcp_closed, Socket} 主动投递给进程。</li>
+<li>{packet,N}，N是包头的长度，以字节为单位，包头会被自动添加和解析，这个参数关系到是否会粘包（事实上socket是没有粘包这种概念的，很多新手因为这个词都会被搞得云里雾里的，TCP本来就是基于字节流而不是消息包的协议，正确的解读应该是应用层协议的解析，这个后面我再讲），N为0时包头长度为0</li>
+<li>返回监听套接字后我们需要调用gen_tcp:accept(ListenSocket)等待接收连接，在没有客户端连接之前，是堵塞的，Socket是不会返回的，shell会卡住。用accept/2的话有一个timeout参数 ，超时没有连接会关闭  </li>
+</ul>
+<h2 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1&gt; &#123;ok,Socket&#125; = gen_tcp:connect(&#123;127,0,0,1&#125;,8088,[binary,&#123;active,true&#125;,&#123;packet,0&#125;]).</span><br><span class="line">&#123;ok,#Port&lt;0.508&gt;&#125;  </span><br><span class="line">2&gt; gen_tcp:send(Socket, &quot;hello world!&quot;).</span><br><span class="line">ok  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">我们打开服务端的shell，查看下是否收到消息</span><br><span class="line"></span><br><span class="line">3&gt; flush().</span><br><span class="line">Shell got &#123;tcp,#Port&lt;0.519&gt;,&lt;&lt;&quot;hello world!&quot;&gt;&gt;&#125;</span><br><span class="line">ok  </span><br></pre></td></tr></table></figure>
 
-<p>在这个例子中，我们使用<code>gen_tcp:connect/3</code>函数连接到指定的TCP服务器，并使用<code>gen_tcp:send/2</code>函数将数据发送给服务器。然后，我们使用<code>receive</code>语句来等待服务器的响应。当收到响应数据时，我们打印出响应数据的大小和内容。最后，我们使用<code>gen_tcp:close/1</code>函数关闭TCP套接字。</p>
+<p>可以看到服务端已经收到消息(主动模式下socket会将消息投递到进程邮箱)<br>同样的我们服务端也可以用gen_tcp:send与客户端通信 </p>
+<h2 id="改造处理多个请求"><a href="#改造处理多个请求" class="headerlink" title="改造处理多个请求"></a>改造处理多个请求</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">-module(echo2).</span><br><span class="line"></span><br><span class="line">%% API</span><br><span class="line">-export([</span><br><span class="line">    start_server/0</span><br><span class="line">    , start_client/0</span><br><span class="line">]).</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">-define(TCP_OPTIONS, [binary, &#123;packet, 0&#125;, &#123;active, true&#125;]).</span><br><span class="line">-define(PORT, 8087).</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">start_server()-&gt;</span><br><span class="line">    &#123;ok, LSocket&#125; = gen_tcp:listen(?PORT, ?TCP_OPTIONS),</span><br><span class="line">    %%创建一个接收器进程 去监听套接字</span><br><span class="line">    spawn(fun() -&gt; acceptor(LSocket) end).</span><br><span class="line"></span><br><span class="line">acceptor(LSocket) -&gt;</span><br><span class="line">    &#123;ok, Socket&#125; = gen_tcp:accept(LSocket),</span><br><span class="line">    %% 当监听到连接请求时，创建一个新的进程去监听新的请求，本进程处理这个socket通信</span><br><span class="line">    spawn(fun() -&gt; accept(LSocket) end),</span><br><span class="line">    handle_socket(Socket).</span><br><span class="line"></span><br><span class="line">%% 进入循环，读取socket信息 处理</span><br><span class="line">%% 在客户端断开连接时退出。</span><br><span class="line">handle_socket(Socket) -&gt;</span><br><span class="line">    receive</span><br><span class="line">        &#123;tcp,Socket,Bin&#125;-&gt;</span><br><span class="line">            io:format(&quot; received binary  = ~p~n&quot;,[Bin]),</span><br><span class="line">            %% do some thing</span><br><span class="line">            handle_socket(Socket);</span><br><span class="line">        &#123;tcp_closed, Socket&#125; -&gt;</span><br><span class="line">            io:format(&quot;close ~n&quot;);</span><br><span class="line">        Msg -&gt;</span><br><span class="line">            io:format(&quot;receive ~p ~n&quot;,[Msg]),</span><br><span class="line">            handle_socket(Socket)</span><br><span class="line">    end.</span><br><span class="line"></span><br><span class="line">start_client()-&gt;</span><br><span class="line">    &#123;ok,Socket&#125; = gen_tcp:connect(&#123;127,0,0,1&#125;,?PORT,?TCP_OPTIONS),</span><br><span class="line">    gen_tcp:send(Socket, &quot;Hello&quot;),</span><br><span class="line">    gen_tcp:send(Socket, &quot;223333&quot;),</span><br><span class="line">    gen_tcp:close(Socket).</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">1&gt; c(echo2).</span><br><span class="line">&#123;ok,echo2&#125;</span><br><span class="line">2&gt; echo2:start_server().</span><br><span class="line">&lt;0.39.0&gt;</span><br><span class="line">3&gt; echo2:start_client().</span><br><span class="line">ok</span><br><span class="line"> received binary  = &lt;&lt;&quot;Hello&quot;&gt;&gt;</span><br><span class="line">4&gt;  received binary  = &lt;&lt;&quot;223333&quot;&gt;&gt;</span><br><span class="line">4&gt; close</span><br><span class="line">4&gt; echo2:start_client().</span><br><span class="line">ok</span><br><span class="line"> received binary  = &lt;&lt;&quot;Hello&quot;&gt;&gt;</span><br><span class="line">5&gt;  received binary  = &lt;&lt;&quot;223333&quot;&gt;&gt;</span><br><span class="line">5&gt; close</span><br></pre></td></tr></table></figure>
+
+
+<p>调用start_server()时会堵塞在gen_tcp:accept(LSocket),直到有客户端连接时，服务费返回socket,然后启动一个新进程，该进程职责也是一样的，spawn返回后，接收来自客户端的消息，然后输出，循环这个过程一直到客户端关闭Socket  。</p>
+<p>接收过程是串行的，每次接收到一个请求时才创建一个空闲actor（进程）去监听监听套接字，并发环境时效率低。可以用类似线程池的思想，一开始就创建多个接收器进程，并把它们交给一个监督者进程去管理，或者是采用异步的方式。</p>
+<h2 id="消息模式"><a href="#消息模式" class="headerlink" title="消息模式"></a>消息模式</h2><p>Erlang的socket有3种消息接收模式：active、passive和active once </p>
+<ol>
+<li><p>active（主动消息接收）：<br>非阻塞。当数据到达时系统会socket会向控制进程发送{tcp, Socket, Data}消息。但控制进程无法控制消息流，想象一下如果盲目相信外部所有发送来的数据转化为消息，那么进程的消息队列堆满了一堆数据，严重影响receive的处理；</p>
+</li>
+<li><p>passive（被动消息接收）：<br>阻塞。控制进程必须主动调用recv()来接收消息。<br>可以看到进程邮箱没有收到消息，需要调用gen_tcp:recv获取数据， gen_tcp:recv（Socket,Length）是堵塞的，如果没有收到数据之前是不会返回的，Length代表要获取Socket接收缓冲区数据的大小，基本单位为字节，0代表获取所有 </p>
+</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">1&gt; &#123;ok, LSocket&#125; = gen_tcp:listen(8086, [&#123;active,false&#125;]).</span><br><span class="line">&#123;ok,#Port&lt;0.508&gt;&#125;</span><br><span class="line">2&gt; &#123;ok, Socket&#125; = gen_tcp:accept(LSocket).</span><br><span class="line">再开一个  </span><br><span class="line">1&gt; &#123;ok,Socket&#125; = gen_tcp:connect(&#123;127,0,0,1&#125;,8086,[&#123;active,false&#125;]).</span><br><span class="line">&#123;ok,#Port&lt;0.508&gt;&#125;</span><br><span class="line">2&gt; gen_tcp:send(Socket,&quot;23333&quot;).  </span><br><span class="line">再看下服务端  </span><br><span class="line">&#123;ok,#Port&lt;0.519&gt;&#125;</span><br><span class="line">3&gt; flush().</span><br><span class="line">ok</span><br><span class="line">4&gt; &#123;ok, Data&#125; = gen_tcp:recv(Socket, 0).</span><br><span class="line">&#123;ok,&quot;23333&quot;&#125;  </span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li><p>active once（单次主动）<br>在这个模式中，socket是主动的，但是只能接收一条消息。在控制进程发出一条消息之后，他必须明确的调用 inet:setopts（Socket,[{active,once}]） 以便让socket恢复并接收下一条消息。系统在这发生之前会一直阻塞。 使用 {active,once} 选项，用户可以实现高层次的数据流控制(有时叫交通管制)，同时又防止了服务器被过多的消息所淹没。 虽然active once是官方推荐的方式，但是我发现游戏服务器这块大部分都是采用被动模式  </p>
+<p> {ok,Listen} = gen_tcp:listen(Port,[…,{active,once}…]),<br> {ok,Socket} = gen_tcp:accept(Listen), loop(Socket). </p>
+<p>  loop(Socket) -&gt;</p>
+<p>   receive<br> {tcp,Socket,Data} -&gt; … </p>
+<pre><code>     数据处理 ... %%准备好启用下一条消息时 
+
+    inet:setopts(Socket,[&#123;active,once&#125;]),
+
+     loop(Socket);
+</code></pre>
+<p> {tcp_closed,Socket} -&gt; …<br>  end.</p>
+</li>
+</ol>
 <h1 id="gen-udp"><a href="#gen-udp" class="headerlink" title="gen_udp"></a>gen_udp</h1><p><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/gen_udp.html">https://www.erlang.org/doc/man/gen_udp.html</a></p>
 <p>在Erlang中，UDP编程通常涉及到两个方面：</p>
 <ol>
@@ -412,7 +447,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#IOList"><span class="nav-number">1.</span> <span class="nav-text">IOList</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#gen-tcp"><span class="nav-number">2.</span> <span class="nav-text">gen_tcp</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#gen-udp"><span class="nav-number">3.</span> <span class="nav-text">gen_udp</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#IOList"><span class="nav-number">1.</span> <span class="nav-text">IOList</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#gen-tcp"><span class="nav-number">2.</span> <span class="nav-text">gen_tcp</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">2.1.</span> <span class="nav-text">服务器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">2.2.</span> <span class="nav-text">客户端</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%B9%E9%80%A0%E5%A4%84%E7%90%86%E5%A4%9A%E4%B8%AA%E8%AF%B7%E6%B1%82"><span class="nav-number">2.3.</span> <span class="nav-text">改造处理多个请求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.4.</span> <span class="nav-text">消息模式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#gen-udp"><span class="nav-number">3.</span> <span class="nav-text">gen_udp</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
