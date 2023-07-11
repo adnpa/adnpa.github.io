@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10000,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="介绍erlang中的ETS。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ETS">
+<meta property="og:url" content="http://example.com/2023/07/11/ETS/index.html">
+<meta property="og:site_name" content="HZ&#39;Blog">
+<meta property="og:description" content="介绍erlang中的ETS。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-07-11T15:30:11.000Z">
+<meta property="article:modified_time" content="2023-07-11T19:35:13.708Z">
+<meta property="article:author" content="Honghangzhi">
+<meta property="article:tag" content="erlang">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2023/07/11/ETS/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>ETS | HZ'Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">HZ'Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/07/11/ETS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Honghangzhi">
+      <meta itemprop="description" content="不积跬步，无以千里">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HZ'Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ETS
+        </h1>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-07-11 23:30:11" itemprop="dateCreated datePublished" datetime="2023-07-11T23:30:11+08:00">2023-07-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-07-12 03:35:13" itemprop="dateModified" datetime="2023-07-12T03:35:13+08:00">2023-07-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                  <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                    <a href="/categories/%E7%BC%96%E7%A8%8B/erlang/" itemprop="url" rel="index"><span itemprop="name">erlang</span></a>
+                  </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/07/11/ETS/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/07/11/ETS/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>介绍erlang中的ETS。</p>
+<span id="more"></span>
+
+
+
+
+
+<h2 id="ETS和DETS"><a href="#ETS和DETS" class="headerlink" title="ETS和DETS"></a>ETS和DETS</h2><p>都提供键值对的存储，ETS存在内存，DETS存在磁盘</p>
+<ul>
+<li><p>创建表 </p>
+<ul>
+<li>ets:new(Name, Options) -&gt; table()</li>
+<li>dets:open_file(Name, Args) -&gt; {ok, Name} | {error, Reason}</li>
+<li>Options参数<ul>
+<li>set | ordered_set | bag | duplicate_bag<ul>
+<li>set 异键无序</li>
+<li>ordered_set 异键有序</li>
+<li>bag 同键，不止一个元组拥有相同的键，但是不能有两个完全相同的元组</li>
+<li>duplicate_bag 副本同键，不止一个元组拥有相同的键，并且可以存在多个相同的元组</li>
+</ul>
+</li>
+<li>private<br>创建一个私有表，只有主管进程才能读取和写入它。</li>
+<li>public<br>创建一个公共表，任何知道此表标识符的进程都能读取和写入它。</li>
+<li>protected<br>创建一个受保护表，任何知道此表标识符的进程都能读取它，但只有主管进程才能写入它。</li>
+<li>named_table<br>如果设置了此选项，Name就可以被用于后续的表操作。</li>
+<li>{keypos, K}<br>用K作为键的位置。通常键的位置是1。基本上唯一需要使用这个选项的场合是保存Erlang记录（它其实是元组的另一种形式），并且记录的第一个元素包含记录名的时候。<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 异键表（set），要求表里所有的键都是唯一的</span></span><br><span class="line">TableId = ets:new(mytable, [set, named_table]).</span><br><span class="line"><span class="comment">% 同键表（bag），允许多个元素拥有相同的键</span></span><br><span class="line">TableId = ets:new(mytable, [bag]).</span><br><span class="line"></span><br><span class="line">dets:open_file(abc, [&#123;type, bag&#125;]).</span><br><span class="line">dets:open_file(mytable, [&#123;file, table_file&#125;]).</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>插入元组 </p>
+<ul>
+<li>insert(Name, Objects) -&gt; ok | {error, Reason}<br>插入或更新</li>
+<li>insert_new(Name, Objects) -&gt; boolean() | {error, Reason}<br>插入，只要Objects有已存在的元素，不更新表，返回false<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ets:insert(TableId, &#123;a,<span class="number">1</span>&#125;).</span><br><span class="line">ets:insert_new(TableId, [&#123;a,<span class="number">1</span>&#125;,&#123;b,<span class="number">2</span>&#125;]).</span><br><span class="line">dets:insert(<span class="string">&quot;MyTable&quot;</span>, &#123;a,<span class="number">1</span>&#125;).</span><br><span class="line">dets:insert_new(<span class="string">&quot;MyTable&quot;</span>, [&#123;a,<span class="number">1</span>&#125;,&#123;b,<span class="number">2</span>&#125;]).</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>查找元组 返回列表</p>
+<ul>
+<li>ets:lookup(Table, Key) -&gt; [Object]<br>对于同键表，只会返回只有一个元素的列表</li>
+<li>ets:lookup_element(Table, Key, Pos) -&gt; Elem<br>相当于对lookup出来的元组再使用element函数，返回元组的Pos位置元素</li>
+<li>dets:lookup(Name, Key)<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ets:lookup(TableId, a).</span><br><span class="line">ets:lookup_element(TableId, a, <span class="number">1</span>).</span><br><span class="line"></span><br><span class="line">dets:lookup(<span class="string">&quot;MyTable&quot;</span>, a).</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>丢弃表、元组</p>
+<ul>
+<li>ets:delete(Table) -&gt; true</li>
+<li>ets:delete(Table, Key) -&gt; true</li>
+<li>dets:close(Name)</li>
+<li>dets:delete(Name, Key) -&gt; true<br>删除后查找返回空列表<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ets:delete(TableId, a).</span><br><span class="line">ets:delete(TableId).</span><br><span class="line"></span><br><span class="line">dets:close(abc). </span><br><span class="line">dets:delete(abc, b). </span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h1 id="练习"><a href="#练习" class="headerlink" title="练习"></a>练习</h1><ol>
+<li><p>Mod:module_info(exports)会返回Mod模块里所有导出函数的列表。用这个函数找出Erlang系统库里导出的所有函数。制作一个键-值查询表，其中键是一个{Function,Arity}对（Arity表示参数数量），值是一个模块名。把这些数据储存在ETS和DETS表里。</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">TableId = ets:new(mytable, [bag]).</span><br><span class="line">Objects = erlang:module_info(exports).</span><br><span class="line">ets:insert(TableId, Objects).</span><br><span class="line">ets:lookup(TableId, port_info).</span><br><span class="line"><span class="comment">%</span></span><br><span class="line">TableName = dets:open_file(abc, [&#123;type, bag&#125;]).</span><br><span class="line">dets:insert(TableId, Objects).</span><br><span class="line">dets:lookup(TableId, port_info).</span><br></pre></td></tr></table></figure></li>
+<li><p>制作一个共享的ETS计数表。实现一个名为count:me(Mod,Line)的函数，通过在你的代码里添加count:me(?MODULE, ?LINE)来调用它。每当这个函数被调用时，就给记录自身执行次数的计数器加1。编写一些函数来初始化和读取计数器。</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-module</span><span class="params">(count)</span>.</span><br><span class="line"><span class="keyword">-author</span><span class="params">(<span class="string">&quot;hz&quot;</span>)</span>.</span><br><span class="line"></span><br><span class="line"><span class="comment">%% API</span></span><br><span class="line"><span class="comment">%%-export([me/2]).</span></span><br><span class="line"><span class="keyword">-export</span><span class="params">([init/<span class="number">0</span>, init/<span class="number">1</span>, me/<span class="number">2</span>, get_count/<span class="number">1</span>])</span>.</span><br><span class="line"></span><br><span class="line"><span class="comment">%% 初始化计数器</span></span><br><span class="line"><span class="function"><span class="title">init</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  ets:new(count, [set, named_table]).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">init</span><span class="params">(MODULE)</span> -&gt;</span></span><br><span class="line">  ets:insert(count, &#123;?MODULE, <span class="number">0</span>&#125;).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">me</span><span class="params">(MODULE, LINE)</span> -&gt;</span></span><br><span class="line">  OldNum = ets:lookup(count, MODULE),</span><br><span class="line">  ets:update_element(count, MODULE, <span class="number">1</span>).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">get_count</span><span class="params">(MODULE)</span> -&gt;</span></span><br><span class="line">  ets:lookup_element(count, ?MODULE, <span class="number">2</span>).</span><br></pre></td></tr></table></figure></li>
+<li><p>编写一个检测文本抄袭的程序。用一个双遍历（two-pass）算法来实现它。第一次遍历时，把文本打散成40个字符的小块并计算各个块的校验和，然后把校验和与文件名保存在一个ETS表里。第二次遍历时，计算数据里各个40字符块的校验和，并把它们与ETS表里的校验和进行比较。</p>
+</li>
+</ol>
+<h1 id="并发性"><a href="#并发性" class="headerlink" title="并发性"></a>并发性</h1><p>所有对 对象 的操作都是原子的和隔离的。</p>
+<h1 id="遍历表"><a href="#遍历表" class="headerlink" title="遍历表"></a>遍历表</h1><ul>
+<li><p><strong>Single-step</strong> traversal one key at at time, using </p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/ets.html#first-1">first/1</a> 返回第一个键</li>
+<li><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/ets.html#next-2">next/2</a> 返回紧跟Key1的下一个键</li>
+<li><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/ets.html#last-1">last/1</a> 返回最后一个键</li>
+<li><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/ets.html#prev-2">prev/2</a> 对于<code>ordered_set</code>类型，返回前一个键，对于其他表类型和next/2同义<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">ets:new(abc, [set, named_table]).</span><br><span class="line"><span class="number">5</span>&gt; ets:first(abc).</span><br><span class="line">a</span><br><span class="line"><span class="number">11</span>&gt; ets:next(abc,a).                  </span><br><span class="line">b</span><br><span class="line"><span class="number">15</span>&gt; ets:prev(abc,b). </span><br><span class="line">c</span><br><span class="line"></span><br><span class="line">ets:new(abc, [ordered_set, named_table]).</span><br><span class="line"><span class="number">16</span>&gt; ets:next(abc,b). </span><br><span class="line">c</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>Search with simple <strong>match patterns</strong>, using </p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/ets.html#match-1">match/1/2/3</a>, <ul>
+<li>match(Continuation) -&gt; {[Match], Continuation} | ‘$end_of_table’</li>
+<li>match(Table, Pattern) -&gt; [Match]</li>
+<li>match(Table, Pattern, Limit) -&gt; {[Match], Continuation} | ‘$end_of_table’</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/ets.html#match_delete-2">match_delete/2</a> </li>
+<li><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/ets.html#match_object-1">match_object/1/2/3</a>.</li>
+<li>匹配规则<ul>
+<li>Erlang terms表示匹配<strong>固定值</strong></li>
+<li>‘_’ 匹配任意值</li>
+<li>模式遍历 ‘$N’, where N=0,1,…  在匹配的位置占位<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ets:new(abc, [named_table]). </span><br><span class="line">ets:insert(abc, [&#123;rufsen,dog,<span class="number">7</span>&#125;,&#123;brunte,horse,<span class="number">5</span>&#125;,&#123;ludde,dog,<span class="number">5</span>&#125;]).</span><br><span class="line"></span><br><span class="line"><span class="number">6</span>&gt; ets:match(abc, &#x27;$<span class="number">1</span>&#x27;). <span class="comment">% Matches every object in table</span></span><br><span class="line"><span class="comment">%[[&#123;rufsen,dog,7&#125;],[&#123;ludde,dog,5&#125;],[&#123;brunte,horse,5&#125;]]</span></span><br><span class="line"><span class="number">6</span>&gt; ets:match(abc, &#123;&#x27;_&#x27;,dog,&#x27;$<span class="number">1</span>&#x27;&#125;). </span><br><span class="line">[[<span class="number">7</span>],[<span class="number">5</span>]]</span><br><span class="line"><span class="number">8</span>&gt; ets:match(abc, &#123;&#x27;_&#x27;,cow,&#x27;$<span class="number">1</span>&#x27;&#125;). </span><br><span class="line">[]</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Search with more powerful <strong>match specifications</strong>, using </p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/ets.html#select-1">select/1/2/3</a><ul>
+<li>select(Continuation) -&gt; {[Match], Continuation} | ‘$end_of_table’</li>
+<li>select(Table, MatchSpec) -&gt; [Match]</li>
+<li>select(Table, MatchSpec, Limit) -&gt; {[Match], Continuation} | ‘$end_of_table’</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/ets.html#select_count-2">select_count/2</a> </li>
+<li><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/ets.html#select_delete-2">select_delete/2</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/ets.html#select_replace-2">select_replace/2</a>  </li>
+<li><a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/ets.html#select_reverse-1">select_reverse/1/2/3</a>.</li>
+<li>详细匹配规则：<a target="_blank" rel="noopener" href="https://www.erlang.org/doc/apps/erts/match_spec.html">https://www.erlang.org/doc/apps/erts/match_spec.html</a><br>匹配规则是包含一个或多个<strong>三元组</strong>的列表，第一个元素是模式，第二个元素是关卡列表，可以为空，第三个元素接收匹配结果，<code>$_</code> 指定结果为整个元组对象，<code>&#39;$$&#39;</code>将所有匹配结果放在一个列表中。<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">MatchSpec = [MatchFunction]</span><br><span class="line">MatchFunction = &#123;MatchHead, [Guard], [Result]&#125;</span><br><span class="line">MatchHead = <span class="string">&quot;Pattern as in ets:match&quot;</span></span><br><span class="line">Guard = &#123;<span class="string">&quot;Guardtest name&quot;</span>, ...&#125;</span><br><span class="line">Result = <span class="string">&quot;Term construct&quot;</span></span><br></pre></td></tr></table></figure>
+案例<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">ets:new(abc, [named_table]). </span><br><span class="line">ets:insert(abc, [&#123;rufsen,dog,<span class="number">7</span>&#125;,&#123;brunte,horse,<span class="number">5</span>&#125;,&#123;ludde,dog,<span class="number">5</span>&#125;]).</span><br><span class="line"></span><br><span class="line"><span class="number">10</span>&gt; ets:match(abc,&#123;&#x27;$<span class="number">1</span>&#x27;,&#x27;$<span class="number">2</span>&#x27;,&#x27;$<span class="number">3</span>&#x27;&#125;).</span><br><span class="line">[[rufsen,dog,<span class="number">7</span>],[ludde,dog,<span class="number">5</span>],[brunte,horse,<span class="number">5</span>]]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="number">11</span>&gt; ets:select(abc,[&#123;&#123;&#x27;$<span class="number">1</span>&#x27;,&#x27;$<span class="number">2</span>&#x27;,&#x27;$<span class="number">3</span>&#x27;&#125;,[],[&#x27;$$&#x27;]&#125;]).  </span><br><span class="line">[[rufsen,dog,<span class="number">7</span>],[ludde,dog,<span class="number">5</span>],[brunte,horse,<span class="number">5</span>]]</span><br><span class="line"></span><br><span class="line"><span class="number">12</span>&gt; ets:select(abc,[&#123;&#123;&#x27;$<span class="number">1</span>&#x27;,&#x27;$<span class="number">2</span>&#x27;,&#x27;$<span class="number">3</span>&#x27;&#125;,[],[&#x27;$_&#x27;]&#125;]). </span><br><span class="line">[&#123;rufsen,dog,<span class="number">7</span>&#125;,&#123;ludde,dog,<span class="number">5</span>&#125;,&#123;brunte,horse,<span class="number">5</span>&#125;]</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>转换为其他格式</strong> <a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/ets.html#tab2file-2">tab2file/2/3</a> and <a target="_blank" rel="noopener" href="https://www.erlang.org/doc/man/ets.html#tab2list-1">tab2list/1</a>.</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ets:tab2file(table, <span class="string">&quot;MyFile&quot;</span>).</span><br><span class="line"></span><br><span class="line"><span class="number">27</span>&gt; ets:tab2list(tt).</span><br><span class="line">[&#123;a,<span class="number">1</span>&#125;,&#123;b,<span class="number">1</span>&#125;,&#123;c,<span class="number">1</span>&#125;]</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    
+      <div>
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:24px;">（完）</div>
+    
+</div>
+      </div>
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/erlang/" rel="tag"># erlang</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/07/10/mnesia/" rel="prev" title="mnesia">
+      <i class="fa fa-chevron-left"></i> mnesia
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ETS%E5%92%8CDETS"><span class="nav-number">1.</span> <span class="nav-text">ETS和DETS</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number"></span> <span class="nav-text">练习</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E6%80%A7"><span class="nav-number"></span> <span class="nav-text">并发性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%81%8D%E5%8E%86%E8%A1%A8"><span class="nav-number"></span> <span class="nav-text">遍历表</span></a></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Honghangzhi"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Honghangzhi</p>
+  <div class="site-description" itemprop="description">不积跬步，无以千里</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Honghangzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'Wk2wsEFrasa9yOsstHf3YRlp-gzGzoHsz',
+      appKey     : 'zKA4ww3CAjsjGZ52EFJPkpRn',
+      placeholder: "欢迎交流讨论...",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
