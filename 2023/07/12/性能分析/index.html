@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10000,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="etop和fprof的使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="性能分析">
+<meta property="og:url" content="http://example.com/2023/07/12/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="HZ&#39;Blog">
+<meta property="og:description" content="etop和fprof的使用">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-07-12T15:05:11.000Z">
+<meta property="article:modified_time" content="2023-07-12T18:14:49.549Z">
+<meta property="article:author" content="Honghangzhi">
+<meta property="article:tag" content="erlang">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2023/07/12/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>性能分析 | HZ'Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">HZ'Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/07/12/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Honghangzhi">
+      <meta itemprop="description" content="不积跬步，无以千里">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HZ'Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          性能分析
+        </h1>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-07-12 23:05:11" itemprop="dateCreated datePublished" datetime="2023-07-12T23:05:11+08:00">2023-07-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-07-13 02:14:49" itemprop="dateModified" datetime="2023-07-13T02:14:49+08:00">2023-07-13</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                  <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                    <a href="/categories/%E7%BC%96%E7%A8%8B/erlang/" itemprop="url" rel="index"><span itemprop="name">erlang</span></a>
+                  </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/07/12/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/07/12/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>etop和fprof的使用</p>
+<span id="more"></span>
+
+
+
+<h1 id="etop"><a href="#etop" class="headerlink" title="etop"></a>etop</h1><p>交互式的性能分析工具，它可以实时监控Erlang节点的各种系统资源和进程状态，包括CPU、内存、消息队列等方面，同时还可以对进程进行排序和筛选，以快速定位性能瓶颈。</p>
+<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><ul>
+<li><p>可执行程序 etop</p>
+</li>
+<li><p>批处理文件 etop.bat<br>内容如下，实际启动一个hidden终端，支持使用参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">@ECHO OFF</span><br><span class="line">CALL werl -sname etop -hidden -s etop -s erlang halt -output text %*</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>属于observer应用程序，文件位置在observer下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">C:\Program Files\erl-24.3.4.2\lib\observer-2.11.1\priv\bin&gt;etop</span><br><span class="line"></span><br><span class="line">etop -node tiger@durin.</span><br></pre></td></tr></table></figure>
+
+<p>接口</p>
+<ul>
+<li>start() -&gt; ok</li>
+<li>start(Options) -&gt; ok</li>
+<li>stop() -&gt; stop</li>
+</ul>
+<h2 id="输出信息"><a href="#输出信息" class="headerlink" title="输出信息"></a>输出信息</h2><ul>
+<li>cpu 节点处于活动状态的时间百分比。</li>
+<li>procs 节点上的进程数</li>
+<li>runq 准备运行的进程数</li>
+<li>Memory 单位是KB</li>
+<li>Time 进程被调度的时间</li>
+<li>Reds 进程上执行的reductions 数量。<br>这里没懂Reductions 是什么<br>Reductions = integer() &gt;= 1</li>
+<li>Memory 进程大小，用process_info(Pid,memory)获取</li>
+<li>MsgQ 消息队列长度</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">==========================================================================================</span><br><span class="line"> &#x27;etop@DESKTOP-7LTU1TQ&#x27;                                                    17:22:39</span><br><span class="line"> Load:  cpu         0               Memory:  total       16335    binary         86</span><br><span class="line">        procs      47                        processes    5043    code         5181</span><br><span class="line">        runq        0                        atom          272    ets           381</span><br><span class="line"></span><br><span class="line">Pid            Name or Initial Func    Time    Reds   Memory     MsgQ Current Function</span><br><span class="line">------------------------------------------------------------------------------------------</span><br><span class="line">&lt;0.50.0&gt;       code_server              &#x27;-&#x27;  101901   263936        0 erl_prim_loader:requ</span><br><span class="line">&lt;0.10.0&gt;       erl_prim_loader          &#x27;-&#x27;   58863   196888        0 prim_file:read_file_</span><br><span class="line">&lt;0.44.0&gt;       application_controll     &#x27;-&#x27;    8149   601888        0 gen_server:loop/7   </span><br><span class="line">&lt;0.60.0&gt;       net_kernel               &#x27;-&#x27;    5423    10832        0 gen_server:loop/7   </span><br><span class="line">&lt;0.9.0&gt;        etop_server              &#x27;-&#x27;    2978    13680        0 etop:data_handler/2 </span><br><span class="line">&lt;0.49.0&gt;       kernel_sup               &#x27;-&#x27;    2595    14208        0 gen_server:loop/7   </span><br><span class="line">&lt;0.0.0&gt;        init                     &#x27;-&#x27;    2359    21584        0 init:boot_loop/2    </span><br><span class="line">&lt;0.84.0&gt;       erlang:apply/2           &#x27;-&#x27;     879   230536        0 code_server:call/1  </span><br><span class="line">&lt;0.69.0&gt;       user_drv                 &#x27;-&#x27;     669     8840        0 user_drv:server_loop</span><br><span class="line">&lt;0.42.0&gt;       logger                   &#x27;-&#x27;     641     8840        0 gen_server:loop/7   </span><br><span class="line">==========================================================================================</span><br></pre></td></tr></table></figure>
+
+<h2 id="选项"><a href="#选项" class="headerlink" title="选项"></a>选项</h2><ul>
+<li><p>config(Key,Value) -&gt; Result</p>
+<ul>
+<li><p>lines 显示行数</p>
+</li>
+<li><p>interval 更新间隔（秒）</p>
+</li>
+<li><p>accumulate 显示的是否 累计的execution time</p>
+</li>
+<li><p>sort  根据 runtime | reductions | memory | msg_q 排序</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>打印时可能无法接收键盘输入，使用Ctrl+G挂起再输入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">etop -node tiger@durin -setcookie mycookie -lines 15</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">1&gt; etop:config(lines,5).</span><br><span class="line">ok</span><br><span class="line">2&gt; Pid            Name or Initial Func    Time    Reds   Memory     MsgQ Current Function</span><br><span class="line">2&gt; ------------------------------------------------------------------------------------------</span><br><span class="line">2&gt; &lt;0.64.0&gt;       user                     &#x27;-&#x27;   39547    42392        0 user:get_chars/8</span><br><span class="line">2&gt; &lt;0.84.0&gt;       etop_txt:init/1          &#x27;-&#x27;    6782   109240        0 etop:update/1</span><br><span class="line">2&gt; &lt;0.101.0&gt;      erlang:apply/2           &#x27;-&#x27;    1278     8672        0 shell:eval_loop/3</span><br><span class="line">2&gt; &lt;0.100.0&gt;      erlang:apply/2           &#x27;-&#x27;     389   231016        0 shell:get_command1/5</span><br><span class="line">2&gt; &lt;0.82.0&gt;       etop_server              &#x27;-&#x27;      17     8784        0 etop:data_handler/2</span><br><span class="line">2&gt; ==========================================================================================</span><br></pre></td></tr></table></figure>
+
+<h2 id="记录"><a href="#记录" class="headerlink" title="记录"></a>记录</h2><ul>
+<li>dump(File) -&gt; Result<br>将监控信息转储到文件</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">etop:dump(&quot;MyFile&quot;).</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="fprof"><a href="#fprof" class="headerlink" title="fprof"></a>fprof</h1><p>fprof 是一个分析工具，可用于了解不同函数消耗的处理时间以及在哪些进程中消耗的处理时间。</p>
+<p>fprof 的处理分为三步：</p>
+<ol>
+<li><p>Tracing</p>
+</li>
+<li><p>Profiling</p>
+<ul>
+<li>profile() -&gt; ok | {error, Reason} | {‘EXIT’, ServerPid, Reason}</li>
+<li>profile(OptionName, OptionValue) -&gt;<pre><code>       ok |
+       &#123;ok, Tracer&#125; |
+       &#123;error, Reason&#125; |
+       &#123;&#39;EXIT&#39;, ServerPid, Reason&#125;
+</code></pre>
+</li>
+<li>profile(OptionName) -&gt;<pre><code>       ok |
+       &#123;ok, Tracer&#125; |
+       &#123;error, Reason&#125; |
+       &#123;&#39;EXIT&#39;, ServerPid, Reason&#125;
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p>Analysing</p>
+<ul>
+<li>analyse() -&gt; ok | {error, Reason} | {‘EXIT’, ServerPid, Reason}</li>
+<li>analyse(OptionName, OptionValue) -&gt;<pre><code>       ok | &#123;error, Reason&#125; | &#123;&#39;EXIT&#39;, ServerPid, Reason&#125;
+</code></pre>
+</li>
+<li>analyse(OptionName) -&gt;<pre><code>       ok | &#123;error, Reason&#125; | &#123;&#39;EXIT&#39;, ServerPid, Reason&#125;
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="分析源代码"><a href="#分析源代码" class="headerlink" title="分析源代码"></a>分析源代码</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">-module(my_module).</span><br><span class="line"></span><br><span class="line">%% API</span><br><span class="line">-export([start/0]).</span><br><span class="line"></span><br><span class="line">start() -&gt;</span><br><span class="line">  fprof:trace(start),</span><br><span class="line">  io:format(&quot;ok&quot;),</span><br><span class="line">  fprof:trace(stop).</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br></pre></td><td class="code"><pre><span class="line">8&gt; c(my_module).</span><br><span class="line">&#123;ok,my_module&#125;</span><br><span class="line">9&gt; my_module:start().</span><br><span class="line">okok</span><br><span class="line">10&gt; fprof:profile().</span><br><span class="line">Reading trace data...</span><br><span class="line"></span><br><span class="line">End of trace!</span><br><span class="line">ok</span><br><span class="line">11&gt; fprof:analyse().   </span><br><span class="line">Processing data...</span><br><span class="line">Creating output...</span><br><span class="line">%% Analysis results:</span><br><span class="line">&#123;  analysis_options,</span><br><span class="line"> [&#123;callers, true&#125;,</span><br><span class="line">  &#123;sort, acc&#125;,</span><br><span class="line">  &#123;totals, false&#125;,</span><br><span class="line">  &#123;details, true&#125;]&#125;.</span><br><span class="line"></span><br><span class="line">%                                               CNT       ACC       OWN</span><br><span class="line">[&#123; totals,                                       19,    0.132,    0.131&#125;].  %%%</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">%                                               CNT       ACC       OWN</span><br><span class="line">[&#123; &quot;&lt;0.78.0&gt;&quot;,                                   19,undefined,    0.131&#125;].   %%</span><br><span class="line"></span><br><span class="line">&#123;[&#123;undefined,                                     0,    0.102,    0.001&#125;,</span><br><span class="line">  &#123;&#123;my_module,start,0&#125;,                           0,    0.022,    0.001&#125;,</span><br><span class="line">  &#123;&#123;fprof,call,1&#125;,                                1,    0.003,    0.002&#125;],</span><br><span class="line"> &#123; &#123;fprof,just_call,2&#125;,                           1,    0.127,    0.004&#125;,     %</span><br><span class="line"> [&#123;&#123;erlang,demonitor,1&#125;,                          1,    0.101,    0.101&#125;,</span><br><span class="line">  &#123;&#123;io,format,1&#125;,                                 1,    0.021,    0.004&#125;,</span><br><span class="line">  &#123;&#123;erlang,monitor,2&#125;,                            1,    0.001,    0.001&#125;,</span><br><span class="line">  &#123;suspend,                                       1,    0.000,    0.000&#125;]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;[&#123;&#123;fprof,just_call,2&#125;,                           1,    0.101,    0.101&#125;],</span><br><span class="line"> &#123; &#123;erlang,demonitor,1&#125;,                          1,    0.101,    0.101&#125;,     %</span><br><span class="line"> [ ]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;[&#123;undefined,                                     0,    0.022,    0.000&#125;,</span><br><span class="line">  &#123;&#123;erl_eval,do_apply,6&#125;,                         0,    0.008,    0.001&#125;],</span><br><span class="line"> &#123; &#123;my_module,start,0&#125;,                           0,    0.030,    0.001&#125;,     %</span><br><span class="line"> [&#123;&#123;fprof,just_call,2&#125;,                           0,    0.022,    0.001&#125;,</span><br><span class="line">  &#123;&#123;fprof,trace,1&#125;,                               1,    0.007,    0.001&#125;]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;[&#123;&#123;fprof,just_call,2&#125;,                           1,    0.021,    0.004&#125;],</span><br><span class="line"> &#123; &#123;io,format,1&#125;,                                 1,    0.021,    0.004&#125;,     %</span><br><span class="line"> [&#123;&#123;io,request,3&#125;,                                1,    0.013,    0.002&#125;,</span><br><span class="line">  &#123;&#123;io,default_output,0&#125;,                         1,    0.003,    0.002&#125;,</span><br><span class="line">  &#123;&#123;erlang,make_ref,0&#125;,                           1,    0.001,    0.001&#125;]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;[&#123;&#123;io,format,1&#125;,                                 1,    0.013,    0.002&#125;],</span><br><span class="line"> &#123; &#123;io,request,3&#125;,                                1,    0.013,    0.002&#125;,     %</span><br><span class="line"> [&#123;&#123;io,execute_request,3&#125;,                        1,    0.007,    0.004&#125;,</span><br><span class="line">  &#123;&#123;io,io_request,2&#125;,                             1,    0.004,    0.001&#125;]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;[&#123;undefined,                                     0,    0.008,    0.000&#125;],</span><br><span class="line"> &#123; &#123;erl_eval,do_apply,6&#125;,                         0,    0.008,    0.000&#125;,     %</span><br><span class="line"> [&#123;&#123;my_module,start,0&#125;,                           0,    0.008,    0.001&#125;]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;[&#123;&#123;io,request,3&#125;,                                1,    0.007,    0.004&#125;],</span><br><span class="line"> &#123; &#123;io,execute_request,3&#125;,                        1,    0.007,    0.004&#125;,     %</span><br><span class="line"> [&#123;&#123;erlang,monitor,2&#125;,                            1,    0.001,    0.001&#125;,</span><br><span class="line">  &#123;&#123;erlang,demonitor,2&#125;,                          1,    0.001,    0.001&#125;,</span><br><span class="line">  &#123;suspend,                                       1,    0.001,    0.000&#125;]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;[&#123;&#123;my_module,start,0&#125;,                           1,    0.007,    0.001&#125;],</span><br><span class="line"> &#123; &#123;fprof,trace,1&#125;,                               1,    0.007,    0.001&#125;,     %</span><br><span class="line"> [&#123;&#123;fprof,call,1&#125;,                                1,    0.006,    0.002&#125;]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;[&#123;&#123;fprof,trace,1&#125;,                               1,    0.006,    0.002&#125;],</span><br><span class="line"> &#123; &#123;fprof,call,1&#125;,                                1,    0.006,    0.002&#125;,     %</span><br><span class="line"> [&#123;&#123;fprof,just_call,2&#125;,                           1,    0.003,    0.002&#125;,</span><br><span class="line">  &#123;&#123;erlang,whereis,1&#125;,                            1,    0.001,    0.001&#125;]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;[&#123;&#123;io,request,3&#125;,                                1,    0.004,    0.001&#125;],</span><br><span class="line"> &#123; &#123;io,io_request,2&#125;,                             1,    0.004,    0.001&#125;,     %</span><br><span class="line"> [&#123;&#123;io,bc_req,3&#125;,                                 1,    0.003,    0.002&#125;]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;[&#123;&#123;io,format,1&#125;,                                 1,    0.003,    0.002&#125;],</span><br><span class="line"> &#123; &#123;io,default_output,0&#125;,                         1,    0.003,    0.002&#125;,     %</span><br><span class="line"> [&#123;&#123;erlang,group_leader,0&#125;,                       1,    0.001,    0.001&#125;]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;[&#123;&#123;io,io_request,2&#125;,                             1,    0.003,    0.002&#125;],</span><br><span class="line"> &#123; &#123;io,bc_req,3&#125;,                                 1,    0.003,    0.002&#125;,     %</span><br><span class="line"> [&#123;&#123;net_kernel,dflag_unicode_io,1&#125;,               1,    0.001,    0.001&#125;]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;[&#123;&#123;io,execute_request,3&#125;,                        1,    0.001,    0.001&#125;,</span><br><span class="line">  &#123;&#123;fprof,just_call,2&#125;,                           1,    0.001,    0.001&#125;],</span><br><span class="line"> &#123; &#123;erlang,monitor,2&#125;,                            2,    0.002,    0.002&#125;,     %</span><br><span class="line"> [ ]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;[&#123;&#123;io,bc_req,3&#125;,                                 1,    0.001,    0.001&#125;],</span><br><span class="line"> &#123; &#123;net_kernel,dflag_unicode_io,1&#125;,               1,    0.001,    0.001&#125;,     %</span><br><span class="line"> [ ]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;[&#123;&#123;fprof,call,1&#125;,                                1,    0.001,    0.001&#125;],</span><br><span class="line"> &#123; &#123;erlang,whereis,1&#125;,                            1,    0.001,    0.001&#125;,     %</span><br><span class="line"> [ ]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;[&#123;&#123;io,format,1&#125;,                                 1,    0.001,    0.001&#125;],</span><br><span class="line"> &#123; &#123;erlang,make_ref,0&#125;,                           1,    0.001,    0.001&#125;,     %</span><br><span class="line"> [ ]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;[&#123;&#123;io,default_output,0&#125;,                         1,    0.001,    0.001&#125;],</span><br><span class="line"> &#123; &#123;erlang,group_leader,0&#125;,                       1,    0.001,    0.001&#125;,     %</span><br><span class="line"> [ ]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;[&#123;&#123;io,execute_request,3&#125;,                        1,    0.001,    0.001&#125;],</span><br><span class="line"> &#123; &#123;erlang,demonitor,2&#125;,                          1,    0.001,    0.001&#125;,     %</span><br><span class="line"> [ ]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;[&#123;&#123;io,execute_request,3&#125;,                        1,    0.001,    0.000&#125;,</span><br><span class="line">  &#123;&#123;fprof,just_call,2&#125;,                           1,    0.000,    0.000&#125;],</span><br><span class="line"> &#123; suspend,                                       2,    0.001,    0.000&#125;,     %</span><br><span class="line"> [ ]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;[ ],</span><br><span class="line"> &#123; undefined,                                     0,    0.000,    0.000&#125;,     %</span><br><span class="line"> [&#123;&#123;fprof,just_call,2&#125;,                           0,    0.102,    0.001&#125;,</span><br><span class="line">  &#123;&#123;my_module,start,0&#125;,                           0,    0.022,    0.000&#125;,</span><br><span class="line">  &#123;&#123;erl_eval,do_apply,6&#125;,                         0,    0.008,    0.000&#125;]&#125;.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Done!</span><br><span class="line">ok</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="分析函数"><a href="#分析函数" class="headerlink" title="分析函数"></a>分析函数</h2><ul>
+<li>apply函数 封装了trace(start)和trace(stop)</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">4&gt; c(foo).</span><br><span class="line">foo.erl:25:18: Warning: variable &#x27;FD&#x27; is unused</span><br><span class="line">%   25| create_file_slow(FD, M, M) -&gt;</span><br><span class="line">%     |                  ^</span><br><span class="line"></span><br><span class="line">&#123;ok,foo&#125;</span><br><span class="line">5&gt; fprof:apply(foo, create_file_slow, [junk, 1024]).</span><br><span class="line">ok</span><br><span class="line">6&gt; fprof:profile().</span><br><span class="line">Reading trace data...</span><br><span class="line">..................</span><br><span class="line">End of trace!</span><br><span class="line">ok</span><br><span class="line">7&gt; fprof:analyse().</span><br><span class="line">Processing data...</span><br><span class="line">Creating output...</span><br><span class="line">%% Analysis results:</span><br><span class="line">&#123;  analysis_options,</span><br><span class="line"> [&#123;callers, true&#125;,</span><br><span class="line">  &#123;sort, acc&#125;,</span><br><span class="line">  &#123;totals, false&#125;,</span><br><span class="line">  &#123;details, true&#125;]&#125;.</span><br><span class="line"></span><br><span class="line">%                                               CNT       ACC       OWN</span><br><span class="line">[&#123; totals,                                     11782,   38.914,   22.223&#125;].  %%%</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">%                                               CNT       ACC       OWN</span><br><span class="line">[&#123; &quot;&lt;0.78.0&gt;&quot;,                                 11573,undefined,   21.329&#125;].   %%</span><br><span class="line"></span><br><span class="line">&#123;[&#123;undefined,                                     0,   38.914,    0.002&#125;],</span><br><span class="line"> &#123; &#123;fprof,apply_start_stop,4&#125;,                    0,   38.914,    0.002&#125;,     %</span><br><span class="line"> [&#123;&#123;foo,create_file_slow,2&#125;,                      1,   38.912,    0.007&#125;,</span><br><span class="line">  &#123;suspend,                                       1,    0.000,    0.000&#125;]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;[&#123;&#123;fprof,apply_start_stop,4&#125;,                    1,   38.912,    0.007&#125;],</span><br><span class="line"> &#123; &#123;foo,create_file_slow,2&#125;,                      1,   38.912,    0.007&#125;,     %</span><br><span class="line"> [&#123;&#123;foo,create_file_slow,3&#125;,                      1,   19.592,    0.002&#125;,</span><br><span class="line">  &#123;&#123;file,open,2&#125;,                                 1,   17.512,    0.004&#125;,</span><br><span class="line">  &#123;&#123;lists,map,2&#125;,                                 1,    1.166,    0.445&#125;,</span><br><span class="line">  &#123;&#123;file,close,1&#125;,                                1,    0.544,    0.001&#125;,</span><br><span class="line">  &#123;&#123;lists,seq,2&#125;,                                 1,    0.066,    0.001&#125;,</span><br><span class="line">  &#123;&#123;file,write,2&#125;,                                1,    0.025,    0.001&#125;]&#125;.</span><br><span class="line">  </span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">Done!</span><br><span class="line">ok</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="运行时分析"><a href="#运行时分析" class="headerlink" title="运行时分析"></a>运行时分析</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;ok, Tracer&#125; = fprof:profile(start),</span><br><span class="line">fprof:trace([start, &#123;tracer, Tracer&#125;]),</span><br><span class="line">%% Code to profile</span><br><span class="line">fprof:trace(stop);</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    
+      <div>
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:24px;">（完）</div>
+    
+</div>
+      </div>
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/erlang/" rel="tag"># erlang</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/07/11/ETS/" rel="prev" title="ETS">
+      <i class="fa fa-chevron-left"></i> ETS
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#etop"><span class="nav-number">1.</span> <span class="nav-text">etop</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8"><span class="nav-number">1.1.</span> <span class="nav-text">启动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E4%BF%A1%E6%81%AF"><span class="nav-number">1.2.</span> <span class="nav-text">输出信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E9%A1%B9"><span class="nav-number">1.3.</span> <span class="nav-text">选项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%B0%E5%BD%95"><span class="nav-number">1.4.</span> <span class="nav-text">记录</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#fprof"><span class="nav-number">2.</span> <span class="nav-text">fprof</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E6%BA%90%E4%BB%A3%E7%A0%81"><span class="nav-number">2.1.</span> <span class="nav-text">分析源代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E5%87%BD%E6%95%B0"><span class="nav-number">2.2.</span> <span class="nav-text">分析函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E5%88%86%E6%9E%90"><span class="nav-number">2.3.</span> <span class="nav-text">运行时分析</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Honghangzhi"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Honghangzhi</p>
+  <div class="site-description" itemprop="description">不积跬步，无以千里</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Honghangzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'Wk2wsEFrasa9yOsstHf3YRlp-gzGzoHsz',
+      appKey     : 'zKA4ww3CAjsjGZ52EFJPkpRn',
+      placeholder: "欢迎交流讨论...",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
