@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10000,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="垃圾回收的基本概念和算法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="垃圾回收基础">
+<meta property="og:url" content="http://example.com/2024/05/25/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/index.html">
+<meta property="og:site_name" content="HZ&#39;Blog">
+<meta property="og:description" content="垃圾回收的基本概念和算法">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2024/05/img/image-20240524102004854.png">
+<meta property="og:image" content="http://example.com/2024/05/img/image-20240524221342877.png">
+<meta property="article:published_time" content="2024-05-25T14:23:59.000Z">
+<meta property="article:modified_time" content="2024-05-24T17:30:53.131Z">
+<meta property="article:author" content="Honghangzhi">
+<meta property="article:tag" content="垃圾回收">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2024/05/img/image-20240524102004854.png">
+
+<link rel="canonical" href="http://example.com/2024/05/25/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>垃圾回收基础 | HZ'Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">HZ'Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/25/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Honghangzhi">
+      <meta itemprop="description" content="不积跬步，无以千里">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HZ'Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          垃圾回收基础
+        </h1>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-05-25 22:23:59 / 修改时间：01:30:53" itemprop="dateCreated datePublished" datetime="2024-05-25T22:23:59+08:00">2024-05-25</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                  <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                    <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/" itemprop="url" rel="index"><span itemprop="name">垃圾回收</span></a>
+                  </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/05/25/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/05/25/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>垃圾回收的基本概念和算法</p>
+<span id="more"></span>
+
+
+
+
+
+<h1 id="垃圾回收基本概念"><a href="#垃圾回收基本概念" class="headerlink" title="垃圾回收基本概念"></a>垃圾回收基本概念</h1><ul>
+<li>对象，分为头和域<ul>
+<li>头，保存对象本身信息，对象大小、种类等</li>
+<li>域，对象中可访问的部分：分为指针和非指针，指针是指向内存空间中某块区域的值，非指针是值本身。</li>
+</ul>
+</li>
+<li>指针，是GC销毁或保留对象的关键</li>
+<li>mutator（赋值器）<br>In computer science, a mutator method is a method used to control changes to a variable. They are also widely known as setter methods.<ul>
+<li>生成对象</li>
+<li>更新指针</li>
+</ul>
+</li>
+<li>堆，动态存放对象的内存空间<br>GC 是管理堆中已分配对象的机制，需要时从堆里分配内存空间给mutator</li>
+<li>活动对象/ 非活动对象<br>分配到内存空间，能通过mutator 引用的对象称为“活动对象”<br>非活动对象=垃圾</li>
+<li>chunk，为利用对象而事先准备出来的空间<br>分块→活动对象→垃圾（非活动对象）→ 分块→ ……</li>
+<li>赋值器根，指针集合，直接由赋值器根引用的对象称为根对象。</li>
+</ul>
+<p>GC算法评价</p>
+<ul>
+<li>吞吐量</li>
+<li>最大暂停时间，因执行GC 而暂停执行mutator 的最长时间</li>
+<li>堆使用效率<br>GC 复制算法中将堆二等分，每次只使用一半，交替进行，因此总是只能利用堆的一半</li>
+<li>访问的局部性</li>
+</ul>
+<h1 id="标记-清除法"><a href="#标记-清除法" class="headerlink" title="标记-清除法"></a>标记-清除法</h1><p>标记-清除算法是一种用于垃圾回收（Garbage Collection）的算法。它的主要思想是通过<strong>标记对象是否可达</strong>来判断哪些对象是垃圾，然后将这些垃圾对象进行清除。</p>
+<p>具体来说，标记-清除算法将堆内存中的所有对象分为两类，即可达对象和不可达对象。首先，从根节点开始，遍历整个对象图，将所有可达的对象打上标记。随后，遍历整个堆内存，将未标记的对象视为不可达对象，即垃圾对象，将它们进行清除。清除后，将剩余可达对象进行整理，将它们压缩到堆内存的一端。</p>
+<p>标记-清除算法的主要优点是可以有效地回收不连续的内存，因为它不需要进行内存的移动。但是，它也有一些缺点。首先，它会产生内存碎片，因为被清除的对象留下了空洞。这会导致内存分配时需要进行更多的内存搜索和分配，从而影响性能。此外，标记-清除算法在执行垃圾回收时会暂停程序运行，这可能会影响实时性应用程序的性能。</p>
+<p>因此，在实际应用中，标记-清除算法通常需要与其他垃圾回收算法结合使用，以达到更好的效果。</p>
+<h2 id="标记阶段"><a href="#标记阶段" class="headerlink" title="标记阶段"></a>标记阶段</h2><p>标记所有可达对象。具体来说，标记阶段从一组根对象开始，通过遍历对象图来<strong>标记所有可达对象</strong>。通常使用深度优先搜索或广度优先搜索算法来遍历对象图，一般来说，深度优先搜索更节约内存。</p>
+<p>概念</p>
+<ul>
+<li>根对象通常是程序中的全局变量、活动线程的栈和寄存器等，它们是已知的、永远不会被回收的对象。</li>
+<li>能够从程序的根对象到达的对象，并且仍然可以被程序访问到的对象</li>
+</ul>
+<p>步骤</p>
+<ol>
+<li>标记通过根直接引用的对象</li>
+<li>递归地标记通过指针数组能访问到的对象</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">mark_phase()&#123;</span><br><span class="line">    for(r : $roots)</span><br><span class="line">        mark(*r)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">mark(obj)&#123;</span><br><span class="line">    if(obj.mark == FALSE)</span><br><span class="line">    	obj.mark = TRUE</span><br><span class="line">    for(child : children(obj))</span><br><span class="line">    	mark(*child)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="清除阶段"><a href="#清除阶段" class="headerlink" title="清除阶段"></a>清除阶段</h2><p><strong>清除所有未被标记的对象</strong>。具体来说，在标记阶段中未被标记的对象都被认为是垃圾对象，需要在清除阶段进行清除。</p>
+<p>从堆首地址$heap_start开始遍历堆</p>
+<ul>
+<li>活动对象，将标记取消</li>
+<li>非活动对象，将分块加入空闲链表</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">sweep_phase()&#123;</span><br><span class="line">    sweeping = $heap_start</span><br><span class="line">    while(sweeping &lt; $heap_end)</span><br><span class="line">    if(sweeping.mark == TRUE)</span><br><span class="line">    	sweeping.mark = FALSE</span><br><span class="line">    else</span><br><span class="line">    	sweeping.next = $free_list</span><br><span class="line">    	$free_list = sweeping</span><br><span class="line">    sweeping += sweeping.size</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>简单的清除，会产生碎片化现象，优化需要用后面的压缩法或BiBOP法</p>
+<h2 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h2><ul>
+<li>实现简单，可以和其他算法结合</li>
+<li>和保守式GC 算法兼容</li>
+</ul>
+<h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><ul>
+<li>碎片化<br>改进：压缩存活对象，BiBOP 法</li>
+<li>分配速度，每次分配都要遍历空闲链表<br>改进：多个空闲链表，BiBOP 法</li>
+<li>与写时复制技术不兼容<br>UNIX 操作系统中复制进程，也就是使用fork() 函数时，大部分内存空间都不会被复制，而是共享内存，在对共享内存空间进行写入时，复制自己私有空间的数据。<br>改进：位图标记法</li>
+</ul>
+<h2 id="多个空闲链表"><a href="#多个空闲链表" class="headerlink" title="多个空闲链表"></a>多个空闲链表</h2><p>创建只连接大分块的空闲链表和只连接小分块的空闲链表，按照mutator 所申请的分块大小选择空闲链表，就能在短时间内找到符合条件的分块了。</p>
+<p>分配算法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">new_obj(size)&#123;</span><br><span class="line">    index = size / (WORD_LENGTH / BYTE_LENGTH)</span><br><span class="line">    if(index &lt;= 100)</span><br><span class="line">        if($free_list[index] != NULL)</span><br><span class="line">            chunk = $free_list[index]</span><br><span class="line">            $free_list[index] = $free_list[index].next</span><br><span class="line">            return chunk</span><br><span class="line">    else</span><br><span class="line">        chunk = pickup_chunk(size, $free_list[101])</span><br><span class="line">        if(chunk != NULL)</span><br><span class="line">        	return chunk</span><br><span class="line">    allocation_fail()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="BiBOP法"><a href="#BiBOP法" class="headerlink" title="BiBOP法"></a>BiBOP法</h2><p>Big Bag Of Pages，将大小相近的对象整理成固定大小的块进行管理。</p>
+<p>碎片化的原因之一就是堆上杂乱散布着大小各异的对象，类似分段的缺点。BiBOP 类似于分页，组织成大小相同的块。</p>
+<h2 id="位图标记"><a href="#位图标记" class="headerlink" title="位图标记"></a>位图标记</h2><p>位图标记法即只收集各个对象的标志位并表格化，不跟对象一起管理。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mark(obj)&#123;</span><br><span class="line">    obj_num = (obj - $heap_start) / WORD_LENGTH</span><br><span class="line">    index = obj_num / WORD_LENGTH</span><br><span class="line">    offset = obj_num % WORD_LENGTH</span><br><span class="line">    if(($bitmap_tbl[index] &amp; (1 &lt;&lt; offset)) == 0)</span><br><span class="line">        $bitmap_tbl[index] |= (1 &lt;&lt; offset)</span><br><span class="line">        for(child : children(obj))</span><br><span class="line">        	mark(*child)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="延迟清除法（懒惰清扫）"><a href="#延迟清除法（懒惰清扫）" class="headerlink" title="延迟清除法（懒惰清扫）"></a>延迟清除法（懒惰清扫）</h2><p>不统一清除非活动对象，而是分配时清除</p>
+<p>分配，调用清除函数获取分块</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">new_obj(size)&#123;</span><br><span class="line">chunk = lazy_sweep(size)</span><br><span class="line">if(chunk != NULL)</span><br><span class="line">return chunk</span><br><span class="line">mark_phase()</span><br><span class="line">chunk = lazy_sweep(size)</span><br><span class="line">if(chunk != NULL)</span><br><span class="line">return chunk</span><br><span class="line">allocation_fail()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>清除函数，返回需要的分块</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">lazy_sweep(size)&#123;</span><br><span class="line">    while($sweeping &lt; $heap_end)</span><br><span class="line">    if($sweeping.mark == TRUE)</span><br><span class="line">    	$sweeping.mark = FALSE</span><br><span class="line">    else if($sweeping.size &gt;= size)</span><br><span class="line">        chunk = $sweeping</span><br><span class="line">        $sweeping += $sweeping.size</span><br><span class="line">        return chunk</span><br><span class="line">    $sweeping += $sweeping.size</span><br><span class="line">    $sweeping = $heap_start</span><br><span class="line">    return NULL</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="引用计数法"><a href="#引用计数法" class="headerlink" title="引用计数法"></a>引用计数法</h1><p>引用计数法是一种垃圾回收算法,它是通过跟踪每个对象被引用的次数来确定哪些对象可以被安全地回收。具体工作原理如下:</p>
+<ol>
+<li><p>每个对象都有一个引用计数器,记录着有多少个引用指向该对象。</p>
+</li>
+<li><p>当一个新对象被创建时,它的引用计数被初始化为1。</p>
+</li>
+<li><p>每次有一个新的引用指向该对象,它的引用计数就会加1。</p>
+</li>
+<li><p>每当一个引用失效(例如变量被赋值为新的对象),它的引用计数就会减1。</p>
+</li>
+<li><p>当一个对象的引用计数变为0时,说明没有任何引用指向它了,这个对象就可以被安全地回收了。</p>
+</li>
+</ol>
+<h2 id="创建对象"><a href="#创建对象" class="headerlink" title="创建对象"></a>创建对象</h2><p>从空闲链表分配数据库，若没有合适的内存块则失败</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">new_obj(size)&#123;</span><br><span class="line">    obj = pickup_chunk(size, $free_list)</span><br><span class="line">    if(obj == NULL)</span><br><span class="line">    	allocation_fail()</span><br><span class="line">    else</span><br><span class="line">    	obj.ref_cnt = 1</span><br><span class="line">    return obj</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="更新指针"><a href="#更新指针" class="headerlink" title="更新指针"></a>更新指针</h2><p>先对指针新引用的对象计数器++，再对之前指向的老对象–，并判断是否失效等操作，最后改变指针。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">update_ptr(ptr, obj)&#123;</span><br><span class="line">    inc_ref_cnt(obj)</span><br><span class="line">    dec_ref_cnt(*ptr)</span><br><span class="line">    *ptr = obj</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<ol>
+<li><strong>基本思想</strong>:<ul>
+<li>每个对象都维护一个引用计数器,记录当前有多少个引用指向该对象。</li>
+<li>当创建一个新对象时,它的引用计数初始化为 1。</li>
+<li>每当有新的引用指向该对象时,引用计数加 1。</li>
+<li>每当一个引用失效时,引用计数减 1。</li>
+<li>当一个对象的引用计数降到 0 时,说明没有任何引用指向它,该对象就可以被回收了。</li>
+</ul>
+</li>
+</ol>
+<h2 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h2><ul>
+<li>可以及时回收无用对象，计数成为0时马上就回收，减少内存占用。</li>
+<li>最大暂停时间短，只有当通过mutator 更新指针时程序才会执行垃圾回收</li>
+<li>不需要沿指针查找，如在分布式环境下，沿各个计算节点间指针查找，成本会增大，这种情况可以减少沿指针查找次数。</li>
+</ul>
+<h2 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h2><ul>
+<li>计数器值的增减处理繁重，因为指针的更新往往比较频繁。<br>解决方法：延迟引用计数法</li>
+<li>计数器需要占用很多位，因为要数完所有的对象，使内存空间使用效率大大降低<br>解决方法：Sticky 引用计数法</li>
+<li>实现繁琐</li>
+<li>循环引用问题，当A引用了B，B也引用了A，就形成了循环引用。因为双方的计数器都是1，因此永远无法回收。<br>解决方法：部分标记- 清除算法</li>
+</ul>
+<h2 id="延迟引用计数法"><a href="#延迟引用计数法" class="headerlink" title="延迟引用计数法"></a>延迟引用计数法</h2><p>延迟引用计数法是对传统引用计数法的一种改进。它的主要思想是尽量推迟对引用计数的更新,从而降低更新引用计数的开销。这种方法具体包括以下几个方面:</p>
+<ol>
+<li>延迟引用计数的更新:当一个对象的引用计数减少时,并不立即更新计数,而是将其记录在一个延迟更新列表中。</li>
+<li>批量更新引用计数:定期对延迟更新列表中的对象进行批量处理,一次性更新它们的引用计数。这样可以大幅降低更新引用计数的频率。</li>
+<li>优化引用计数的检查:在进行垃圾回收时,只需检查延迟更新列表中的对象,而不需要扫描所有对象。</li>
+</ol>
+<p>这种延迟的方式可以大大降低引用计数更新的开销,从而提高整体的垃圾回收效率。但同时也引入了一些新的问题,比如需要处理延迟更新列表,以及如何确保正确性等。</p>
+<p>因此,延迟引用计数法是对基本引用计数法的一种改进,在一些需要高性能的应用中会被使用。它通过推迟引用计数的更新来减少开销,并可以与其他算法结合使用。</p>
+<h2 id="Sticky-引用计数法"><a href="#Sticky-引用计数法" class="headerlink" title="Sticky 引用计数法"></a>Sticky 引用计数法</h2><p>Sticky 引用计数法是一种引用计数垃圾回收算法的变体，它结合了标记-清楚法，解决了计数器溢出的问题。</p>
+<p>Sticky 引用计数法的主要思想是:</p>
+<ol>
+<li>计数器溢出时，将所有对象的计数器都设为0，进入标记-清除阶段</li>
+<li>标记阶段：首先把由根直接引用的对象堆到标记栈里，然后按顺序从标记栈取出对象，对计数器进行增量操作</li>
+<li>清除阶段：搜索整个堆，清除计数器仍为0的对象</li>
+</ol>
+<p>这样，即使计数器溢出了，也会在适当的时候，执行标记-清除算法来安全地回收。</p>
+<p>不过,Sticky 引用计数法也有一些缺点:</p>
+<ol>
+<li>需要维护额外的 Sticky 标记表,增加了实现的复杂度。</li>
+<li>可能会导致一些对象长时间无法被回收,因为它们的 Sticky 标记无法降为 0。</li>
+</ol>
+<h2 id="部分标记-清除法（四色标记法）"><a href="#部分标记-清除法（四色标记法）" class="headerlink" title="部分标记- 清除法（四色标记法）"></a>部分标记- 清除法（四色标记法）</h2><p>为了解决循环引用无法回收的问题，可以考虑结合使用标记-清除法。可以只对“可能有循环引用的对象群”使用GC 标记- 清除算法，对其他对象进行内存管理时使用引用计数法。像这样只对一部分对象群使用GC 标记-清除算法的方法，叫作“部分标记- 清除算法”（Partial Mark &amp; Sweep）</p>
+<p>部分标记- 清除法中，对象被分为四种颜色来管理</p>
+<ol>
+<li>黑（BLACK）：绝对不是垃圾的对象（对象产生时的初始颜色）</li>
+<li>白（WHITE）：绝对是垃圾的对象</li>
+<li>灰（GRAY）：搜索完毕的对象</li>
+<li>阴影（HATCH）：可能是循环垃圾的对象</li>
+</ol>
+<h1 id="GC复制算法"><a href="#GC复制算法" class="headerlink" title="GC复制算法"></a>GC复制算法</h1><p>复制算法是一种常见的垃圾回收方法,它的工作原理如下:</p>
+<ol>
+<li><p><strong>基本思想</strong>:</p>
+<ul>
+<li>将堆内存划分为两个等大的区域,称为”From”空间和”To”空间。</li>
+<li>垃圾回收器会将”From”空间中的存活对象复制到”To”空间中,同时释放”From”空间的内存。</li>
+<li>在下一次回收时,”To”空间和”From”空间会交换角色。</li>
+</ul>
+</li>
+<li><p><strong>工作过程</strong>:</p>
+<ul>
+<li>首先,垃圾回收器从根对象开始,递归地扫描并复制存活对象到”To”空间。</li>
+<li>在复制过程中,如果发现某个对象的引用指向”From”空间的对象,则更新引用指向复制后的新对象。</li>
+<li>当”From”空间中所有存活对象都被复制完成后,剩余的内存空间就可以被回收。</li>
+</ul>
+</li>
+<li><p><strong>优点</strong></p>
+<ul>
+<li><p>不需要标记和清除的过程,简化了垃圾回收的实现。</p>
+</li>
+<li><p>通过复制,可以有效地解决内存碎片的问题。</p>
+</li>
+<li><p>复制过程中,对象的布局会被重新组织,有利于提高内存访问的局部性。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>缺点</strong></p>
+<ul>
+<li><p>需要两倍的内存空间,因为需要同时保留”From”空间和”To”空间。</p>
+</li>
+<li><p>复制对象的过程会带来一定的性能开销。</p>
+</li>
+</ul>
+</li>
+</ol>
+<h1 id="标记-压缩法"><a href="#标记-压缩法" class="headerlink" title="标记-压缩法"></a>标记-压缩法</h1><p>标记-压缩法是一种改进的垃圾回收算法,它结合了标记-清除法和复制法的优点,主要步骤如下:</p>
+<ol>
+<li><strong>标记阶段</strong>:<ul>
+<li>垃圾回收器从根对象开始,递归地标记所有存活对象。</li>
+<li>与标记-清除法类似,未被标记的对象被视为垃圾。</li>
+</ul>
+</li>
+<li><strong>压缩阶段</strong>:<ul>
+<li>在标记阶段完成后,垃圾回收器会将存活对象压缩到连续的内存区域。</li>
+<li>具体做法是:遍历堆内存,将存活对象往一端移动,最终形成一个连续的内存块。</li>
+<li>这样可以有效地解决内存碎片的问题。</li>
+</ul>
+</li>
+<li><strong>优点</strong>:<ul>
+<li>不需要额外的内存空间,避免了复制算法的内存开销。</li>
+<li>通过压缩,可以有效地解决内存碎片的问题。</li>
+<li>可以保留标记-清除法的简单性和高效性。</li>
+</ul>
+</li>
+<li><strong>缺点</strong>:<ul>
+<li>在压缩阶段,需要<strong>移动大量的存活对象</strong>,会带来一定的性能开销。</li>
+<li>如果存活对象过多,压缩的过程可能会耗时较长。</li>
+</ul>
+</li>
+</ol>
+<h1 id="分代垃圾回收"><a href="#分代垃圾回收" class="headerlink" title="分代垃圾回收"></a>分代垃圾回收</h1><blockquote>
+<p>大部分的对象在生成后马上就变成了垃圾，很少有对象能活得很久</p>
+</blockquote>
+<p>分代垃圾回收是一种基于对象生命周期的垃圾回收策略,它的核心思想是:</p>
+<ol>
+<li><strong>基本思想</strong>:<ul>
+<li>将堆内存划分为几个代(Generation),通常包括年轻代(Young Generation)和老年代(Old Generation)。</li>
+<li>新创建的对象都会被放在年轻代,经过一定的存活时间后,会被晋升到老年代。</li>
+<li>对不同代使用不同的垃圾回收算法和频率,以优化垃圾回收的效率。</li>
+</ul>
+</li>
+<li><strong>工作过程</strong>:<ul>
+<li>年轻代中的对象比较容易成为垃圾,因此采用复制算法进行快速回收。</li>
+<li>老年代中的对象存活时间较长,采用标记-清除或标记-压缩算法进行回收。</li>
+<li>当对象从年轻代晋升到老年代时,称为”晋升”(Promotion)。</li>
+</ul>
+</li>
+<li><strong>优点</strong>:<ul>
+<li>利用了对象生命周期的特点,可以更有针对性地进行垃圾回收。</li>
+<li>年轻代使用复制算法可以快速回收大量临时对象。</li>
+<li>老年代使用标记-清除或标记-压缩算法可以高效地回收长期存活的对象。</li>
+<li>可以降低整体的垃圾回收开销。</li>
+</ul>
+</li>
+<li><strong>缺点</strong>:<ul>
+<li>需要额外的内存空间来维护不同代之间的数据结构。</li>
+<li>对象在不同代之间的晋升也会带来一定的开销。</li>
+</ul>
+</li>
+</ol>
+<p>以Ungar算法为例</p>
+<h2 id="堆结构划分"><a href="#堆结构划分" class="headerlink" title="堆结构划分"></a>堆结构划分</h2><p><img src="./../../img/image-20240524102004854.png" alt="image-20240524102004854"></p>
+<ul>
+<li>生成空间，分配新对象的空间</li>
+<li>2 个大小相等的幸存空间，和复制算法中的From和To类似，执行新生代GC时会使用。</li>
+<li>老年代空间，一定次数在新生代幸存的对象会被<strong>复制</strong>到老年代空间</li>
+<li>记录集，用来记录从老年代对象到新生代对象的引用</li>
+</ul>
+<h2 id="写屏障"><a href="#写屏障" class="headerlink" title="写屏障"></a>写屏障</h2><p>对于老年代引用新生代对象的情况，因为新生代GC只会扫描新生代空间和根持有的引用，是无法处理的，如果再把老年代的对象也全部扫描的话，就会相当于扫描了整个堆空间，丧失分代的优势。于是考虑增加了记录集，专门记录从老年代对象到新生代对象的引用。新生代GC只扫描老年代中，记录集有记录的部分。</p>
+<p>写屏障就是将老年代对象记录到记录集的过程，这个函数会在update_ptr时执行，对满足以下三点的对象记录到记录集。</p>
+<ul>
+<li>发出引用的对象是老年代对象</li>
+<li>指针更新后的引用的目标对象是新生代对象</li>
+<li>发出引用的对象还没有被记录到记录集中</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">write_barrier(obj, field, new_obj)&#123;</span><br><span class="line">    if(obj &gt;= $old_start &amp;&amp; new_obj &lt; $old_start &amp;&amp; obj.remembered == FALSE)</span><br><span class="line">        $rs[$rs_index] = obj</span><br><span class="line">        $rs_index++</span><br><span class="line">        obj.remembered = TRUE</span><br><span class="line">    *field = new_obj</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="新生代GC"><a href="#新生代GC" class="headerlink" title="新生代GC"></a>新生代GC</h2><ol>
+<li>生成空间满了以后，开始执行GC</li>
+<li>检查生成空间和From空间的活动对象，如果小于AGE_MAX，复制到To空间，否则晋升到老年代空间</li>
+<li>交换From和To空间</li>
+</ol>
+<h2 id="老年代GC"><a href="#老年代GC" class="headerlink" title="老年代GC"></a>老年代GC</h2><p>使用四种基本算法之一即可，一般是标记-清除法</p>
+<h1 id="增量式垃圾回收"><a href="#增量式垃圾回收" class="headerlink" title="增量式垃圾回收"></a>增量式垃圾回收</h1><p>停止型GC（stop-the-world-GC）缺点，GC一开始，mutator就无法执行，这在某些应用里是致命的。因此人们发明了增量式GC，让GC和mutator交替执行。</p>
+<h2 id="三色标记法"><a href="#三色标记法" class="headerlink" title="三色标记法"></a>三色标记法</h2><ul>
+<li>白色：还未搜索过的对象</li>
+<li>灰色：正在搜索的对象</li>
+<li>黑色：搜索完成的对象</li>
+</ul>
+<p>算法中三种颜色的区分</p>
+<ul>
+<li>白色：mark=false并且不在标记栈中</li>
+<li>灰色：mark=true并且在标记栈中</li>
+<li>黑色：mark=true并且不在标记栈中</li>
+</ul>
+<h2 id="增量式标记-清除算法"><a href="#增量式标记-清除算法" class="headerlink" title="增量式标记-清除算法"></a>增量式标记-清除算法</h2><h3 id="根查找阶段"><a href="#根查找阶段" class="headerlink" title="根查找阶段"></a>根查找阶段</h3><p>将根直接指向的对象标记为灰色，完成后将gc_phase改为GC_MARK，即标记阶段</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">root_scan_phase()&#123;</span><br><span class="line">    for(r : $roots)</span><br><span class="line">    	mark(*r)</span><br><span class="line">    $gc_phase = GC_MARK</span><br><span class="line">&#125;</span><br><span class="line">mark(obj)&#123;</span><br><span class="line">    if(obj.mark == FALSE)</span><br><span class="line">        obj.mark = TRUE</span><br><span class="line">        push(obj, $mark_stack)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="标记阶段-1"><a href="#标记阶段-1" class="headerlink" title="标记阶段"></a>标记阶段</h3><p>从标记栈取对象，将其子对象涂成灰色，这一系列操作会<strong>执行MARK_MAX次</strong>，即不是一次处理掉所有灰色对象，而是和mutator交替执行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">incremental_mark_phase()&#123;</span><br><span class="line">    for(i : 1..MARK_MAX)</span><br><span class="line">        if(is_empty($mark_stack) == FALSE)</span><br><span class="line">            obj = pop($mark_stack)</span><br><span class="line">            for(child : children(obj))</span><br><span class="line">            	mark(*child)</span><br><span class="line">        else</span><br><span class="line">            for(r : $roots)</span><br><span class="line">                mark(*r)</span><br><span class="line">            while(is_empty($mark_stack) == FALSE)</span><br><span class="line">                obj = pop($mark_stack)</span><br><span class="line">                for(child : children(obj))</span><br><span class="line">                    mark(*child)</span><br><span class="line">            $gc_phase = GC_SWEEP</span><br><span class="line">            $sweeping = $heap_start</span><br><span class="line">            return</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里有一个标记遗漏的问题，如下图，(a)中A已经把子对象都加入标记栈，但是当暂停GC，运行程序时，先让A引用C，再移除B的引用。出现了(c)这种情况，C即不是根指向的对象，又没有灰色对象引用，就会被遗漏，不会被搜索。</p>
+<p><img src="./../../img/image-20240524221342877.png" alt="image-20240524221342877"></p>
+<p>这个问题有两个办法解决：</p>
+<ul>
+<li>强三色不变式，强制性不允许黑色对象引用白色对象</li>
+<li>弱三色不变式，黑色可以引用白色，但必须同时被灰色引用，或上游存在灰色对象</li>
+</ul>
+<p>这两种解决方法的实现也是通过写屏障，</p>
+<p>Dijkstra的写屏障实现了强三色不变式，只要新引用的对象是白色，就将其标记（涂成灰色）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">write_barrier(obj, field, newobj)&#123;</span><br><span class="line">    if(newobj.mark == FALSE)</span><br><span class="line">        newobj.mark = TRUE</span><br><span class="line">        push(newobj, $mark_stack)</span><br><span class="line">    *field = newobj</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="清除阶段-1"><a href="#清除阶段-1" class="headerlink" title="清除阶段"></a>清除阶段</h3><p>基本和普通的标记-清除法一样，将没标记的对象（不可达）加入空闲链表，将标记对象的标志位取消。同样是增量式的清除，每次只处理SWEEP_MAX数量，当把整个堆全部清除后就结束GC</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">incremental_sweep_phase()&#123;</span><br><span class="line">	swept_count = 0</span><br><span class="line">    while(swept_count &lt; SWEEP_MAX)</span><br><span class="line">        if($sweeping &lt; $heap_end)</span><br><span class="line">            if($sweeping.mark == TRUE)</span><br><span class="line">            	$sweeping.mark = FALSE</span><br><span class="line">            else</span><br><span class="line">                $sweeping.next = $free_list</span><br><span class="line">                $free_list = $sweeping</span><br><span class="line">                $free_size += $sweeping.size</span><br><span class="line">                $sweeping += $sweeping.size</span><br><span class="line">                swept_count++</span><br><span class="line">        else</span><br><span class="line">            $gc_phase = GC_ROOT_SCAN</span><br><span class="line">            return</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>优缺点</p>
+<ul>
+<li>缩短最大暂停时间</li>
+<li>降低吞吐量，因为写入屏障会增加额外负担</li>
+</ul>
+<h2 id="Steele-的算法"><a href="#Steele-的算法" class="headerlink" title="Steele 的算法"></a>Steele 的算法</h2><p>Steele 的算法提供了强三色不变式的实现，标记阶段若发起引用的对象是黑色的并且引用对象是白色或灰色的，就将发起对象涂成灰色。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">write_barrier(obj, field, newobj)&#123;</span><br><span class="line">    if($gc_phase == GC_MARK &amp;&amp; obj.mark == TRUE &amp;&amp; newobj.mark == FALSE)</span><br><span class="line">        obj.mark = FALSE</span><br><span class="line">        push(obj, $mark_stack)</span><br><span class="line">    *field = newobj</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="汤浅的算法"><a href="#汤浅的算法" class="headerlink" title="汤浅的算法"></a>汤浅的算法</h2><p>汤浅的算法也提供了强三色不变式的实现，标记阶段若发起引用的对象是白色的，就将其涂成灰色。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">write_barrier(obj, field, newobj)&#123;</span><br><span class="line">    oldobj = *field</span><br><span class="line">    if(gc_phase == GC_MARK &amp;&amp; oldobj.mark == FALSE)</span><br><span class="line">    	oldobj.mark = TRUE</span><br><span class="line">    	push(oldobj, $mark_stack)</span><br><span class="line">    *field = newobj</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/ivmai/bdwgc">https://github.com/ivmai/bdwgc</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://blog.codingnow.com/2010/02/cpp_gc.html">https://blog.codingnow.com/2010/02/cpp_gc.html</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000022062597">https://segmentfault.com/a/1190000022062597</a></p>
+</li>
+<li><p>《垃圾回收的算法与实现》</p>
+</li>
+<li><p>《垃圾回收算法手册》</p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    
+      <div>
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:24px;">（完）</div>
+    
+</div>
+      </div>
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/" rel="tag"># 垃圾回收</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/05/20/go-gmp/" rel="prev" title="GMP">
+      <i class="fa fa-chevron-left"></i> GMP
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">垃圾回收基本概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0-%E6%B8%85%E9%99%A4%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">标记-清除法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0%E9%98%B6%E6%AE%B5"><span class="nav-number">2.1.</span> <span class="nav-text">标记阶段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B8%85%E9%99%A4%E9%98%B6%E6%AE%B5"><span class="nav-number">2.2.</span> <span class="nav-text">清除阶段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-number">2.3.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="nav-number">2.4.</span> <span class="nav-text">缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E4%B8%AA%E7%A9%BA%E9%97%B2%E9%93%BE%E8%A1%A8"><span class="nav-number">2.5.</span> <span class="nav-text">多个空闲链表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BiBOP%E6%B3%95"><span class="nav-number">2.6.</span> <span class="nav-text">BiBOP法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%8D%E5%9B%BE%E6%A0%87%E8%AE%B0"><span class="nav-number">2.7.</span> <span class="nav-text">位图标记</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%B6%E8%BF%9F%E6%B8%85%E9%99%A4%E6%B3%95%EF%BC%88%E6%87%92%E6%83%B0%E6%B8%85%E6%89%AB%EF%BC%89"><span class="nav-number">2.8.</span> <span class="nav-text">延迟清除法（懒惰清扫）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">引用计数法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1"><span class="nav-number">3.1.</span> <span class="nav-text">创建对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E6%8C%87%E9%92%88"><span class="nav-number">3.2.</span> <span class="nav-text">更新指针</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E7%82%B9-1"><span class="nav-number">3.3.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9-1"><span class="nav-number">3.4.</span> <span class="nav-text">缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%B6%E8%BF%9F%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E6%B3%95"><span class="nav-number">3.5.</span> <span class="nav-text">延迟引用计数法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sticky-%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E6%B3%95"><span class="nav-number">3.6.</span> <span class="nav-text">Sticky 引用计数法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%83%A8%E5%88%86%E6%A0%87%E8%AE%B0-%E6%B8%85%E9%99%A4%E6%B3%95%EF%BC%88%E5%9B%9B%E8%89%B2%E6%A0%87%E8%AE%B0%E6%B3%95%EF%BC%89"><span class="nav-number">3.7.</span> <span class="nav-text">部分标记- 清除法（四色标记法）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#GC%E5%A4%8D%E5%88%B6%E7%AE%97%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">GC复制算法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0-%E5%8E%8B%E7%BC%A9%E6%B3%95"><span class="nav-number">5.</span> <span class="nav-text">标记-压缩法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E4%BB%A3%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="nav-number">6.</span> <span class="nav-text">分代垃圾回收</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A0%86%E7%BB%93%E6%9E%84%E5%88%92%E5%88%86"><span class="nav-number">6.1.</span> <span class="nav-text">堆结构划分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%99%E5%B1%8F%E9%9A%9C"><span class="nav-number">6.2.</span> <span class="nav-text">写屏障</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B0%E7%94%9F%E4%BB%A3GC"><span class="nav-number">6.3.</span> <span class="nav-text">新生代GC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%80%81%E5%B9%B4%E4%BB%A3GC"><span class="nav-number">6.4.</span> <span class="nav-text">老年代GC</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A2%9E%E9%87%8F%E5%BC%8F%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="nav-number">7.</span> <span class="nav-text">增量式垃圾回收</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E8%89%B2%E6%A0%87%E8%AE%B0%E6%B3%95"><span class="nav-number">7.1.</span> <span class="nav-text">三色标记法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A2%9E%E9%87%8F%E5%BC%8F%E6%A0%87%E8%AE%B0-%E6%B8%85%E9%99%A4%E7%AE%97%E6%B3%95"><span class="nav-number">7.2.</span> <span class="nav-text">增量式标记-清除算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B9%E6%9F%A5%E6%89%BE%E9%98%B6%E6%AE%B5"><span class="nav-number">7.2.1.</span> <span class="nav-text">根查找阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0%E9%98%B6%E6%AE%B5-1"><span class="nav-number">7.2.2.</span> <span class="nav-text">标记阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%85%E9%99%A4%E9%98%B6%E6%AE%B5-1"><span class="nav-number">7.2.3.</span> <span class="nav-text">清除阶段</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Steele-%E7%9A%84%E7%AE%97%E6%B3%95"><span class="nav-number">7.3.</span> <span class="nav-text">Steele 的算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B1%A4%E6%B5%85%E7%9A%84%E7%AE%97%E6%B3%95"><span class="nav-number">7.4.</span> <span class="nav-text">汤浅的算法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">8.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Honghangzhi"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Honghangzhi</p>
+  <div class="site-description" itemprop="description">不积跬步，无以千里</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Honghangzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'Wk2wsEFrasa9yOsstHf3YRlp-gzGzoHsz',
+      appKey     : 'zKA4ww3CAjsjGZ52EFJPkpRn',
+      placeholder: "欢迎交流讨论...",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

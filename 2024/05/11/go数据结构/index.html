@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10000,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="介绍golang的slice、map相关内容">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go数据结构">
+<meta property="og:url" content="http://example.com/2024/05/11/go%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">
+<meta property="og:site_name" content="HZ&#39;Blog">
+<meta property="og:description" content="介绍golang的slice、map相关内容">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-05-11T07:11:11.000Z">
+<meta property="article:modified_time" content="2024-05-22T20:38:58.883Z">
+<meta property="article:author" content="Honghangzhi">
+<meta property="article:tag" content="golang">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2024/05/11/go%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>go数据结构 | HZ'Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">HZ'Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/11/go%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Honghangzhi">
+      <meta itemprop="description" content="不积跬步，无以千里">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HZ'Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          go数据结构
+        </h1>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-11 15:11:11" itemprop="dateCreated datePublished" datetime="2024-05-11T15:11:11+08:00">2024-05-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-05-23 04:38:58" itemprop="dateModified" datetime="2024-05-23T04:38:58+08:00">2024-05-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                  <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                    <a href="/categories/%E7%BC%96%E7%A8%8B/golang/" itemprop="url" rel="index"><span itemprop="name">golang</span></a>
+                  </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/05/11/go%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/05/11/go%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>介绍golang的slice、map相关内容</p>
+<span id="more"></span>
+
+
+
+<h1 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h1><p>数组(Array)是一种固定长度的数据结构,用于存储一组相同类型的元素</p>
+<ol>
+<li><strong>长度固定</strong>:<ul>
+<li>数组的长度在创建时就确定,不能动态改变。</li>
+<li>数组的长度是类型的一部分,如 <code>[5]int</code> 和 <code>[10]int</code> 是不同的类型。</li>
+</ul>
+</li>
+<li><strong>元素类型相同</strong>:<ul>
+<li>数组中的所有元素必须是相同类型的值。</li>
+<li>数组支持基本数据类型和复合数据类型(如结构体)。</li>
+</ul>
+</li>
+<li><strong>零值</strong>:<ul>
+<li>未初始化的数组,其元素的值为该元素类型的零值。</li>
+</ul>
+</li>
+<li><strong>创建数组</strong>:<ul>
+<li>直接声明: <code>var arr [5]int</code></li>
+<li>使用字面量: <code>arr := [5]int&#123;1, 2, 3, 4, 5&#125;</code></li>
+<li>使用省略号: <code>arr := [...]int&#123;1, 2, 3, 4, 5&#125;</code></li>
+</ul>
+</li>
+<li><strong>访问元素</strong>:<ul>
+<li>通过下标访问: <code>arr[index]</code></li>
+<li>下标从 0 开始</li>
+</ul>
+</li>
+<li><strong>数组作为函数参数</strong>:<ul>
+<li>数组作为函数参数时,实际上是值传递,函数内部操作的是数组的副本。</li>
+<li>如果需要修改原数组,可以传递数组的指针。</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> myArray [<span class="number">10</span>]<span class="keyword">int</span></span><br><span class="line">    myArray2 := [<span class="number">10</span>]<span class="keyword">int</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>&#125;</span><br><span class="line">    <span class="keyword">for</span> i:=<span class="number">0</span>; i&lt;<span class="built_in">len</span>(myArray1); i++&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> idx, val =: <span class="keyword">range</span> myArray2 &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//打印类型</span></span><br><span class="line">    fmt.Printf(<span class="string">&quot;%T&quot;</span>, myArray=<span class="number">1</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//值拷贝 长度必须确定 比较麻烦 实际使用动态数组居多</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">printArray</span><span class="params">(arr [4]<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="动态数组（切片）"><a href="#动态数组（切片）" class="headerlink" title="动态数组（切片）"></a>动态数组（切片）</h1><p>在 Go 语言中,切片(Slice)是一种<strong>引用类型</strong>,它代表了数组的一部分。切片拥有以下特点:</p>
+<ol>
+<li><p><strong>长度和容量</strong>:</p>
+<ul>
+<li>切片的长度(length)表示切片中元素的数量。</li>
+<li>切片的容量(capacity)表示从切片的第一个元素到底层数组末尾的元素数量。</li>
+</ul>
+</li>
+<li><p><strong>零值</strong>:</p>
+<ul>
+<li>未初始化的切片的零值是 <code>nil</code>。</li>
+<li>一个零值切片的长度和容量都为 0。</li>
+</ul>
+</li>
+<li><p><strong>创建切片</strong>:</p>
+<ul>
+<li>直接声明: <code>var s []int</code></li>
+<li>使用字面量: <code>s := []int&#123;1, 2, 3&#125;</code></li>
+<li>从数组或切片获取: <code>s := arr[start:end]</code> 或 <code>s := arr[start:end:capacity]</code></li>
+</ul>
+</li>
+<li><p><strong>切片操作</strong>:</p>
+<ul>
+<li>获取元素: <code>s[index]</code></li>
+<li>设置元素: <code>s[index] = value</code></li>
+<li>追加元素: <code>s = append(s, 1, 2, 3)</code></li>
+<li>截取子切片: <code>s2 := s[start:end]</code> 或 <code>s2 := s[start:end:capacity]</code></li>
+</ul>
+</li>
+<li><p><strong>切片底层数组</strong>:</p>
+<ul>
+<li>切片和它的底层数组共享内存,对切片的修改会影响到底层数组。</li>
+<li>当切片的容量不足时,会自动分配一个新的底层数组。</li>
+</ul>
+</li>
+<li><p><strong>slice作为函数参数</strong>:</p>
+<ul>
+<li>是引用传递</li>
+</ul>
+</li>
+</ol>
+<p>示例:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建切片</span></span><br><span class="line"><span class="keyword">var</span> numbers = <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">3</span>, <span class="number">5</span>) <span class="comment">//len为3 capacity为5 </span></span><br><span class="line"></span><br><span class="line">nums := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;</span><br><span class="line">fmt.Println(nums)     <span class="comment">// 输出: [1 2 3 4 5]</span></span><br><span class="line">fmt.Println(<span class="built_in">len</span>(nums)) <span class="comment">// 输出: 5</span></span><br><span class="line">fmt.Println(<span class="built_in">cap</span>(nums)) <span class="comment">// 输出: 5</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 切片操作</span></span><br><span class="line">subNums := nums[<span class="number">2</span>:<span class="number">4</span>] <span class="comment">//通过截取创建的切片，是引用原数组，改变了切片原数组也改变，同理，改变了原数组，切片也发送改变</span></span><br><span class="line">fmt.Println(subNums)   <span class="comment">// 输出: [3 4]</span></span><br><span class="line">fmt.Println(<span class="built_in">len</span>(subNums)) <span class="comment">// 输出: 2</span></span><br><span class="line">fmt.Println(<span class="built_in">cap</span>(subNums)) <span class="comment">// 输出: 3</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 追加元素</span></span><br><span class="line">nums = <span class="built_in">append</span>(nums, <span class="number">6</span>, <span class="number">7</span>)</span><br><span class="line">fmt.Println(nums)     <span class="comment">// 输出: [1 2 3 4 5 6 7]</span></span><br><span class="line">fmt.Println(<span class="built_in">len</span>(nums)) <span class="comment">// 输出: 7</span></span><br><span class="line">fmt.Println(<span class="built_in">cap</span>(nums)) <span class="comment">// 输出: 10</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//深拷贝</span></span><br><span class="line">s2 :=<span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">3</span>)  <span class="comment">//创建一个完全独立于原数组的切片副本，改变这个切片不会影响原数组</span></span><br><span class="line"><span class="built_in">copy</span>(s2, s)  <span class="comment">//s拷贝到s2 </span></span><br></pre></td></tr></table></figure>
+
+<h2 id="底层结构"><a href="#底层结构" class="headerlink" title="底层结构"></a>底层结构</h2><p>在 Go 语言中,slice 的底层实现是基于数组的。每个 slice 都包含了三个重要的字段:</p>
+<ol>
+<li><strong>pointer</strong>: 指向底层数组的指针。</li>
+<li><strong>len</strong>: slice 的长度。</li>
+<li><strong>cap</strong>: slice 的容量。</li>
+</ol>
+<p>具体来说,slice 的底层结构可以表示为:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> slice <span class="keyword">struct</span> &#123;</span><br><span class="line">    pointer <span class="keyword">uintptr</span></span><br><span class="line">    <span class="built_in">len</span>     <span class="keyword">int</span></span><br><span class="line">    <span class="built_in">cap</span>     <span class="keyword">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>让我们来详细了解一下 slice 的底层结构:</p>
+<ol>
+<li><p><strong>pointer</strong>: 这个指针指向了底层数组的第一个元素。通过这个指针,slice 可以访问和修改底层数组的元素。</p>
+</li>
+<li><p><strong>len</strong>: 表示 slice 当前包含的元素个数。len 不能超过 cap。</p>
+</li>
+<li><p><strong>cap</strong>: 表示 slice 底层数组的容量。当 slice 需要存储更多元素时,可以通过扩展容量来实现。</p>
+</li>
+</ol>
+<p>当你创建一个 slice 时,比如 <code>s := []int&#123;1, 2, 3&#125;</code>, Go 会在内存中分配一个底层数组,然后创建一个 slice 结构,其 pointer 指向这个数组,len 和 cap 都为 3。</p>
+<p>当你对 slice 进行操作时,比如 <code>s = s[1:2]</code>, Go 会创建一个新的 slice 结构,但 pointer 仍然指向原来的底层数组。这样做可以避免内存拷贝,提高性能。</p>
+<p>需要注意的是,当 slice 的容量不足时,Go 会自动扩容。扩容时,Go 会分配一个新的较大的底层数组,并将原有的元素拷贝到新数组中,然后更新 slice 结构的 pointer、len 和 cap 字段。</p>
+<h2 id="从数组中取一个相同大小的slice有成本吗？"><a href="#从数组中取一个相同大小的slice有成本吗？" class="headerlink" title="从数组中取一个相同大小的slice有成本吗？"></a>从数组中取一个相同大小的slice有成本吗？</h2><p>是相对轻量的操作</p>
+<h2 id="slice和数组区别"><a href="#slice和数组区别" class="headerlink" title="slice和数组区别"></a>slice和数组区别</h2><p>作为参数的区别</p>
+<ol>
+<li>当使用数组作为参数和返回值的时候，传进去的是值，在函数内部对数组进行修改并不会影响原数据</li>
+<li>当切片作为参数的时候穿进去的是值，也就是值传递，但是当我在函数里面修改切片的时候，我们发现源数据也会被修改，这是因为我们在切片的底层维护这一个匿名的数组，当我们把切片当成参数的时候，会重现创建一个切片，但是创建的这个切片和我们原来的数据是共享数据源的，所以在函数内被修改，源数据也会被修改</li>
+<li>数组还是切片，在函数中传递的时候如果没有指定为指针传递的话，都是值传递，但是切片在传递的过程中，有着共享底层数组的风险，所以如果在函数内部进行了更改的时候，会修改到源数据，所以我们需要根据不同的需求来处理，如果我们不希望源数据被修改话的我们可以使用copy函数复制切片后再传入，如果希望源数据被修改的话我们应该使用指针传递的方式</li>
+</ol>
+<h2 id="底层结构和特性"><a href="#底层结构和特性" class="headerlink" title="底层结构和特性"></a>底层结构和特性</h2><p>答：Go 的 slice 底层数据结构是由一个 <strong>array 指针</strong>指向底层数组，len 表示切片长度，cap 表示切片容量。slice 的主要实现是扩容。对于 append 向 slice 添加元素时，假如 slice 容量够用，则追加新元素进去，slice.len++，返回原来的 slice。当原容量不够，则 slice 先扩容，扩容之后 slice 得到新的 slice，将元素追加进新的 slice，slice.len++，返回新的 slice。对于切片的扩容规则：当切片比较小时（容量小于 1024），则采用较大的扩容倍速进行扩容（新的扩容会是原来的 2 倍），避免频繁扩容，从而减少内存分配的次数和数据拷贝的代价。当切片较大的时（原来的 slice 的容量大于或者等于 1024），采用较小的扩容倍速（新的扩容将扩大大于或者等于原来 1.25 倍），主要避免空间浪费，网上其实很多总结的是 1.25 倍，那是在不考虑内存对齐的情况下，实际上还要考虑内存对齐，扩容是大于或者等于 1.25 倍。</p>
+<p>（关于刚才问的 slice 为什么传到函数内可能被修改，如果 slice 在函数内没有出现扩容，函数外和函数内 slice 变量指向是同一个数组，则函数内复制的 slice 变量值出现更改，函数外这个 slice 变量值也会被修改。如果 slice 在函数内出现扩容，则函数内变量的值会新生成一个数组（也就是新的 slice，而函数外的 slice 指向的还是原来的 slice，则函数内的修改不会影响函数外的 slice。）</p>
+<h1 id="map"><a href="#map" class="headerlink" title="map"></a>map</h1><p><code>map</code> 是一种非常常用的数据结构,用于存储键值对。它提供了快速高效的数据访问和查找功能。以下是关于 Go 语言中 <code>map</code> 的一些重要特点和用法:</p>
+<ol>
+<li><p><strong>声明和初始化</strong>:</p>
+<ul>
+<li>使用 <code>make()</code> 函数创建一个 <code>map</code>:<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">m := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>)</span><br></pre></td></tr></table></figure></li>
+<li>使用字面量语法初始化 <code>map</code>:<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">m := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>&#123;<span class="string">&quot;apple&quot;</span>: <span class="number">5</span>, <span class="string">&quot;banana&quot;</span>: <span class="number">3</span>&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>访问和修改</strong>:</p>
+<ul>
+<li>通过键访问值:<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">value := m[<span class="string">&quot;apple&quot;</span>]</span><br></pre></td></tr></table></figure></li>
+<li>添加或修改键值对:<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">m[<span class="string">&quot;orange&quot;</span>] = <span class="number">7</span></span><br><span class="line">m[<span class="string">&quot;apple&quot;</span>] = <span class="number">6</span></span><br></pre></td></tr></table></figure></li>
+<li>删除键值对:<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">delete</span>(m, <span class="string">&quot;banana&quot;</span>)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>检查键是否存在</strong>:</p>
+<ul>
+<li>使用”两值返回”的方式检查键是否存在:<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">value, ok := m[<span class="string">&quot;pear&quot;</span>]</span><br><span class="line"><span class="keyword">if</span> !ok &#123;</span><br><span class="line">    <span class="comment">// 键不存在</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>遍历 <code>map</code></strong>:</p>
+<ul>
+<li>使用 <code>for range</code> 循环遍历 <code>map</code>:<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> key, value := <span class="keyword">range</span> m &#123;</span><br><span class="line">    fmt.Printf(<span class="string">&quot;Key: %s, Value: %d\n&quot;</span>, key, value)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>注意遍历顺序是随机的。</li>
+</ul>
+</li>
+<li><p><strong>并发安全性</strong>:</p>
+<ul>
+<li><code>map</code> 本身不是并发安全的。如果需要在并发环境下使用 <code>map</code>,需要使用 <code>sync.Map</code> 或者自行加锁。</li>
+</ul>
+</li>
+<li><p><strong>其他特性</strong>:</p>
+<ul>
+<li><code>map</code> 的键必须是<strong>可比较</strong>的类型,如字符串、整数、布尔值等。</li>
+<li><code>map</code> 的值可以是任意类型,包括自定义类型。</li>
+<li><code>map</code> 的长度可以动态增长,无需事先指定大小。</li>
+</ul>
+</li>
+</ol>
+<h2 id="底层结构-1"><a href="#底层结构-1" class="headerlink" title="底层结构"></a>底层结构</h2><p><a target="_blank" rel="noopener" href="https://github.com/golang/go/blob/master/src/runtime/map.go">https://github.com/golang/go/blob/master/src/runtime/map.go</a></p>
+<p>Go 语言中 <code>map</code> 的底层实现是基于哈希表(hash table)的数据结构。具体来说,Go 的 <code>map</code> 是使用拉链法(chaining)来解决哈希冲突的。下面我们来详细了解一下 <code>map</code> 的底层实现:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> hmap <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// Note: the format of the hmap is also encoded in cmd/compile/internal/reflectdata/reflect.go.</span></span><br><span class="line">	<span class="comment">// Make sure this stays in sync with the compiler&#x27;s definition.</span></span><br><span class="line">	count     <span class="keyword">int</span> <span class="comment">// # live cells == size of map.  Must be first (used by len() builtin)</span></span><br><span class="line">	flags     <span class="keyword">uint8</span></span><br><span class="line">	B         <span class="keyword">uint8</span>  <span class="comment">// log_2 of # of buckets (can hold up to loadFactor * 2^B items)</span></span><br><span class="line">	noverflow <span class="keyword">uint16</span> <span class="comment">// approximate number of overflow buckets; see incrnoverflow for details</span></span><br><span class="line">	hash0     <span class="keyword">uint32</span> <span class="comment">// hash seed</span></span><br><span class="line"></span><br><span class="line">	buckets    unsafe.Pointer <span class="comment">// array of 2^B Buckets. may be nil if count==0.</span></span><br><span class="line">	oldbuckets unsafe.Pointer <span class="comment">// previous bucket array of half the size, non-nil only when growing</span></span><br><span class="line">	nevacuate  <span class="keyword">uintptr</span>        <span class="comment">// progress counter for evacuation (buckets less than this have been evacuated)</span></span><br><span class="line"></span><br><span class="line">	extra *mapextra <span class="comment">// optional fields</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><strong>bucket 结构</strong>:<ul>
+<li>Go 中的 <code>map</code> 由多个 <code>bucket</code> 组成,每个 <code>bucket</code> 存储 8 个键值对。</li>
+<li>每个 <code>bucket</code> 结构包含以下字段:<ul>
+<li><code>tophash</code>: 8 个键的哈希值的高 8 位。用于快速比较是否命中。</li>
+<li><code>keys</code>: 8 个键。</li>
+<li><code>values</code>: 8 个值。</li>
+</ul>
+</li>
+<li>当某个 <code>bucket</code> 存不下新的键值对时,会创建一个新的 <code>bucket</code> 并链接到原有的 <code>bucket</code> 上,形成链表结构。</li>
+</ul>
+</li>
+<li><strong>哈希函数</strong>:<ul>
+<li>Go 使用 <code>runtime.alg1</code> 作为默认的哈希函数。这是一种快速高效的哈希算法。</li>
+<li>对于字符串类型的键,Go 使用特殊的字符串哈希算法,进一步提高性能。</li>
+</ul>
+</li>
+<li><strong>扩容机制</strong>:<ul>
+<li><strong>初始容量</strong>:<ul>
+<li>当创建一个新的 map 时,如果没有指定初始容量,Go 会默认分配一个小的初始容量,通常是 8。</li>
+<li>如果在创建 map 时指定了初始容量,Go 会根据这个容量分配相应大小的底层数组。</li>
+</ul>
+</li>
+<li><strong>扩容时机</strong>:<ul>
+<li>当 map 中元素的数量超过当前容量的 2/3 时,就会触发扩容操作。</li>
+<li>扩容的目的是为了降低 map 的平均查找时间复杂度,保持 map 的性能。</li>
+</ul>
+</li>
+<li><strong>扩容策略</strong>:<ul>
+<li>map 的扩容操作会创建一个新的底层数组,新数组的容量通常是旧数组容量的 2 倍。</li>
+<li>将旧数组中的元素逐个复制到新数组中。</li>
+<li>更新 map 结构体中的相关字段,使其指向新的底层数组。</li>
+</ul>
+</li>
+<li><strong>装载因子</strong>:<ul>
+<li>装载因子是 map 中元素个数与底层数组容量的比值。</li>
+<li>Go 语言中 map 的默认装载因子是 2/3,即当 map 中元素个数超过底层数组容量的 2/3 时,就会触发扩容。</li>
+<li>较高的装载因子可以减少内存占用,但可能会增加 map 的查找时间。较低的装载因子可以提高查找性能,但会增加内存占用。</li>
+</ul>
+</li>
+<li><strong>key 的重新哈希</strong>:<ul>
+<li>在扩容时,map 会重新计算每个 key 的哈希值,并根据新的容量将元素放到新的位置上。</li>
+<li>这样可以保证 map 中元素的分布更加均匀,降低冲突概率,提高查找性能。</li>
+<li>会尽量减少rehash以提高性能</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>查找操作</strong>:<ul>
+<li>当使用 <code>m[key]</code> 访问 map 中的元素时,会发生以下步骤:</li>
+<li>首先计算 key 的哈希值。</li>
+<li>根据哈希值和当前 map 的容量,确定 key 在底层数组中的位置。</li>
+<li>遍历该位置的冲突链(也称为桶),逐个比较 key 是否相等。</li>
+<li>如果找到匹配的 key,则返回对应的值。如果没找到,则返回 map 值类型的零值。</li>
+</ul>
+</li>
+<li><strong>插入操作</strong>:<ul>
+<li>当使用 <code>m[key] = value</code> 向 map 中插入元素时,会发生以下步骤:</li>
+<li>首先计算 key 的哈希值。</li>
+<li>根据哈希值和当前 map 的容量,确定 key 在底层数组中的位置。</li>
+<li>遍历该位置的冲突链,查找是否已经存在相同的 key。</li>
+<li>如果找到相同的 key,则更新对应的值。</li>
+<li>如果没找到相同的 key,则创建一个新的键值对,添加到冲突链的尾部。</li>
+<li>如果添加后导致装载因子超过 2/3,则触发 map 的扩容操作。</li>
+</ul>
+</li>
+<li><strong>删除操作</strong>:<ul>
+<li>当使用 <code>delete(m, key)</code> 从 map 中删除元素时,会发生以下步骤:</li>
+<li>首先计算 key 的哈希值。</li>
+<li>根据哈希值和当前 map 的容量,确定 key 在底层数组中的位置。</li>
+<li>遍历该位置的冲突链,查找是否存在相同的 key。</li>
+<li>如果找到相同的 key,则将其从冲突链中删除。</li>
+<li>如果冲突链为空,则将该位置的桶标记为空。</li>
+</ul>
+</li>
+</ol>
+<h2 id="map循环是否有序"><a href="#map循环是否有序" class="headerlink" title="map循环是否有序"></a>map循环是否有序</h2><p>map 的底层实现是基于哈希表的,哈希表本身是一种无序的数据结构。当我们使用 <code>for key, value := range myMap</code> 的方式遍历 map 时,Go 会在每次遍历时以随机的顺序返回 map 中的键值对。这种无序性是 map 设计的一个特点,它可以提高 map 的查找性能。</p>
+<ol>
+<li><strong>使用有序数据结构</strong>:<ul>
+<li>如果你需要保持键值对的顺序,可以使用 Go 标准库提供的 <code>slice</code> 或 <code>list</code> 来模拟有序的 map。在这种情况下,你需要自行维护键值对的顺序信息。</li>
+</ul>
+</li>
+<li><strong>手动对 map 的 key 进行排序</strong>:<ul>
+<li>你可以先获取 map 的所有键,然后对它们进行排序(比如使用 <code>sort</code> 包)。接着按照排序后的键的顺序来遍历 map。</li>
+</ul>
+</li>
+<li><strong>第三方的ordered_map</strong></li>
+</ol>
+<h2 id="删除key的内存情况"><a href="#删除key的内存情况" class="headerlink" title="删除key的内存情况"></a>删除key的内存情况</h2><ul>
+<li>如果删除的元素是值类型，如int，float，bool，string以及数组和struct，map的内存不会自动释放</li>
+<li>如果删除的元素是引用类型，如指针，slice，map，chan等，map的内存会自动释放，但释放的内存是子元素应用类型的内存占用</li>
+<li>将map设置为nil后，内存被回收。</li>
+</ul>
+<h2 id="nil-map-和空-map-区别"><a href="#nil-map-和空-map-区别" class="headerlink" title="nil map 和空 map 区别"></a>nil map 和空 map 区别</h2><p><strong>nil map 是未初始化，空map是长度为空</strong></p>
+<p>1）可以对未初始化的map进行取值，但取出来的东西是空：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> m1 <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span></span><br><span class="line">fmt.Println(m1[<span class="string">&quot;1&quot;</span>])</span><br></pre></td></tr></table></figure>
+
+<p>2）不能对未初始化的map进行赋值，这样将会抛出一个异常：</p>
+<p>未初始化的map是nil，它与一个空map基本等价，只是nil的map不允许往里面添加值。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> m1 <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span></span><br><span class="line">m1[<span class="string">&quot;1&quot;</span>] = <span class="string">&quot;1&quot;</span></span><br><span class="line"><span class="built_in">panic</span>: assignment to entry in <span class="literal">nil</span> <span class="keyword">map</span></span><br><span class="line"></span><br><span class="line">因此，<span class="keyword">map</span>是<span class="literal">nil</span>时，取值是不会报错的（取不到而已），但增加值会报错。</span><br><span class="line"></span><br><span class="line">其实，还有一个区别，<span class="built_in">delete</span>一个<span class="literal">nil</span> <span class="keyword">map</span>会<span class="built_in">panic</span>，</span><br><span class="line">但是<span class="built_in">delete</span> 空<span class="keyword">map</span>是一个空操作（并不会<span class="built_in">panic</span>）</span><br><span class="line">（这个区别在最新的Go tips中已经没有了，即：<span class="built_in">delete</span>一个<span class="literal">nil</span> <span class="keyword">map</span>也不会<span class="built_in">panic</span>）</span><br></pre></td></tr></table></figure>
+
+<p>3）通过fmt打印map时，空map和nil map结果是一样的，都为map[]。所以，这个时候别断定map是空还是nil，而应该通过map == nil来判断。</p>
+<h2 id="哪些类型可以作为map类型的key"><a href="#哪些类型可以作为map类型的key" class="headerlink" title="哪些类型可以作为map类型的key"></a>哪些类型可以作为map类型的key</h2><p>在 Go 语言中,map 的键必须是可比较类型。可比较类型是指支持使用 <code>==</code> 和 <code>!=</code> 运算符进行相等性比较的类型。</p>
+<p>具体来说,Go 标准库中以下类型是可比较类型:</p>
+<ol>
+<li><p><strong>基本类型</strong>:</p>
+<ul>
+<li>布尔型 (<code>bool</code>)</li>
+<li>整型 (<code>int</code>, <code>int8</code>, <code>int16</code>, <code>int32</code>, <code>int64</code>, <code>uint</code>, <code>uint8</code>, <code>uint16</code>, <code>uint32</code>, <code>uint64</code>, <code>uintptr</code>)</li>
+<li>浮点型 (<code>float32</code>, <code>float64</code>)</li>
+<li>复数型 (<code>complex64</code>, <code>complex128</code>)</li>
+<li>字符型 (<code>byte</code>, <code>rune</code>)</li>
+<li>字符串型 (<code>string</code>)</li>
+</ul>
+</li>
+<li><p><strong>指针类型</strong>:</p>
+<ul>
+<li>所有指针类型,如 <code>*int</code>、<code>*struct</code>等</li>
+</ul>
+</li>
+<li><p><strong>结构体类型</strong>:</p>
+<ul>
+<li>当结构体的所有字段都是可比较类型时,该结构体类型也是可比较类型。</li>
+</ul>
+</li>
+<li><p><strong>数组类型</strong>:</p>
+<ul>
+<li>当数组的元素类型是可比较类型时,该数组类型也是可比较类型。</li>
+</ul>
+</li>
+<li><p><strong>接口类型</strong>:</p>
+<ul>
+<li>当接口值的动态类型和动态值都是可比较类型时,该接口类型也是可比较类型。</li>
+</ul>
+</li>
+</ol>
+<p>需要注意的是:</p>
+<ul>
+<li>切片(<code>slice</code>)、映射(<code>map</code>)和函数类型都不是可比较类型,因此不能作为 map 的键。</li>
+<li>如果你需要使用这些类型作为 map 的键,可以考虑使用自定义的结构体类型来模拟。比如使用包含切片的结构体作为 map 的键。</li>
+</ul>
+<h2 id="并发访问map"><a href="#并发访问map" class="headerlink" title="并发访问map"></a>并发访问map</h2><ol>
+<li>锁</li>
+<li>sync.Map</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    
+      <div>
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:24px;">（完）</div>
+    
+</div>
+      </div>
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/golang/" rel="tag"># golang</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/05/10/go%E8%AF%AD%E6%B3%95%E5%9F%BA%E7%A1%80/" rel="prev" title="go语法基础">
+      <i class="fa fa-chevron-left"></i> go语法基础
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/05/13/go%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="next" title="go并发编程">
+      go并发编程 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E7%BB%84"><span class="nav-number">1.</span> <span class="nav-text">数组</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E6%95%B0%E7%BB%84%EF%BC%88%E5%88%87%E7%89%87%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">动态数组（切片）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%95%E5%B1%82%E7%BB%93%E6%9E%84"><span class="nav-number">2.1.</span> <span class="nav-text">底层结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E6%95%B0%E7%BB%84%E4%B8%AD%E5%8F%96%E4%B8%80%E4%B8%AA%E7%9B%B8%E5%90%8C%E5%A4%A7%E5%B0%8F%E7%9A%84slice%E6%9C%89%E6%88%90%E6%9C%AC%E5%90%97%EF%BC%9F"><span class="nav-number">2.2.</span> <span class="nav-text">从数组中取一个相同大小的slice有成本吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#slice%E5%92%8C%E6%95%B0%E7%BB%84%E5%8C%BA%E5%88%AB"><span class="nav-number">2.3.</span> <span class="nav-text">slice和数组区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%95%E5%B1%82%E7%BB%93%E6%9E%84%E5%92%8C%E7%89%B9%E6%80%A7"><span class="nav-number">2.4.</span> <span class="nav-text">底层结构和特性</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#map"><span class="nav-number">3.</span> <span class="nav-text">map</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%95%E5%B1%82%E7%BB%93%E6%9E%84-1"><span class="nav-number">3.1.</span> <span class="nav-text">底层结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#map%E5%BE%AA%E7%8E%AF%E6%98%AF%E5%90%A6%E6%9C%89%E5%BA%8F"><span class="nav-number">3.2.</span> <span class="nav-text">map循环是否有序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4key%E7%9A%84%E5%86%85%E5%AD%98%E6%83%85%E5%86%B5"><span class="nav-number">3.3.</span> <span class="nav-text">删除key的内存情况</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nil-map-%E5%92%8C%E7%A9%BA-map-%E5%8C%BA%E5%88%AB"><span class="nav-number">3.4.</span> <span class="nav-text">nil map 和空 map 区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%93%AA%E4%BA%9B%E7%B1%BB%E5%9E%8B%E5%8F%AF%E4%BB%A5%E4%BD%9C%E4%B8%BAmap%E7%B1%BB%E5%9E%8B%E7%9A%84key"><span class="nav-number">3.5.</span> <span class="nav-text">哪些类型可以作为map类型的key</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E8%AE%BF%E9%97%AEmap"><span class="nav-number">3.6.</span> <span class="nav-text">并发访问map</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Honghangzhi"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Honghangzhi</p>
+  <div class="site-description" itemprop="description">不积跬步，无以千里</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Honghangzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'Wk2wsEFrasa9yOsstHf3YRlp-gzGzoHsz',
+      appKey     : 'zKA4ww3CAjsjGZ52EFJPkpRn',
+      placeholder: "欢迎交流讨论...",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
