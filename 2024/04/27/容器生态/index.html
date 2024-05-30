@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10000,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="鸟瞰容器生态">
+<meta property="og:type" content="article">
+<meta property="og:title" content="鸟瞰容器生态">
+<meta property="og:url" content="http://example.com/2024/04/27/%E5%AE%B9%E5%99%A8%E7%94%9F%E6%80%81/index.html">
+<meta property="og:site_name" content="HZ&#39;Blog">
+<meta property="og:description" content="鸟瞰容器生态">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-04-26T16:55:39.000Z">
+<meta property="article:modified_time" content="2024-05-30T22:04:10.381Z">
+<meta property="article:author" content="Honghangzhi">
+<meta property="article:tag" content="容器">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2024/04/27/%E5%AE%B9%E5%99%A8%E7%94%9F%E6%80%81/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>鸟瞰容器生态 | HZ'Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">HZ'Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/04/27/%E5%AE%B9%E5%99%A8%E7%94%9F%E6%80%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Honghangzhi">
+      <meta itemprop="description" content="不积跬步，无以千里">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HZ'Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          鸟瞰容器生态
+        </h1>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-04-27 00:55:39" itemprop="dateCreated datePublished" datetime="2024-04-27T00:55:39+08:00">2024-04-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-05-31 06:04:10" itemprop="dateModified" datetime="2024-05-31T06:04:10+08:00">2024-05-31</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                  <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                    <a href="/categories/%E4%BA%91%E5%8E%9F%E7%94%9F/" itemprop="url" rel="index"><span itemprop="name">云原生</span></a>
+                  </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/04/27/%E5%AE%B9%E5%99%A8%E7%94%9F%E6%80%81/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/04/27/%E5%AE%B9%E5%99%A8%E7%94%9F%E6%80%81/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>鸟瞰容器生态</p>
+<span id="more"></span>
+
+<h1 id="什么是容器"><a href="#什么是容器" class="headerlink" title="什么是容器"></a>什么是容器</h1><p>容器是一种轻量级的虚拟化技术，用于将应用程序及其所有依赖项打包在一起，以便在不同的计算环境中进行部署和运行。容器化技术的一个主要代表是Docker。</p>
+<p>在传统的计算环境中，应用程序通常需要在操作系统上进行安装和配置，而且不同的应用程序之间可能存在依赖冲突或版本冲突的问题。而通过容器化，应用程序及其所有依赖项被打包成一个独立的、可移植的单元，称为容器。容器中包含了应用程序所需的所有文件、库、环境变量和配置信息。</p>
+<p>容器利用操作系统级别的虚拟化技术，如Linux的命名空间和控制组（cgroups），在主机操作系统上创建一个隔离的执行环境，使得容器内的应用程序能够运行在一个相对独立的环境中，而不会干扰其他容器或主机上的应用程序。</p>
+<p>容器具有以下特点：</p>
+<ol>
+<li><p>轻量级：相比传统的虚拟机技术，容器的启动速度更快，占用的系统资源更少，因为它们共享主机操作系统的内核。</p>
+</li>
+<li><p>可移植性：容器可以在不同的计算环境中运行，包括开发环境、测试环境和生产环境，而无需担心应用程序的依赖项和配置问题。</p>
+</li>
+<li><p>隔离性：容器之间相互隔离，每个容器都有自己的文件系统、进程空间和网络栈，使得应用程序在容器内运行时相对安全，并且不会互相干扰。</p>
+</li>
+<li><p>可扩展性：容器可以通过扩展和复制来应对不同负载下的需求，可以动态地调整容器的数量，以适应应用程序的性能需求。</p>
+</li>
+<li><p>管理和部署简单：容器可以通过容器编排工具或平台来管理和部署，简化了应用程序的交付和维护过程。</p>
+</li>
+</ol>
+<p>容器化技术为应用程序的开发、测试和部署提供了更高的灵活性、可移植性和可扩展性，使得构建和管理分布式系统变得更加方便和高效。</p>
+<h1 id="docker核心组件"><a href="#docker核心组件" class="headerlink" title="docker核心组件"></a>docker核心组件</h1><p>Docker 是一个开源的容器化平台，它由多个核心组件组成，这些组件协同工作以实现容器的创建、管理和运行。以下是 Docker 的核心组件：</p>
+<ol>
+<li><p>Docker Engine（Docker 引擎）：<br>Docker Engine 是 Docker 平台的核心组件，它负责构建、运行和管理容器。它包括以下子组件：</p>
+<ul>
+<li>Docker Daemon（Docker 守护进程）：守护进程在主机上运行，负责管理容器的创建、运行和停止，以及与 Docker 客户端进行通信。</li>
+<li>Docker CLI（Docker 命令行界面）：命令行界面用于与 Docker Daemon 进行交互，通过执行命令来管理容器和镜像等。</li>
+</ul>
+</li>
+<li><p>Docker Images（Docker 镜像）：<br>Docker 镜像是容器的构建块，它是一个只读模板，包含了运行容器所需的文件系统、应用程序和依赖项等。镜像可以基于其他镜像进行构建，并可以通过 Docker Hub 或私有镜像仓库进行共享和获取。</p>
+</li>
+<li><p>Docker Containers（Docker 容器）：<br>Docker 容器是从 Docker 镜像创建的运行实例。每个容器都是隔离的、轻量级的虚拟环境，其中运行着应用程序和其依赖项。容器具有独立的文件系统、网络和进程空间，可以独立运行和管理。</p>
+</li>
+<li><p>Docker Compose：<br>Docker Compose 是一个用于定义和运行多个容器应用的工具。它使用一个 YAML 文件来描述应用程序的服务、网络和协作关系，可以一次性地启动、停止和管理多个容器。</p>
+</li>
+<li><p>Docker Registry（Docker 仓库）：<br>Docker 仓库用于存储和共享 Docker 镜像。Docker Hub 是官方的公共 Docker 仓库，提供了大量的官方和社区维护的镜像供用户使用。此外，还可以搭建私有的 Docker 仓库来存储自定义的镜像。</p>
+</li>
+</ol>
+<p>这些核心组件共同构成了 Docker 平台的基础架构，使用户能够方便地创建、部署和管理容器化应用程序。</p>
+<h1 id="容器核心技术"><a href="#容器核心技术" class="headerlink" title="容器核心技术"></a>容器核心技术</h1><p>专指让Container在host上运行起来的技术</p>
+<ul>
+<li>容器规范<ul>
+<li>runtime spec</li>
+<li>image format spec</li>
+</ul>
+</li>
+<li>容器runtime<ul>
+<li>lxc</li>
+<li>runc</li>
+<li>rkt</li>
+</ul>
+</li>
+<li>容器管理工具<ul>
+<li>lxd</li>
+<li>docker engine<ul>
+<li>deamon</li>
+<li><strong>cli</strong></li>
+</ul>
+</li>
+<li>rkt cli</li>
+</ul>
+</li>
+<li>容器定义工具<ul>
+<li><strong>docker image</strong></li>
+<li><strong>dockerfile</strong></li>
+<li>ACI </li>
+</ul>
+</li>
+<li>Registries<ul>
+<li><strong>Docker Registry</strong></li>
+<li><strong>Docker Hub</strong></li>
+<li>Quay.io</li>
+</ul>
+</li>
+<li>容器OS<ul>
+<li>coreos</li>
+<li>atomic</li>
+<li>ubuntu core</li>
+</ul>
+</li>
+</ul>
+<h1 id="容器平台技术"><a href="#容器平台技术" class="headerlink" title="容器平台技术"></a>容器平台技术</h1><p>基于容器的应用一般采用微服务架构，在这种架构下，应用被划分为不同组件并以服务的形式运行在各自的容器中，通过API对外提供服务。为了保证高可用，每个组件可能运行多个相同的容器，组成集群，根据业务需要动态创建、迁移和销毁。</p>
+<p>容器编排是指管理和协调多个容器化应用程序在集群环境中的部署和生命周期管理。</p>
+<ul>
+<li>容器编排引擎 <ul>
+<li>docker swarm</li>
+<li>**kubernetes ** google领导的开源容器编排引擎</li>
+<li>mesos+marathon</li>
+</ul>
+</li>
+<li>容器管理平台<ul>
+<li>Rancher</li>
+<li>ContainerShip</li>
+</ul>
+</li>
+<li>基于容器的PaaS<ul>
+<li>Deis</li>
+<li>Flynn</li>
+<li>Dokku</li>
+</ul>
+</li>
+</ul>
+<h1 id="容器支持技术"><a href="#容器支持技术" class="headerlink" title="容器支持技术"></a>容器支持技术</h1><p>用于支持基于容器的基础设施</p>
+<ul>
+<li>容器网络<br>管理容器与容器，容器与其他实体间的流通性和隔离性<ul>
+<li><strong>docker network</strong></li>
+<li>flannel</li>
+<li>weave</li>
+<li>calico</li>
+</ul>
+</li>
+<li>服务发现<br>容器根据host的资源在不同host间迁移，ip和端口随之变化，需要提供一种机制让client能够知道如何访问容器。<ul>
+<li>etcd</li>
+<li>consul</li>
+<li>zookeeper</li>
+</ul>
+</li>
+<li>监控<ul>
+<li><strong>docker ps/top/stats</strong> 原生监控命令</li>
+<li><strong>docker stats API</strong> 提供的web api</li>
+<li>sysdlg</li>
+<li>cAdvisor/Heapster</li>
+<li>Weave Scope</li>
+</ul>
+</li>
+<li>数据管理<ul>
+<li>Rex-Ray</li>
+</ul>
+</li>
+<li>日志管理<ul>
+<li>docker logs</li>
+<li>logspout</li>
+</ul>
+</li>
+<li>安全性<ul>
+<li>OpenSCAP</li>
+</ul>
+</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://www.docker.com/">https://www.docker.com/</a></p>
+<p>docker: <a target="_blank" rel="noopener" href="https://www.docker.com/">https://www.docker.com/</a></p>
+<p>Docs: <a target="_blank" rel="noopener" href="https://docs.docker.com/">https://docs.docker.com/</a></p>
+<p> <a target="_blank" rel="noopener" href="https://yeasy.gitbook.io/docker_practice/">Docker从入门到实践</a></p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ul>
+<li>第一步Docker书</li>
+<li>每天5分钟玩转Docker容器技术</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    
+      <div>
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:24px;">（完）</div>
+    
+</div>
+      </div>
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%AE%B9%E5%99%A8/" rel="tag"># 容器</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/07/12/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/" rel="prev" title="性能分析">
+      <i class="fa fa-chevron-left"></i> 性能分析
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/04/28/%E9%95%9C%E5%83%8F/" rel="next" title="Docker镜像">
+      Docker镜像 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%AE%B9%E5%99%A8"><span class="nav-number">1.</span> <span class="nav-text">什么是容器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6"><span class="nav-number">2.</span> <span class="nav-text">docker核心组件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF"><span class="nav-number">3.</span> <span class="nav-text">容器核心技术</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E5%B9%B3%E5%8F%B0%E6%8A%80%E6%9C%AF"><span class="nav-number">4.</span> <span class="nav-text">容器平台技术</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E6%94%AF%E6%8C%81%E6%8A%80%E6%9C%AF"><span class="nav-number">5.</span> <span class="nav-text">容器支持技术</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">6.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Honghangzhi"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Honghangzhi</p>
+  <div class="site-description" itemprop="description">不积跬步，无以千里</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Honghangzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'Wk2wsEFrasa9yOsstHf3YRlp-gzGzoHsz',
+      appKey     : 'zKA4ww3CAjsjGZ52EFJPkpRn',
+      placeholder: "欢迎交流讨论...",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
